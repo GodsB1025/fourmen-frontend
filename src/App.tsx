@@ -1,10 +1,11 @@
-import { View, Text } from 'react-native'
+import react from 'react'
+import 'App.css'
 
 function App() {
   return (
-    <View>
-      <Text>test</Text>
-    </View>
+    <div>
+      <p>test</p>
+    </div>
   )
 }
 

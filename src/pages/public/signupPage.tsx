@@ -2,8 +2,10 @@ import React from 'react'
 
 type Props = {}
 
-const signupPage = (props: Props) => {
+const SignupPage = (props: Props) => {
   return (
     <div>signupPage</div>
   )
 }
+
+export default SignupPage
