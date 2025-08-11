@@ -1,5 +1,6 @@
-import React from 'react'
-import'./App.css'
+import react from 'react'
+import 'App.css'
+
 
 function App() {
   return (

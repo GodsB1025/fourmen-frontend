@@ -1,15 +1,12 @@
-import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
 // 서비스의 메인페이지
-const lobbyPage = () => {
+const LobbyPage = () => {
     return (
-        <View>
-            <Text>lobby</Text>
-        </View>
+        <div>
+            <p>lobby</p>
+        </div>
     )
 }
 
-export default lobbyPage
-
-const styles = StyleSheet.create({})
+export default LobbyPage
