@@ -1,16 +1,34 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React from "react";
+import "./Header.css";
 
-type Props = {}
+type HeaderProps = {
+  /** onLogin이 있으면 버튼으로, 없으면 /login 링크로 렌더링 */
+  onLogin?: () => void;
+  brandHref?: string;
+};
 
-const Header = (props: Props) => {
-    return (
-        <View>
-            <Text>Header</Text>
-        </View>
-    )
-}
+const Header: React.FC<HeaderProps> = ({ onLogin, brandHref = "/" }) => {
+  return (
+    <header className="header" role="banner">
+      <div className="inner">
+        <a href={brandHref} className="brand" aria-label="4MEN Home">
+          4MEN
+        </a>
 
-export default Header
+        <nav aria-label="Primary" className="nav">
+          {onLogin ? (
+            <button type="button" className="loginBtn" onClick={onLogin}>
+              Log In
+            </button>
+          ) : (
+            <a href="/login" className="loginLink">
+              Log In
+            </a>
+          )}
+        </nav>
+      </div>
+    </header>
+  );
+};
 
-const styles = StyleSheet.create({})
+export default Header;
