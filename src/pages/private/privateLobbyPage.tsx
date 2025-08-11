@@ -2,10 +2,10 @@ import React from 'react'
 
 type Props = {}
 
-const privateLobbyPage = (props: Props) => {
+const PrivateLobbyPage = (props: Props) => {
   return (
     <div>privateLobbyPage</div>
   )
 }
 
-export default privateLobbyPage
+export default PrivateLobbyPage
