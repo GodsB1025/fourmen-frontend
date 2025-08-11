@@ -8,12 +8,12 @@ import NotFoundPage from "../pages/public/NotFoundPage";
 
 const LobbyPage = lazy(() => import('../pages/public/LobbyPage'));
 const SignInPage = lazy(() => import('../pages/public/SignInPage'));
-const SignupPage = lazy(() => import('../pages/public/SignupPage'));
-const DashboardPage = lazy(() => import('../pages/private/dashboard/DashboardPage'));
-const ContractPage = lazy(() => import("../pages/private/ContractPage"));
-const PrivateLobbyPage = lazy(() => import("../pages/private/PrivateLobbyPage"))
-const MeetingRoomPage = lazy(() => import("../pages/private/MeetingRoomPage"))
-const VideoRoomPage = lazy(() => import("../pages/private/VideoRoomPage"))
+const SignupPage = lazy(() => import('../pages/public/signupPage'));
+const DashboardPage = lazy(() => import('../pages/private/dashboard/dashboardPage'));
+const ContractPage = lazy(() => import("../pages/private/contractPage"));
+const PrivateLobbyPage = lazy(() => import("../pages/private/privateLobbyPage"))
+const MeetingRoomPage = lazy(() => import("../pages/private/meetingRoomPage"))
+const VideoRoomPage = lazy(() => import("../pages/private/videoRoomPage"))
 
 
 const PageLoader = () => <Loading/>
