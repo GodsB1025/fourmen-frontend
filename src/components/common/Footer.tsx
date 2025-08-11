@@ -21,7 +21,7 @@ export default function Footer({
   team = [
     { name: "김경보", email: "godsb1025@gmail.com" },
     { name: "제갈태웅", email: "wgkrtk005@gmail.com" },
-    { name: "최호철", email: "ghcf12@gmail.com" },
+    { name: "최호철", email: "ghcjf199818@gmail.com" },
     { name: "홍성재", email: "aurcqhg@gmail.com" },
   ],
   className = "",
