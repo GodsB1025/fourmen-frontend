@@ -1,0 +1,122 @@
+:root{
+  --sb-width: 240px;
+  --line: #e5e7eb;
+  --muted: #6b7280;
+  --danger: #ef4444;
+  --text: #111827;
+  --bg: #ffffff;
+  --bg-hover: #f8fafc;
+  --shadow: 0 1px 2px rgba(0,0,0,.06);
+}
+
+/* 전체 영역 */
+.sidebar{
+  position: sticky;      /* 스크롤해도 좌측에 고정 */
+  top: 0;
+  display: grid;
+  grid-template-rows: auto 1fr auto;     /* user / nav / logout */
+  width: var(--sb-width);
+  min-width: var(--sb-width);
+  height: 100vh;
+  background: var(--bg);
+  border-right: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  padding: 16px 10px;
+}
+
+/* 사용자 정보 */
+.user{
+  padding: 8px 8px 18px; /* 상단 여백 줄이고 하단 여백 늘림 → 위로 이동 */
+  /* border-bottom: 1px solid var(--line);  구분선 제거 */
+}
+.user-name{
+  display: block;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--text);
+  margin: 0 0 2px;           /* 이름-이메일 사이 아주 살짝 간격 */
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.user-email{
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* ───── 메뉴 리스트 ───── */
+.nav{
+  padding: 28px 4px 8px; /* 상단 여백 늘림 → 아래로 이동 */
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.nav-item{
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 10px;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background .15s ease;
+  box-shadow: none;
+}
+.nav-item:hover{
+  background: var(--bg-hover);
+}
+.nav-item.is-active{
+  background: #f3f6ff;
+}
+.nav-item.is-active::before{
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
+  border-radius: 2px;
+  background: #2563eb;
+}
+.icon{
+  width: 20px;
+  display: inline-flex;
+  justify-content: center;
+}
+
+/* ───── 로그아웃 ───── */
+.logout{
+  margin-top: auto;
+  padding: 12px 4px 0;
+  /* border-top: 1px solid var(--line);  구분선 제거 */
+}
+.logout-btn{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 10px;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background .15s ease;
+  box-shadow: none;
+}
+.logout-btn:hover{
+  background: #fff1f2;
+}
+.label.danger{ color: var(--danger); }
+
+/* ───── 접근성 ───── */
+.nav-item:focus-visible,
+.logout-btn:focus-visible{
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(37,99,235,.25);
+  border-radius: 8px;
+}

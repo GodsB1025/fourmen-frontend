@@ -1,17 +1,29 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React from "react";
+import "./TextInput.css"; // 스타일 분리
 
-type Props = {}
+type TextInputProps = {
+  type?: string;
+  placeholder?: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  name?: string;
+};
 
-// TextInput 태그의 재사용성을 높이기 위해 따로 분리
-const TextInput = (props: Props) => {
+export default function TextInput({
+  type = "text",
+  placeholder = "",
+  value,
+  onChange,
+  name,
+}: TextInputProps) {
   return (
-    <View>
-      <Text>TextInput</Text>
-    </View>
-  )
+    <input
+      className="custom-input"
+      type={type}
+      placeholder={placeholder}
+      value={value}
+      onChange={onChange}
+      name={name}
+    />
+  );
 }
-
-export default TextInput
-
-const styles = StyleSheet.create({})
