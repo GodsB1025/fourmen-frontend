@@ -6,8 +6,6 @@ import './LobbyPage.css';
 function LobbyPage(): JSX.Element {
   return (
     <div className="lobby">
-      <Header />
-
       <main>
         {/* Hero */}
         <section className="hero container">
