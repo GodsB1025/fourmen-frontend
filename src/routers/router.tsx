@@ -5,6 +5,7 @@ import { PATH } from "../stores/paths";
 
 import PrivateRoute from "./PrivateRoute";
 import NotFoundPage from "../pages/public/NotFoundPage";
+import PublicLayout from "../pages/public/PublicLayout";
 
 const LobbyPage = lazy(() => import('../pages/public/LobbyPage'));
 const SignInPage = lazy(() => import('../pages/public/SignInPage'));
@@ -32,6 +33,7 @@ const routes: RouteObject[] = [
     },
     {
         // Public Routes (인증이 필요 없는 경로)
+        element: <PublicLayout/>,
         children: [
             { path: PATH.ROOT, element: <LobbyPage /> },
             { path: PATH.SIGN_IN, element: <SignInPage /> },

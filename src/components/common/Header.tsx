@@ -1,5 +1,7 @@
 import React from "react";
 import "./Header.css";
+import { Link } from "react-router-dom";
+import { PATH } from "../../stores/paths";
 
 type HeaderProps = {
   onLogin?: () => void;
@@ -19,7 +21,7 @@ export default function Header({ onLogin, brandHref = "/" }: HeaderProps) {
               Log In
             </button>
           ) : (
-            <a href="/login" className="loginLink">Log In</a>
+            <Link to={PATH.SIGN_IN} className="loginLink">Log in</Link>
           )}
         </nav>
       </div>
