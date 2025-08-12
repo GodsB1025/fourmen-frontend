@@ -1,13 +1,13 @@
-import React from 'react'
+import React from 'react';
+import './Loading.css';
 
-type Props = {}
-
-const Loading = (props: Props) => {
+const Loading = () => {
   return (
-    <div>
-      Loading....
+    <div className="loading-overlay" aria-live="assertive" role="alert">
+      <div className="loading-spinner"></div>
+      <p>Loading....</p>
     </div>
-  )
-}
+  );
+};
 
-export default Loading
+export default Loading;

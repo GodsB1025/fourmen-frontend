@@ -1,0 +1,46 @@
+.loading-overlay {
+    /* 화면 전체를 덮도록 고정 */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+
+    /* 반투명한 흰색 배경과 블러 효과 */
+    background-color: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(3px);
+
+    /* 내용을 중앙 정렬 */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    /* 다른 모든 요소 위에 오도록 z-index 설정 */
+    z-index: 9999;
+
+    /* 부드러운 전환 효과 */
+    transition: opacity 0.2s ease-in-out;
+}
+
+.loading-overlay p {
+    margin-top: 20px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+}
+
+/* 간단한 CSS 스피너 애니메이션 */
+.loading-spinner {
+    border: 5px solid #f3f3f3; /* Light grey */
+    border-top: 5px solid #3899ec; /* Blue */
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

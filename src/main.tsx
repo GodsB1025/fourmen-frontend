@@ -1,14 +1,16 @@
-import { StrictMode } from 'react'
-import './index.css'
-import { createRoot } from 'react-dom/client'
-import App from './App.tsx'
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { RouterProvider } from 'react-router-dom';
+import { router } from './routers/router';
+import './index.css';
 
-const Root = () => {
-  return <App/>
-}
+const container = document.getElementById('root');
+if (!container) throw new Error('Failed to find the root element');
 
-createRoot(document.getElementById('root')!).render(
+const root = createRoot(container);
+
+root.render(
   <StrictMode>
-    <Root/>
-  </StrictMode>,
-)
+    <RouterProvider router={router} />
+  </StrictMode>
+);
