@@ -3,8 +3,8 @@ import './SignInPage.css';
 import Login from '../../components/auth/Login';
 
 const SignInPage = () => {
-    const [email, setEmail] = useState('test@test.com');
-    const [password, setPassword] = useState('●●●●●●●●●●●●');
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
 
     // 폼 제출 시 기본 동작 방지
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {

@@ -1,6 +1,9 @@
 import React from 'react'
+import './Login.css'
 import { PATH } from '../../stores/paths';
 import { Link } from 'react-router-dom';
+import TextInput from '../common/TextInput';
+import ActionButton from '../common/ActionButton';
 
 interface SignInProps {
     email : string;
@@ -14,42 +17,43 @@ const Login = ({
     email, password,
     setEmail, setPassword,
     handleLogin
-    }: SignInProps) => {
+}: SignInProps) => {
+
+    const isFormValid = email.trim() !== '' && password.trim() !== '';
     return (
-        <div>
-            <main className="signin-main">
-                <div className="signin-container">
+        <main className="signin-main">
+            <div className="signin-container">
                 <h1 className="signin-title">로그인</h1>
+                <div className="spacer" style={{ flexGrow: 2 }} />
                 <form onSubmit={handleLogin} className="signin-form">
-                    <input
+                    <TextInput
                     type="email"
+                    placeholder='test@email.com'
                     value={email}
+                    name="email"
                     onChange={(e) => setEmail(e.target.value)}
-                    className="signin-input"
-                    aria-label="Email"
-                    autoComplete="email"
                     />
-                    <input
+                    <TextInput
                     type="password"
+                    placeholder='password'
                     value={password}
+                    name="password"
                     onChange={(e) => setPassword(e.target.value)}
-                    className="signin-input"
-                    aria-label="Password"
-                    autoComplete="current-password"
                     />
-                    <button type="submit" className="signin-button">
-                    Login
-                    </button>
+                    <div className="spacer" style={{ flexGrow: 1 }} />
+                    <ActionButton type="submit" isActive={isFormValid}>
+                        로그인
+                    </ActionButton>
                 </form>
+                <div className="spacer" style={{ flexGrow: 2 }} />
                 <div className="signup-prompt">
                     <span>계정이 없으신가요?</span>
                     <Link to={PATH.SIGN_UP} className="signup-link">
                     회원가입 하기
                     </Link>
                 </div>
-                </div>
-            </main>
-        </div>
+            </div>
+        </main>
     )
 }
 
