@@ -1,9 +1,15 @@
 import React, { type JSX } from 'react';
-import Header from '../../components/common/Header';
 import Footer from '../../components/common/Footer';
+import mans from '../../assets/imgs/man.png'
+import { useNavigate } from "react-router-dom";
 import './LobbyPage.css';
 
 function LobbyPage(): JSX.Element {
+  const navigate = useNavigate();
+  const handleClick = () => {
+    alert("로그인 후 이용가능합니다.");
+    navigate("/signin");
+  };
   return (
     <div className="lobby">
       <main>
@@ -17,10 +23,12 @@ function LobbyPage(): JSX.Element {
               AI가 회의를 자동으로 기록하고 요약해요. <br />
               미팅 이후 액션·계약까지 한 곳에서 이어집니다.
             </p>
-            <button className="btn-primary">시작하기</button>
+            <button className="btn-primary" onClick={handleClick}>시작하기</button>
           </div>
 
-          <div className="hero-visual checkerboard large" aria-hidden="true" />
+          <div className="hero-visual checkerboard large" aria-hidden="true">
+            <img src={mans} alt="웃는 남자"/>
+          </div>
         </section>
 
         {/* Pain points */}
@@ -83,7 +91,7 @@ function LobbyPage(): JSX.Element {
         <section className="cta">
           <div className="container cta-inner">
             <p>지금 바로 비즈니스 미팅의 혁신을 경험하세요</p>
-            <button className="btn-primary btn-small">시작하기</button>
+            <button className="btn-primary btn-small" onClick={handleClick}>시작하기</button>
           </div>
         </section>
       </main>
