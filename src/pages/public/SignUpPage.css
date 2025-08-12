@@ -1,0 +1,322 @@
+:root {
+  --line: #e5e7eb;
+  --muted: #6b7280;
+  --text: #111827;
+  --bg: #fff;
+  --primary: #2563eb;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto;
+}
+
+.su-wrap {
+  min-height: 100vh;
+  background: #fff;
+  color: var(--text);
+}
+
+/* 상단바 */
+.su-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--line);
+  background: #fff;
+  position: sticky;
+  top: 0;
+}
+
+.brand {
+  font-weight: 800;
+}
+
+.login {
+  font-size: 14px;
+  color: var(--muted);
+  text-decoration: none;
+}
+
+/* 카드 박스 */
+.su-card {
+  width: min(720px, calc(100% - 32px));
+  margin: 36px auto;
+  padding: 28px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+.su-title {
+  margin: 0 0 16px;
+  font-size: 22px;
+  font-weight: 800;     
+  text-align: center;
+}
+
+/* 진행률 바 */
+.su-progress .bar {
+  height: 6px;
+  background: #f3f4f6;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.su-progress .fill {
+  height: 100%;
+  background: var(--primary);
+}
+
+.su-progress .meta {
+  display: flex;
+  justify-content: space-between;
+  margin: 6px 2px 18px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* 단계 영역 */
+.su-step {
+  display: grid;
+  gap: 14px;
+}
+
+/* 가입 유형 선택 카드 */
+.su-typegrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.su-typecard {
+  appearance: none;
+  border: none;
+  cursor: pointer;
+
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  gap: 12px;
+
+  padding: 28px 24px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 2px 10px rgba(0,0,0,.06);
+  text-align: center;
+
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: keep-all;
+
+  transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+}
+
+.su-typecard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(0,0,0,.08);
+  background: #f9fafb;
+}
+
+.su-typecard.active {
+  /* 보더 없이 링 느낌 */
+  box-shadow:
+    0 10px 24px rgba(0,0,0,.10),
+    0 0 0 3px rgba(37,99,235,.25);
+  background: #fff;
+}
+
+.su-typecard-icon {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 4px;
+  display: grid;
+  place-items: center;
+  border-radius: 20px;
+  background: #f3f4f6;
+  border: 1px solid var(--line);
+}
+.su-typecard-icon svg {
+  width: 58px;
+  height: 58px;
+  fill: #111827;
+}
+
+.su-typecard-title {
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.su-typecard-desc {
+  margin: 0 auto;
+  max-width: 360px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+/* 반응형 */
+@media (max-width: 720px) {
+  .su-typegrid { grid-template-columns: 1fr; gap: 14px; }
+  .su-typecard { padding: 22px 18px; }
+  .su-typecard-icon { width: 88px; height: 88px; }
+  .su-typecard-icon svg { width: 48px; height: 48px; }
+}
+
+/*지워도되용*/
+/* .su-type {
+  display: grid;
+  gap: 6px;
+  justify-items: center;
+  align-content: center;
+  padding: 22px;
+  border-radius: 14px;
+  background: #fff;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.su-type strong {
+  font-size: 14px;
+}
+
+.su-type span {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.su-type.active {
+  outline: 2px solid var(--primary);
+} */
+
+/* 폼 필드 */
+.su-field {
+  display: grid;
+  gap: 6px;
+}
+
+label {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.su-hint {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+/* 관리자 코드 안내 박스 */
+.su-adminbox {
+  background: #f3f4f6;
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: grid;
+  gap: 6px;
+}
+
+.su-adminbox .stripe {
+  height: 6px;
+  background: linear-gradient(90deg, #4f46e5, #a855f7, #22d3ee);
+  border-radius: 999px;
+}
+
+.su-adminbox .desc {
+  margin: 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* 버튼 영역 */
+.su-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+button {
+  height: 40px;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+button.primary {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+
+button.ghost {
+  background: #eee;
+  border-color: #ddd;
+  padding: 8px 14px;
+  height: auto;
+  border-radius: 999px;
+}
+/* --- override global button for type cards --- */
+button.su-typecard {
+  /* 전역 button 초기화 / 덮어쓰기 */
+  height: auto;
+  padding: 28px 24px;
+  border: 0;
+  border-radius: 16px;
+
+  /* 카드 레이아웃 */
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  gap: 12px;
+  box-sizing: border-box;
+
+  /* 카드 비주얼 */
+  background: #fff;
+  box-shadow: 0 2px 10px rgba(0,0,0,.06);
+  text-align: center;
+
+  /* 텍스트 줄바꿈 */
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: keep-all;
+
+  /* 트랜지션 */
+  transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+}
+button.su-typecard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(0,0,0,.08);
+  background: #f9fafb;
+}
+button.su-typecard.active {
+  box-shadow:
+    0 10px 24px rgba(0,0,0,.10),
+    0 0 0 3px rgba(37,99,235,.25);
+  background: #fff;
+}
+
+/* 완료 화면 */
+.su-done {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  padding: 32px 0;
+}
+
+.su-error {
+  margin-top: 12px;
+  color: #d00;
+  font-size: 13px;
+}
