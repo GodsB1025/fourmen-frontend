@@ -1,0 +1,54 @@
+/* Header, Footer 공간을 제외한 메인 영역이 중앙을 차지하도록 설정 */
+.signin-main {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 40px 16px;
+}
+
+.signin-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    min-height: 50vh;
+    max-width: 380px; /* 폼의 최대 너비 */
+}
+
+.space {
+    flex-grow: 1;
+}
+
+.signin-title {
+    font-size: 28px;
+    font-weight: 600;
+    color: #222;
+    margin-bottom: 40px;
+}
+
+.signin-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: 20px;
+}
+
+.signup-prompt {
+    margin-top: 30px;
+    font-size: 14px;
+    color: #757575;
+}
+
+.signup-link {
+    color: #3899ec;
+    font-weight: 500;
+    text-decoration: none;
+    margin-left: 8px;
+}
+
+.signup-link:hover {
+    text-decoration: underline;
+}
