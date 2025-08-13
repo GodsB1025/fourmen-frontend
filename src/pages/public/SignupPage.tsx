@@ -130,7 +130,7 @@ export default function SignupWizard() {
             <TextInput
               value={f.email}
               onChange={(e) => setF({ ...f, email: e.target.value })}
-              placeholder="you@example.com"
+              placeholder="test@email.com"
               type="email"
             />
             <div className="su-actions">
