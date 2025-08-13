@@ -78,7 +78,6 @@ export default function CreateMeetingContent() {
                 </div>
             </div>
             
-            {/* 하단 액션 버튼 영역 */}
             <div className="form-actions">
                 <div className="left-actions">
                 <button type="button" className="invite-button" aria-label="참석자 초대">
@@ -99,7 +98,7 @@ export default function CreateMeetingContent() {
                 </div>
 
                 <button type="submit" className="create-button">
-                회의 생성 +
+                    회의 생성 +
                 </button>
             </div>
         </form>

@@ -23,12 +23,13 @@
     grid-template-columns: repeat(2, 220px); /* 2개의 열 */
     grid-template-rows: repeat(2, 220px);    /* 2개의 행 */
     place-items: center;
+    justify-content: center;
 }
 
 .card {
     height: 200px;
     width: 200px;
-    background-color: var(--bg);
+    background-color: #4b52ff;
     border: 1px solid var(--line);
     border-radius: 16px; /* 더 부드러운 곡선 */
     display: flex;
@@ -36,7 +37,7 @@
     align-items: center;
     font-size: 1.1rem;
     font-weight: 500;
-    color: var(--text);
+    color: #fff;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
     position: relative;

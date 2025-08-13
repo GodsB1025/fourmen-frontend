@@ -9,6 +9,12 @@
     width: 100%;
 }
 
+.form-group .text-input-wrapper input {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 16px;
+}
+
 /* 회의실 이름 입력란 */
 .meeting-name-input {
     width: 100%;
@@ -16,10 +22,18 @@
     border: 1px solid #E0E0E0;
     border-radius: 8px;
     font-size: 16px;
-    box-sizing: border-box;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    background: none;
 }
-.meeting-name-input::placeholder {
-    color: #BDBDBD;
+
+.form-group .text-input-wrapper input::placeholder {
+    color: #b7b7b7;
+}
+
+.form-group .text-input-wrapper input:focus {
+    border-color: #4b52ff;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
 }
 
 /* 날짜 및 시간 입력란 행 */

@@ -8,7 +8,7 @@ const PrivateLobbyPage = () => {
         <div className="card">
           회의 생성
         </div>
-        <div className="card active">
+        <div className="card">
             회의 참여
         </div>
         <div className="card">
