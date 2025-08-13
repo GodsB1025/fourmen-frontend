@@ -1,7 +1,19 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
 
-// https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(),],
-})
+  plugins: [react()],
+  server: {
+    port: 5173, // 프론트 포트
+    proxy: {
+      "/api": {
+        target: "http://localhost:8081",
+        changeOrigin: true,
+        ws: true,
+        secure: false,
+        // ⬇️ 만약 백엔드가 /api 프리픽스를 쓰지 않는다면 주석 해제
+        // rewrite: (path) => path.replace(/^\/api/, ""),
+      },
+    },
+  },
+});

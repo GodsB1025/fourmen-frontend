@@ -7,6 +7,7 @@ import PrivateRoute from "./PrivateRoute";
 import NotFoundPage from "../pages/public/NotFoundPage";
 import PublicLayout from "../pages/public/PublicLayout";
 import App from "../App";
+import PrivateLayout from "../pages/private/PrivateLayout";
 
 const LobbyPage = lazy(() => import('../pages/public/LobbyPage'));
 const SignInPage = lazy(() => import('../pages/public/SignInPage'));
@@ -28,11 +29,16 @@ const routes: RouteObject[] = [
                 // 인증이 필요한 경로
                 element: <PrivateRoute />, // 부모에서 인증을 체크
                 children: [
-                    { path: PATH.DASHBOARD, element: <DashboardPage /> },
-                    { path: PATH.CONTRACT, element: <ContractPage />},
-                    { path: PATH.COMMANDER, element: <PrivateLobbyPage />},
-                    { path: PATH.MEETING_ROOM, element: <MeetingRoomPage />},
-                    { path: PATH.VIDEO_ROOM, element: <VideoRoomPage />},
+                        {
+                            element: <PrivateLayout />,
+                            children: [
+                                { path: PATH.DASHBOARD, element: <DashboardPage /> },
+                                { path: PATH.CONTRACT, element: <ContractPage />},
+                                { path: PATH.COMMANDER, element: <PrivateLobbyPage />},
+                                { path: PATH.MEETING_ROOM, element: <MeetingRoomPage />},
+                                { path: PATH.VIDEO_ROOM, element: <VideoRoomPage />},
+                            ]
+                        }
                 ],
             },
             {

@@ -10,6 +10,43 @@ function LobbyPage(): JSX.Element {
     alert("로그인 후 이용가능합니다.");
     navigate("/signin");
   };
+  function MicIcon() {
+  return (
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x="8" y="3" width="8" height="12" rx="4" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M5 11a7 7 0 0 0 14 0" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <path d="M12 18v3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+function SummaryIcon() {
+  return (
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x="4" y="3" width="16" height="18" rx="2" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M8 8h8M8 12h5M8 16h8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <circle cx="16.5" cy="8" r="0.75" fill="currentColor" />
+    </svg>
+  );
+}
+function ContractIcon() {
+  return (
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M7 3h8l3 3v15H7V3z" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M15 3v3h3" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M9 12h6M9 15h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <path d="M9 9h3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+function CalendarIcon() {
+  return (
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M8 3v4M16 3v4M3 9h18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <rect x="7" y="12" width="4" height="4" rx="1" fill="currentColor" />
+    </svg>
+  );
+}
   return (
     <div className="lobby">
       <main>
@@ -55,19 +92,27 @@ function LobbyPage(): JSX.Element {
           <h2 className="section-title">서비스 소개</h2>
           <ul className="service-list">
             <li>
-              <div className="checkerboard sm" aria-hidden="true" />
+              <div aria-hidden="true">
+                <MicIcon/>
+              </div>
               <span>AI 회의 기록</span>
             </li>
             <li>
-              <div className="checkerboard sm" aria-hidden="true" />
+              <div aria-hidden="true">
+                <SummaryIcon/>
+              </div>
               <span>자동 요약/공유</span>
             </li>
             <li>
-              <div className="checkerboard sm" aria-hidden="true" />
+              <div aria-hidden="true">
+                <CalendarIcon />
+              </div>
               <span>타임라인 관리</span>
             </li>
             <li>
-              <div className="checkerboard sm" aria-hidden="true" />
+              <div aria-hidden="true">
+                <ContractIcon />
+              </div>
               <span>계약/작업 연계</span>
             </li>
           </ul>
