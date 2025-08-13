@@ -1,0 +1,13 @@
+.layout-container {
+    display: flex;
+    background-color: var(--bg-hover, #f8fafc); /* 사이드바의 호버 배경색과 통일 */
+    font-family: 'Noto Sans KR', sans-serif; /* 폰트 일관성 유지 */
+}
+
+.layout-content {
+    flex: 1;
+    padding: 2rem 2.5rem; /* 패딩값 미세 조정 */
+    height: 100vh;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
