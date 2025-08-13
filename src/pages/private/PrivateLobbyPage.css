@@ -1,0 +1,85 @@
+:root {
+  /* Sidebar.css 와 맞추기 위한 변수 재선언 또는 import */
+    --line: #e5e7eb;
+    --muted: #6b7280;
+    --danger: #ef4444;
+    --text: #111827;
+    --bg: #ffffff;
+    --bg-hover: #f8fafc;
+    --primary-blue: #2563eb; /* is-active 의 색상과 맞춤 */
+}
+
+.lobby-page-container {
+    display: flex;
+    align-items: center;
+    gap: 2.5rem; /* 간격 미세 조정 */
+    width: 100%;
+    height: 100%;
+}
+
+.action-cards {
+    flex-grow: 1;
+    display: grid;
+    grid-template-columns: repeat(2, 220px); /* 2개의 열 */
+    grid-template-rows: repeat(2, 220px);    /* 2개의 행 */
+    place-items: center;
+}
+
+.card {
+    height: 200px;
+    width: 200px;
+    background-color: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 16px; /* 더 부드러운 곡선 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    position: relative;
+    box-shadow: var(--shadow);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    border-color: #d1d5db;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.card.active {
+    background-color: var(--primary-blue);
+    color: var(--bg);
+    border-color: var(--primary-blue);
+    font-weight: 700;
+}
+
+.info-panel {
+    width: 350px;
+    flex-shrink: 0;
+    background-color: var(--bg); /* 사이드바와 동일한 흰색 배경 */
+    border-radius: 16px;
+    padding: 2rem;
+    border: 1px solid var(--line);
+}
+
+.info-panel h3, .info-panel h4 {
+    color: var(--text);
+    margin-top: 0;
+}
+
+.info-panel ul {
+    padding-left: 20px;
+    margin-bottom: 2rem;
+}
+
+.info-panel li, .info-panel .no-meeting-text {
+    color: var(--muted);
+}
+
+.info-panel .divider {
+    border-top: 1px solid var(--line);
+    margin: 1.5rem 0;
+}
