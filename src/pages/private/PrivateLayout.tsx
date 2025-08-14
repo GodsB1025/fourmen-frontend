@@ -6,7 +6,6 @@ import CreateMeetingContent from '../../components/modal/CreateMeetingContent';
 import JoinMeetingContent from '../../components/modal/JoinMeetingContent';
 import './PrivateLayout.css';
 import { useModalStore } from '../../stores/modalStore';
-import { useAuthStore } from '../../stores/authStore';
 
 const PrivateLayout = () => {
     const { activeModal, openModal, closeModal } = useModalStore();
