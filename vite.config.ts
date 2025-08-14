@@ -12,7 +12,7 @@ export default defineConfig({
         ws: true,
         secure: false,
         // ⬇️ 만약 백엔드가 /api 프리픽스를 쓰지 않는다면 주석 해제
-        // rewrite: (path) => path.replace(/^\/api/, ""),
+        rewrite: (path) => path.replace(/^\/api/, ""),
       },
     },
   },

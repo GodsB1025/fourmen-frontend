@@ -1,8 +1,8 @@
 import { useMemo, type JSX } from "react";
 import "./Sidebar.css";
-import { PATH } from "../../stores/paths";
+import { PATH } from "../../types/paths";
 import { useAuthStore } from "../../stores/auths";
-import { logout as apiLogout } from "../../api/Auth";
+import { logout as apiLogout } from "../../apis/Auth";
 import { useNavigate } from "react-router-dom";
 
 type NavItem = {

@@ -1,7 +1,7 @@
 import { lazy, Suspense } from "react";
 import { createBrowserRouter, type RouteObject } from "react-router-dom";
 import Loading from "../components/common/Loading"
-import { PATH } from "../stores/paths";
+import { PATH } from "../types/paths";
 
 import PrivateRoute from "./PrivateRoute";
 import NotFoundPage from "../pages/public/NotFoundPage";

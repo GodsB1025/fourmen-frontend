@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useAuthStore } from './stores/auths';
 import { Outlet, useNavigation } from 'react-router-dom';
 import Loading from './components/common/Loading';
-import { getMe } from './api/Auth';
+import { getMe } from './apis/Auth';
 import './App.css';
 
 function App() {

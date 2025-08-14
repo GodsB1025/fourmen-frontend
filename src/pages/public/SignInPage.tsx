@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import './SignInPage.css';
 import Login from '../../components/auth/Login';
-import { login } from '../../api/Auth';
+import { login } from '../../apis/Auth';
 import { useNavigate } from 'react-router-dom';
-import { PATH } from '../../stores/paths';
+import { PATH } from '../../types/paths';
 import { useAuthStore } from '../../stores/auths';
 
 const SignInPage = () => {
