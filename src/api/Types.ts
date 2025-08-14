@@ -7,6 +7,13 @@ export interface SignupRequest {
   adminCode: string; 
 }
 
+export interface CreateMeetingRequest {
+  title : string,
+  scheduleAt: string,
+  useAiMinutes: boolean,
+  participantEmails: string[],
+}
+
 export interface Company {
   id: number;
   name: string;
@@ -42,3 +49,4 @@ export interface LoginResponse {
   message: string;
   data: User;
 }
+
