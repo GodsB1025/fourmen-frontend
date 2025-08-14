@@ -1,10 +1,12 @@
 import { useMemo, type JSX } from "react";
 import "./Sidebar.css";
+import { PATH } from "../../stores/paths";
 
 type NavItem = {
   key: string;
   label: string;
   icon: JSX.Element;
+  onClick?: () => void; // 각 아이템에 대한 커스텀 클릭 핸들러 (선택 사항)
 };
 
 type SidebarProps = {
@@ -12,8 +14,9 @@ type SidebarProps = {
   userEmail: string;
   onLogout?: () => void;
   onNavigate?: (key: string) => void;
-  /** 활성 메뉴 표시가 필요하면 전달 (선택) */
   activeKey?: string;
+  onOpenCreateModal?: () => void; // 모달을 열기 위한 함수들을 props로 받음
+  onOpenJoinModal?: () => void;
 };
 
 function IconHome() {
@@ -70,16 +73,18 @@ export default function Sidebar({
   onLogout,
   onNavigate,
   activeKey,
+  onOpenCreateModal,
+  onOpenJoinModal,
 }: SidebarProps) {
   const items: NavItem[] = useMemo(
     () => [
-      { key: "home",      label: "HOME",     icon: <IconHome /> },
-      { key: "dashboard", label: "대시보드", icon: <IconCalendar /> },
-      { key: "create",    label: "회의 생성", icon: <IconVideo /> },
-      { key: "join",      label: "회의 참가", icon: <IconVideo /> },
-      { key: "contract",  label: "전자 계약", icon: <IconContract /> },
+      { key: PATH.COMMANDER, label: "HOME", icon: <IconHome /> },
+      { key: PATH.DASHBOARD, label: "대시보드", icon: <IconCalendar /> },
+      { key: "create", label: "회의 생성", icon: <IconVideo />, onClick: onOpenCreateModal },
+      { key: "join", label: "회의 참가", icon: <IconVideo />, onClick: onOpenJoinModal },
+      { key: PATH.CONTRACT,  label: "전자 계약", icon: <IconContract /> },
     ],
-    []
+    [onOpenCreateModal, onOpenJoinModal] //
   );
 
   return (
@@ -96,8 +101,14 @@ export default function Sidebar({
           <button
             key={item.key}
             type="button"
-            className={`nav-item ${activeKey === item.key ? "is-active" : ""}`}
-            onClick={() => onNavigate?.(item.key)}
+            className={`nav-item ${activeKey === item.key ? "is-active" : ""}`} //
+            onClick={() => {
+              if (item.onClick) {
+                item.onClick(); // 커스텀  onClick이 있으면 그걸 실행
+              } else {
+                onNavigate?.(item.key);
+              }
+            }}
           >
             <span className="icon">{item.icon}</span>
             <span className="label">{item.label}</span>
