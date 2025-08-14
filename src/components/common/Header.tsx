@@ -1,7 +1,7 @@
 import React from "react";
 import "./Header.css";
 import { Link } from "react-router-dom";
-import { PATH } from "../../stores/paths";
+import { PATH } from "../../types/paths";
 
 type HeaderProps = {
   onLogin?: () => void;

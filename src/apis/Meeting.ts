@@ -1,5 +1,5 @@
 import api from './Client'
-import type { CreateMeetingRequest } from './Types'
+import type { CreateMeetingRequest } from '../api/Types'
 
 export const createMeetingRoom = async (payload: CreateMeetingRequest) => {
     const { data } = await api.post('/meeting', payload)

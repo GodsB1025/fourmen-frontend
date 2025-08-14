@@ -1,6 +1,6 @@
 import { useMemo, type JSX } from "react";
 import "./Sidebar.css";
-import { PATH } from "../../stores/paths";
+import { PATH } from "../../types/paths";
 
 type NavItem = {
   key: string;

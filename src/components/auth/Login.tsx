@@ -1,6 +1,6 @@
 import React from 'react'
 import './Login.css'
-import { PATH } from '../../stores/paths';
+import { PATH } from '../../types/paths';
 import { Link } from 'react-router-dom';
 import TextInput from '../common/TextInput';
 import ActionButton from '../common/ActionButton';

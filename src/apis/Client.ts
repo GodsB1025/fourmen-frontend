@@ -1,10 +1,10 @@
 import axios from 'axios';
 import type { AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
 
-const baseURL =
-  import.meta.env.DEV
-    ? "/api"
-    : (import.meta.env.VITE_API_BASE_URL as string);
+// const baseURL = import.meta.env.DEV
+//   ? '/api'
+//   : (import.meta.env.VITE_API_BASE_URL as string)
+const baseURL = import.meta.env.VITE_API_BASE_URL as string
 
 const api = axios.create({
     baseURL,
@@ -30,6 +30,7 @@ const flushQueue = (ok: boolean) => { pendingQueue.forEach(cb => cb(ok)); pendin
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     // 바디가 있는 메서드에만 Content-Type 기본값 설정
+    console.log("요청 URL 확인:",baseURL)
     const method = (config.method || 'get').toLowerCase();
     const hasBody = ['post', 'put', 'patch', 'delete'].includes(method);
     config.headers = config.headers ?? {};
