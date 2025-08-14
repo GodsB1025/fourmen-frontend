@@ -1,6 +1,9 @@
 import { useMemo, type JSX } from "react";
 import "./Sidebar.css";
 import { PATH } from "../../stores/paths";
+import { useAuthStore } from "../../stores/auths";
+import { logout as apiLogout } from "../../api/Auth";
+import { useNavigate } from "react-router-dom";
 
 type NavItem = {
   key: string;
@@ -10,9 +13,6 @@ type NavItem = {
 };
 
 type SidebarProps = {
-  userName: string;
-  userEmail: string;
-  onLogout?: () => void;
   onNavigate?: (key: string) => void;
   activeKey?: string;
   onOpenCreateModal?: () => void; // 모달을 열기 위한 함수들을 props로 받음
@@ -68,14 +68,14 @@ function IconPower() {
 }
 
 export default function Sidebar({
-  userName,
-  userEmail,
-  onLogout,
   onNavigate,
   activeKey,
   onOpenCreateModal,
   onOpenJoinModal,
 }: SidebarProps) {
+  const {user, logout: logoutFromStore} = useAuthStore();
+  const nav = useNavigate();
+
   const items: NavItem[] = useMemo(
     () => [
       { key: PATH.COMMANDER, label: "HOME", icon: <IconHome /> },
@@ -87,13 +87,30 @@ export default function Sidebar({
     [onOpenCreateModal, onOpenJoinModal] //
   );
 
+  const handleLogout = async () => {
+    try{
+      await apiLogout();
+    } catch(error){
+      console.error("logout fail", error);
+    } finally{
+      logoutFromStore();
+      nav(PATH.ROOT, {replace: true})
+
+      setTimeout(() => {
+        logoutFromStore();
+      }, 0);
+    }
+  };
+
   return (
     <aside className="sidebar" role="complementary" aria-label="사이드바">
       {/* 사용자 정보 (아바타 없음) */}
-      <div className="user">
-        <div className="user-name" title={userName}>{userName}</div>
-        <div className="user-email" title={userEmail}>{userEmail}</div>
-      </div>
+      {user && (
+        <div className="user">
+          <div className="user-name" title={user.name}>{user.name}</div>
+          <div className="user-email" title={user.email}>{user.email}</div>
+        </div>
+      )}
 
       {/* 내비게이션 */}
       <nav className="nav" aria-label="사이드바 메뉴">
@@ -121,7 +138,7 @@ export default function Sidebar({
         <button
           type="button"
           className="logout-btn"
-          onClick={onLogout}
+          onClick={handleLogout}
         >
           <span className="icon"><IconPower /></span>
           <span className="label danger">로그아웃</span>
