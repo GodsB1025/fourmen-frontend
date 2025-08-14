@@ -11,7 +11,7 @@ type Form = {
     adminKey: string;
 }
 
-interface  pickUpProps {
+interface  PickUpProps {
     f: Form,
     setF: React.Dispatch<React.SetStateAction<Form>>,
     setErr: React.Dispatch<React.SetStateAction<string | null>>,
@@ -23,7 +23,7 @@ const SignUpTypePick = ({
     setF,
     setErr,
     goNext,
-}: pickUpProps) => {
+}: PickUpProps) => {
     return (
         <section className="su-step su-typepick">
             <div className="su-typegrid">
