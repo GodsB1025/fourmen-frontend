@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
 import './CreateMeetingContent.css';
 import TextInput from '../common/TextInput';
+import { useAuthStore } from '../../stores/authStore';
+import formatToISO from '../../utils/formatToISO';
+import type { CreateMeetingRequest } from '../../apis/Types';
+import { createMeetingRoom } from '../../apis/Meeting';
+import { useModalStore } from '../../stores/modalStore';
 
 // 사용자 추가 아이콘 SVG를 별도 컴포넌트로 분리하여 가독성을 높입니다.
 const PersonPlusIcon = () => (
@@ -31,23 +36,53 @@ const CreateMeetingContent = () => {
         };
     };
 
-    // AI 요약 토글 스위치의 상태를 관리합니다.
-    const [isAiSummaryOn, setAiSummaryOn] = useState<boolean>(true);
+    const user = useAuthStore((state) => state.user)
+    const { closeModal } = useModalStore();
 
-    // 회의실 이름 상태
-    const [meetingName, setMeetingName] = useState<string>("");
-
-    // useState에 함수를 전달하여 초기 렌더링 시에만 실행되도록 합니다. (Lazy initial state)
+    const [isAiSummaryOn, setAiSummaryOn] = useState<boolean>(true); // AI 요약 토글 스위치
+    const [meetingName, setMeetingName] = useState<string>(""); // 회의실 이름
     const [date, setDate] = useState(getInitialDateTime().date);
     const [time, setTime] = useState(getInitialDateTime().time);
+    const [participantEmails, setParticipantEmails] = useState([user?.email])
+    const [error, setError] = useState<string | null>(null);
+    const [busy, setBusy] = useState(false);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    // // user 정보가 로드되면 참가자 이메일에 추가
+    // useEffect(() => {
+    //     if (user?.email && !participantEmails.includes(user.email)) {
+    //         setParticipantEmails([user.email]);
+    //     }
+    // }, [user]);
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // 폼 제출 로직 (예: 서버로 데이터 전송)
-        console.log("회의 생성 데이터:", {
-        // name, date, time, isAiSummaryOn
-        });
-        alert('회의가 생성되었습니다!');
+        setError(null)
+
+        if (!meetingName.trim()) {
+            setError("회의실 이름을 입력해주세요.");
+            return;
+        }
+        setBusy(true);
+        try {
+            const scheduledAt = formatToISO(date, time)
+            const payload: CreateMeetingRequest = {
+                title: meetingName,
+                scheduleAt: scheduledAt,
+                useAiMinutes: isAiSummaryOn,
+                participantEmails: participantEmails.filter((email): email is string => !!email),
+            };
+            console.log("API 요청 페이로드:", payload);
+            await createMeetingRoom(payload);
+
+            console.log("회의 생성 데이터:", meetingName, date, time);
+            alert('회의가 성공적으로 생성되었습니다!');
+            closeModal()
+        } catch (err: any) {
+            console.error("회의 생성 실패:", err);
+            setError(err.message || "회의 생성 중 오류가 발생했습니다.");
+        } finally {
+            setBusy(false);
+        }
     };
 
     return (
@@ -98,28 +133,29 @@ const CreateMeetingContent = () => {
             </div>
             
             <div className="form-actions">
-                <div className="left-actions">
                 <button type="button" className="invite-button" aria-label="참석자 초대">
                     <PersonPlusIcon />
                 </button>
-                
-                <div className="toggle-group">
-                    <span className="toggle-label-text">AI 요약</span>
-                    <label className="toggle-switch">
-                    <input 
-                        type="checkbox" 
-                        checked={isAiSummaryOn} 
-                        onChange={() => setAiSummaryOn(!isAiSummaryOn)}
-                    />
-                    <span className="slider"></span>
-                    </label>
-                </div>
-                </div>
 
-                <button type="submit" className="create-button">
-                    회의 생성 +
-                </button>
+                <div className='toggle-and-submit'>
+                    <div className="toggle-group">
+                        <span className="toggle-label-text">AI 요약</span>
+                        <label className="toggle-switch">
+                        <input 
+                            type="checkbox" 
+                            checked={isAiSummaryOn} 
+                            onChange={() => setAiSummaryOn(!isAiSummaryOn)}
+                        />
+                        <span className="slider"></span>
+                        </label>
+                    </div>
+
+                    <button type="submit" className="create-button">
+                        회의 생성 +
+                    </button>
+                </div>
             </div>
+            {error && <p className="form-error">{error}</p>}
         </form>
     );
 }

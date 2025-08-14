@@ -38,5 +38,5 @@ export async function logout() {
 export async function getMe(): Promise<GetMeResponse> {
   const { data } = await api.get('/user/me');
   // console.log("user/me 의 결과:", data)
-  return data;
+  return data.data;
 }

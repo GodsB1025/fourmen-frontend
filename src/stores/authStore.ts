@@ -41,7 +41,6 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
       console.log("사용자 정보 불러오기 실행중...")
       const data = await getMe();
       if(data) {
-        console.log("상태 복구 api getMe 객체 확인:", data)
         const user : User = {
           userId : data.id,
           name : data.name,
@@ -49,12 +48,10 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
           role : data.role,
           company : data.company
         }
-        console.log("상태 복구 후 새로 생성한 User user 객체 확인:", user)
         set({
           user,
           isAuthenticated: true
         })
-        console.log("상태 복구 후 전역 user 객체 확인:", get().user)
       } else {
         get().logout()
       }
