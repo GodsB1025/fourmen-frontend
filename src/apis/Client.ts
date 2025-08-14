@@ -1,6 +1,6 @@
 import axios from 'axios';
 import type { AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
-import { useAuthStore } from '../stores/auths';
+import { useAuthStore } from '../stores/authStore';
 
 // const baseURL = import.meta.env.DEV
 //   ? '/api'
@@ -30,8 +30,7 @@ const flushQueue = (ok: boolean) => { pendingQueue.forEach(cb => cb(ok)); pendin
 // 요청 인터셉터
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    // 바디가 있는 메서드에만 Content-Type 기본값 설정
-    console.log("요청 URL 확인:",baseURL)
+    // console.log("요청 URL 확인:",baseURL)
     const method = (config.method || 'get').toLowerCase();
     const hasBody = ['post', 'put', 'patch', 'delete'].includes(method);
     config.headers = config.headers ?? {};
@@ -86,9 +85,11 @@ api.interceptors.response.use(
 
       isRefreshing = true;
       try {
+        console.log("refresh토큰 만료, 재발급 시도")
         await api.post('/auth/refresh');   // 서버 경로/메서드 확인
         isRefreshing = false;
         flushQueue(true);
+        console.log("refresh토큰 재발급 성공")
         return api(original);
       } catch (refreshErr) {
         isRefreshing = false;

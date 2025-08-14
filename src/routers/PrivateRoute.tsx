@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { PATH } from '../types/paths';
-import { useAuthStore } from '../stores/auths';
+import { useAuthStore } from '../stores/authStore';
 
 export default function PrivateRoute() {
   const loc = useLocation();
