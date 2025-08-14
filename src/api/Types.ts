@@ -22,13 +22,19 @@ export interface SignupResponse {
   role: UserRole;
 }
 
-// 로그인 api 연동을 위한 타입 정의
 export interface User {
+  id : string;
   userId: number;
   name: string;
   email: string;
   role: 'USER' | 'ADMIN' | 'CONTRACT_ADMIN';
   companyId: number | null;
+}
+
+// 로그인 api 연동을 위한 타입 정의
+export interface LoginRequest {
+  email: string;
+  password: string;
 }
 
 export interface LoginResponse {

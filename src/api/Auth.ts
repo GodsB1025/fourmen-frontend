@@ -1,5 +1,5 @@
 import api from './Client'
-import type { User, LoginResponse } from './Types'
+import type { User, LoginRequest, LoginResponse } from './Types'
 import type { SignupRequest, SignupResponse } from './Types'
 
 export async function signup(payload: SignupRequest) {
@@ -23,7 +23,19 @@ export async function verifyEmailCode(email: string, code: string) {
 });
 }
 
-export async function login(payload: User){
-    const { data } = await api.post<LoginResponse>('/auth/login', payload);
-    return data;
+export async function login(payload: LoginRequest):Promise<User>{
+    const { data } = await api.post<LoginResponse>('/auth/login', payload)
+    if(data.result !== 'SUCCESS'){
+      throw new Error(data.message || '로그인 실패')
+    }
+    return data.data;
+}
+
+export async function logout() {
+  await api.post('/auth/logout');
+}
+
+export async function getMe(): Promise<User> {
+  const { data } = await api.get<User>('/user/me');
+  return data;
 }
