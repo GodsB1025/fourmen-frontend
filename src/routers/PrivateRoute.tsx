@@ -1,12 +1,19 @@
-import React from 'react'
-import { Outlet } from 'react-router-dom'
+import React from 'react';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { PATH } from '../types/paths';
+import { useAuthStore } from '../stores/auths';
 
-const PrivateRoute = () => {
-    // 인증 여부 확인 후 Outlet으로 내보내기
+export default function PrivateRoute() {
+  const loc = useLocation();
+  const {user, isAuthChecked} = useAuthStore();
 
-    return (
-        <Outlet/>
-    )
+  if(!isAuthChecked){
+    return null;
+  }
+
+  if (!user) {
+    return <Navigate to={PATH.ROOT} replace state={{ from: loc.pathname }} />;
+  }
+
+  return <Outlet/>;
 }
-
-export default PrivateRoute

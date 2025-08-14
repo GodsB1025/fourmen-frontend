@@ -1,5 +1,6 @@
 import axios from 'axios';
 import type { AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
+import { useAuthStore } from '../stores/auths';
 
 // const baseURL = import.meta.env.DEV
 //   ? '/api'
@@ -94,6 +95,7 @@ api.interceptors.response.use(
         flushQueue(false);
         // 여기서 전역 로그아웃/리디렉션 가능
         // window.location.href = '/signin';
+        useAuthStore.getState().logout();
         return Promise.reject(refreshErr);
       }
     }
