@@ -3,6 +3,7 @@ import TextInput from "../../components/common/TextInput"; // 경로 맞게 수�
 import { signup , sendVerificationEmail, verifyEmailCode} from "../../api/Auth";
 import type { SignupRequest } from "../../api/Types";
 import "./SignupPage.css";
+import SignUpTypePick from "../../components/auth/SignUpTypePick";
 
 type Type = "USER" | "ADMIN" | null;
 type Step = 0 | 1 | 2 | 3 | 4 | 5;
