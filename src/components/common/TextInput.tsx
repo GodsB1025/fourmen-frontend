@@ -15,7 +15,11 @@ export default function TextInput({
   value,
   onChange,
   name,
+  ...rest
 }: TextInputProps) {
+
+  // const inputClassName = `custom-input ${hasError ? 'error' : ''}`.trim();
+
   return (
     <input
       className="custom-input"
@@ -24,6 +28,7 @@ export default function TextInput({
       value={value}
       onChange={onChange}
       name={name}
+      {...rest}
     />
   );
 }

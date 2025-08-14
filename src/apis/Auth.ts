@@ -1,5 +1,5 @@
 import api from './Client'
-import type { User, LoginRequest, LoginResponse } from './Types'
+import type { User, LoginRequest, LoginResponse, GetMeResponse } from './Types'
 import type { SignupRequest, SignupResponse } from './Types'
 
 export async function signup(payload: SignupRequest) {
@@ -35,7 +35,8 @@ export async function logout() {
   await api.post('/auth/logout');
 }
 
-export async function getMe(): Promise<User> {
-  const { data } = await api.get<User>('/user/me');
+export async function getMe(): Promise<GetMeResponse> {
+  const { data } = await api.get('/user/me');
+  // console.log("user/me 의 결과:", data)
   return data;
 }

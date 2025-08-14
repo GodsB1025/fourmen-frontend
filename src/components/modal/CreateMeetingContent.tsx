@@ -12,15 +12,34 @@ const PersonPlusIcon = () => (
 );
 
 
-export default function CreateMeetingContent() {
-    // AI 요약 토글 스위치의 상태를 관리합니다.
-    const [isAiSummaryOn, setAiSummaryOn] = useState(true);
+const CreateMeetingContent = () => {
+    // 컴포넌트가 처음 렌더링될 때 현재 시간을 가져와 초기 상태를 설정합니다.
+    const getInitialDateTime = () => {
+        const now = new Date();
+        const year = now.getFullYear().toString().slice(-2); // '25'
+        const month = (now.getMonth() + 1).toString().padStart(2, '0'); // 1월은 0부터 시작하므로 +1, 두 자리로 포맷팅
+        const day = now.getDate().toString().padStart(2, '0'); // 두 자리로 포맷팅
 
-    // 현재 날짜와 시간을 기본값으로 설정할 수 있습니다.
-    // 예시를 위해 이미지의 값으로 초기화합니다.
-    const [meetingName, setMeetingName] = useState("");
-    const [date, setDate] = useState({ year: '25', month: '08', day: '05' });
-    const [time, setTime] = useState({ ampm: 'PM', hour: '05', minute: '59' });
+        const hours = now.getHours(); // 0-23시
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        const hour = (hours % 12 || 12).toString().padStart(2, '0'); // 12시간 형식으로 변환 및 포맷팅 (0시는 12시로)
+        const minute = now.getMinutes().toString().padStart(2, '0'); // 두 자리로 포맷팅
+
+        return {
+            date: { year, month, day },
+            time: { ampm, hour, minute },
+        };
+    };
+
+    // AI 요약 토글 스위치의 상태를 관리합니다.
+    const [isAiSummaryOn, setAiSummaryOn] = useState<boolean>(true);
+
+    // 회의실 이름 상태
+    const [meetingName, setMeetingName] = useState<string>("");
+
+    // useState에 함수를 전달하여 초기 렌더링 시에만 실행되도록 합니다. (Lazy initial state)
+    const [date, setDate] = useState(getInitialDateTime().date);
+    const [time, setTime] = useState(getInitialDateTime().time);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -104,3 +123,5 @@ export default function CreateMeetingContent() {
         </form>
     );
 }
+
+export default CreateMeetingContent

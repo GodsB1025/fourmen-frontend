@@ -5,11 +5,10 @@ import Modal from '../../components/modal/Modal';
 import CreateMeetingContent from '../../components/modal/CreateMeetingContent';
 import JoinMeetingContent from '../../components/modal/JoinMeetingContent';
 import './PrivateLayout.css';
-
-type ModalType = 'create' | 'join';
+import { useModalStore } from '../../stores/modalStore';
 
 const PrivateLayout = () => {
-    const [activeModal, setActiveModal] = useState<ModalType | null>(null);
+    const { activeModal, openModal, closeModal } = useModalStore();
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -52,8 +51,8 @@ const PrivateLayout = () => {
                     navigate(path);
                 }}
                 activeKey={location.pathname}
-                onOpenCreateModal={() => setActiveModal('create')}
-                onOpenJoinModal={() => setActiveModal('join')}
+                onOpenCreateModal={() => openModal('create')}
+                onOpenJoinModal={() => openModal('join')}
             />
             <main className="layout-content">
                 <Outlet />
@@ -61,7 +60,7 @@ const PrivateLayout = () => {
 
             <Modal
                 isOpen={activeModal !== null}
-                onClose={() => setActiveModal(null)}
+                onClose={() => closeModal()}
                 title={getModalTitle()}
             >
                 {renderModalContent()}

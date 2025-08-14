@@ -1,7 +1,7 @@
 import { useMemo, type JSX } from "react";
 import "./Sidebar.css";
 import { PATH } from "../../types/paths";
-import { useAuthStore } from "../../stores/auths";
+import { useAuthStore } from "../../stores/authStore";
 import { logout as apiLogout } from "../../apis/Auth";
 import { useNavigate } from "react-router-dom";
 
@@ -95,10 +95,6 @@ export default function Sidebar({
     } finally{
       logoutFromStore();
       nav(PATH.ROOT, {replace: true})
-
-      setTimeout(() => {
-        logoutFromStore();
-      }, 0);
     }
   };
 
