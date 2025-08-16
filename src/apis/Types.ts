@@ -9,7 +9,7 @@ export interface SignupRequest {
 
 export interface CreateMeetingRequest {
   title : string,
-  scheduleAt: string,
+  scheduledAt: string,
   useAiMinutes: boolean,
   participantEmails: string[],
 }
@@ -57,4 +57,3 @@ export interface GetMeResponse {
   company: number | null;
   phone: string;
 }
-

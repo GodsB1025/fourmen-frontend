@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './SignInPage.css';
 import Login from '../../components/auth/Login';
-import { login } from '../../apis/Auth';
+import { getMe, login } from '../../apis/Auth';
 import { useNavigate } from 'react-router-dom';
 import { PATH } from '../../types/paths';
 import type { User } from '../../apis/Types';
@@ -22,8 +22,8 @@ const SignInPage = () => {
     setErr(null);
     setBusy(true);
     try {
-      const data = await login({ email: email.trim(), password });
-      console.log("로그인 유저 확인:", data)
+      var data = await login({ email: email.trim(), password });
+      // console.log("로그인 유저 확인:", data)
       const user : User = {
         userId : data.userId,
         name : data.name,

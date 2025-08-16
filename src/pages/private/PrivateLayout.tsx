@@ -13,11 +13,6 @@ const PrivateLayout = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const dummyUser = {
-        name: "홍길동",
-        email: "test@email.com",
-    };
-
     const getModalTitle = () => {
         switch (activeModal) {
             case 'create':
@@ -43,27 +38,22 @@ const PrivateLayout = () => {
 
     return (
         <div className="layout-container">
-            <Sidebar 
-                userName={dummyUser.name}
-                userEmail={dummyUser.email}
-                onLogout={() => console.log('로그아웃 클릭됨')}
-                onNavigate={(path: string) => {
-                    navigate(path);
-                }}
-                activeKey={location.pathname}
-                onOpenCreateModal={() => openModal('create')}
-                onOpenJoinModal={() => openModal('join')}
+            <Sidebar
+                onNavigate={(path: string) => { navigate(path) }}
+                activeKey={ location.pathname }
+                onOpenCreateModal={ () => openModal('create') }
+                onOpenJoinModal={ () => openModal('join') }
             />
             <main className="layout-content">
                 <Outlet />
             </main>
 
             <Modal
-                isOpen={activeModal !== null}
-                onClose={() => closeModal()}
-                title={getModalTitle()}
+                isOpen={ activeModal !== null }
+                onClose={ () => closeModal() }
+                title={ getModalTitle() }
             >
-                {renderModalContent()}
+                { renderModalContent() }
             </Modal>
         </div>
     );

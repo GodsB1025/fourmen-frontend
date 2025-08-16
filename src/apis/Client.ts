@@ -2,6 +2,8 @@ import axios from 'axios';
 import type { AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
 import { useAuthStore } from '../stores/authStore';
 import type { ApiError } from '../types/error';
+import Cookies from 'js-cookie';
+
 
 // const baseURL = import.meta.env.DEV
 //   ? '/api'
@@ -13,15 +15,6 @@ const api = axios.create({
   withCredentials: true,              
   timeout: 5000,
 })
-
-// export async function initCsrf() {
-//   try {
-//     // 서버 구현에 맞게 경로 확인 (예: '/csrf' or '/auth/csrf')
-//     await api.get('/csrf');
-//   } catch {
-//     // noop (로그만 필요하면 추가)
-//   }
-// }
 
 let isRefreshing = false;
 let pendingQueue: Array<(ok: boolean) => void> = [];
@@ -42,6 +35,14 @@ api.interceptors.request.use(
     if (!config.headers['Accept']) {
       config.headers['Accept'] = 'application/json';
     }
+
+    // 쿠키에서 XSRF-TOKEN 값을 읽어오고, 있으면 헤더에 추가
+    const csrfToken = Cookies.get('XSRF-TOKEN');
+    console.log("csrfToken 확인:",csrfToken)
+    if (csrfToken) {
+      config.headers['X-XSRF-TOKEN'] = csrfToken;
+    }
+
     return config;
   },
   (error: AxiosError) => Promise.reject(error)
@@ -62,17 +63,6 @@ api.interceptors.response.use(
 
     const urlPath = (original?.url || '').toLowerCase();
     const isRefreshCall = urlPath.includes('/auth/refresh');
-
-    // 403: CSRF 실패 가능 → unsafe 메서드에서만 1회 /csrf 후 재시도
-    // if (status === 403 && original && !original._retry && isUnsafe) {
-    //   original._retry = true;
-    //   try {
-    //     await initCsrf();
-    //     return api(original);
-    //   } catch {
-    //     return Promise.reject(error);
-    //   }
-    // }
 
     // 401: 액세스 토큰 만료 → refresh (단, refresh 요청 자신은 재시도 금지)
     if (status === 401 && original && !original._retry && !isRefreshCall) {
