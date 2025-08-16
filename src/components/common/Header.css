@@ -1,5 +1,5 @@
 :root {
-  --header-bg: #f6f6f6;        /* 스샷처럼 아주 옅은 회색 */
+  --header-bg: #ffffff;        /* 스샷처럼 아주 옅은 회색 */
   --header-fg: #0f0f0f;        /* 텍스트 기본색 */
   --muted-fg: #585858;         /* 링크 기본색 */
   --border: #e6e6e6;           /* 하단 구분선 */

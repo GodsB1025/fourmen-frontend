@@ -44,9 +44,7 @@ const CreateMeetingContent = () => {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         // 폼 제출 로직 (예: 서버로 데이터 전송)
-        console.log("회의 생성 데이터:", {
-        // name, date, time, isAiSummaryOn
-        });
+        console.log("회의 생성 데이터:", );
         alert('회의가 생성되었습니다!');
     };
 
