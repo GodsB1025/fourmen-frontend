@@ -4,6 +4,7 @@ import { useAuthStore } from '../stores/authStore';
 import type { ApiError } from '../types/error';
 import Cookies from 'js-cookie';
 
+
 // const baseURL = import.meta.env.DEV
 //   ? '/api'
 //   : (import.meta.env.VITE_API_BASE_URL as string)
