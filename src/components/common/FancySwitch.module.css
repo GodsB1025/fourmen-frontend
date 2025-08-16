@@ -1,0 +1,27 @@
+/* FancySwitch.module.css */
+.switchContainer {
+  display: flex;
+  padding: 8px;
+  background-color: #e5e7eb; /* bg-gray-200 */
+  border-radius: 9999px; /* rounded-full */
+  position: relative;
+}
+
+.radioButton {
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #4b5563; /* text-gray-600 */
+  z-index: 10;
+  transition: color 0.3s;
+}
+
+.radioButton[data-checked='true'] {
+  color: white;
+}
+
+.highlighter {
+  background-color: #3b82f6; /* bg-blue-500 */
+  border-radius: 9999px; /* rounded-full */
+}

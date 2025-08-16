@@ -35,19 +35,18 @@ const CreateMeetingContent = () => {
             time: { ampm, hour, minute },
         };
     };
-
-    const user = useAuthStore((state) => state.user)
+    
     const { closeModal } = useModalStore();
 
     const [isAiSummaryOn, setAiSummaryOn] = useState<boolean>(true); // AI 요약 토글 스위치
     const [meetingName, setMeetingName] = useState<string>(""); // 회의실 이름
     const [date, setDate] = useState(getInitialDateTime().date);
     const [time, setTime] = useState(getInitialDateTime().time);
-    const [participantEmails, setParticipantEmails] = useState([user?.email])
+    const [participantEmails, setParticipantEmails] = useState<string[]>([])
     const [error, setError] = useState<string | null>(null);
     const [busy, setBusy] = useState(false);
 
-    // // user 정보가 로드되면 참가자 이메일에 추가
+    // user 정보가 로드되면 참가자 이메일에 추가
     // useEffect(() => {
     //     if (user?.email && !participantEmails.includes(user.email)) {
     //         setParticipantEmails([user.email]);
@@ -64,12 +63,14 @@ const CreateMeetingContent = () => {
         }
         setBusy(true);
         try {
-            const scheduledAt = formatToISO(date, time)
+            const scheduledAtISOString = formatToISO(date, time);
+            const uniqueParticipantEmails = Array.from(new Set(participantEmails.filter((email): email is string => !!email)));
+            
             const payload: CreateMeetingRequest = {
                 title: meetingName,
-                scheduleAt: scheduledAt,
+                scheduledAt: scheduledAtISOString,
                 useAiMinutes: isAiSummaryOn,
-                participantEmails: participantEmails.filter((email): email is string => !!email),
+                participantEmails: uniqueParticipantEmails,
             };
             console.log("API 요청 페이로드:", payload);
             await createMeetingRoom(payload);
@@ -160,4 +161,4 @@ const CreateMeetingContent = () => {
     );
 }
 
-export default CreateMeetingContent
+export default CreateMeetingContent;
