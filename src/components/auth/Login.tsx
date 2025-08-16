@@ -10,13 +10,13 @@ interface SignInProps {
     password : string;
     setEmail : React.Dispatch<React.SetStateAction<string>>;
     setPassword : React.Dispatch<React.SetStateAction<string>>;
-    handleLogin : (event: React.FormEvent<HTMLFormElement>) => void;
+    handleSubmit : (event: React.FormEvent<HTMLFormElement>) => void;
 }
 
 const Login = ({
     email, password,
     setEmail, setPassword,
-    handleLogin
+    handleSubmit
 }: SignInProps) => {
 
     const isFormValid = email.trim() !== '' && password.trim() !== '';
@@ -25,7 +25,7 @@ const Login = ({
             <div className="signin-container">
                 <h1 className="signin-title">로그인</h1>
                 <div className="spacer" style={{ flexGrow: 2 }} />
-                <form onSubmit={handleLogin} className="signin-form">
+                <form onSubmit={handleSubmit} className="signin-form">
                     <TextInput
                     type="email"
                     placeholder='test@email.com'

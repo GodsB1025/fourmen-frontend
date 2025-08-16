@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
 import './CreateMeetingContent.css';
 import TextInput from '../common/TextInput';
+import { useAuthStore } from '../../stores/authStore';
+import formatToISO from '../../utils/formatToISO';
+import type { CreateMeetingRequest } from '../../apis/Types';
+import { createMeetingRoom } from '../../apis/Meeting';
+import { useModalStore } from '../../stores/modalStore';
 
 // 사용자 추가 아이콘 SVG를 별도 컴포넌트로 분리하여 가독성을 높입니다.
 const PersonPlusIcon = () => (
@@ -12,23 +17,73 @@ const PersonPlusIcon = () => (
 );
 
 
-export default function CreateMeetingContent() {
-    // AI 요약 토글 스위치의 상태를 관리합니다.
-    const [isAiSummaryOn, setAiSummaryOn] = useState(true);
+const CreateMeetingContent = () => {
+    // 컴포넌트가 처음 렌더링될 때 현재 시간을 가져와 초기 상태를 설정합니다.
+    const getInitialDateTime = () => {
+        const now = new Date();
+        const year = now.getFullYear().toString().slice(-2); // '25'
+        const month = (now.getMonth() + 1).toString().padStart(2, '0'); // 1월은 0부터 시작하므로 +1, 두 자리로 포맷팅
+        const day = now.getDate().toString().padStart(2, '0'); // 두 자리로 포맷팅
 
-    // 현재 날짜와 시간을 기본값으로 설정할 수 있습니다.
-    // 예시를 위해 이미지의 값으로 초기화합니다.
-    const [meetingName, setMeetingName] = useState("");
-    const [date, setDate] = useState({ year: '25', month: '08', day: '05' });
-    const [time, setTime] = useState({ ampm: 'PM', hour: '05', minute: '59' });
+        const hours = now.getHours(); // 0-23시
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        const hour = (hours % 12 || 12).toString().padStart(2, '0'); // 12시간 형식으로 변환 및 포맷팅 (0시는 12시로)
+        const minute = now.getMinutes().toString().padStart(2, '0'); // 두 자리로 포맷팅
 
-    const handleSubmit = (e: React.FormEvent) => {
+        return {
+            date: { year, month, day },
+            time: { ampm, hour, minute },
+        };
+    };
+    
+    const { closeModal } = useModalStore();
+
+    const [isAiSummaryOn, setAiSummaryOn] = useState<boolean>(true); // AI 요약 토글 스위치
+    const [meetingName, setMeetingName] = useState<string>(""); // 회의실 이름
+    const [date, setDate] = useState(getInitialDateTime().date);
+    const [time, setTime] = useState(getInitialDateTime().time);
+    const [participantEmails, setParticipantEmails] = useState<string[]>([])
+    const [error, setError] = useState<string | null>(null);
+    const [busy, setBusy] = useState(false);
+
+    // user 정보가 로드되면 참가자 이메일에 추가
+    // useEffect(() => {
+    //     if (user?.email && !participantEmails.includes(user.email)) {
+    //         setParticipantEmails([user.email]);
+    //     }
+    // }, [user]);
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // 폼 제출 로직 (예: 서버로 데이터 전송)
-        console.log("회의 생성 데이터:", {
-        // name, date, time, isAiSummaryOn
-        });
-        alert('회의가 생성되었습니다!');
+        setError(null)
+
+        if (!meetingName.trim()) {
+            setError("회의실 이름을 입력해주세요.");
+            return;
+        }
+        setBusy(true);
+        try {
+            const scheduledAtISOString = formatToISO(date, time);
+            const uniqueParticipantEmails = Array.from(new Set(participantEmails.filter((email): email is string => !!email)));
+            
+            const payload: CreateMeetingRequest = {
+                title: meetingName,
+                scheduledAt: scheduledAtISOString,
+                useAiMinutes: isAiSummaryOn,
+                participantEmails: uniqueParticipantEmails,
+            };
+            console.log("API 요청 페이로드:", payload);
+            await createMeetingRoom(payload);
+
+            console.log("회의 생성 데이터:", meetingName, date, time);
+            alert('회의가 성공적으로 생성되었습니다!');
+            closeModal()
+        } catch (err: any) {
+            console.error("회의 생성 실패:", err);
+            setError(err.message || "회의 생성 중 오류가 발생했습니다.");
+        } finally {
+            setBusy(false);
+        }
     };
 
     return (
@@ -79,28 +134,31 @@ export default function CreateMeetingContent() {
             </div>
             
             <div className="form-actions">
-                <div className="left-actions">
                 <button type="button" className="invite-button" aria-label="참석자 초대">
                     <PersonPlusIcon />
                 </button>
-                
-                <div className="toggle-group">
-                    <span className="toggle-label-text">AI 요약</span>
-                    <label className="toggle-switch">
-                    <input 
-                        type="checkbox" 
-                        checked={isAiSummaryOn} 
-                        onChange={() => setAiSummaryOn(!isAiSummaryOn)}
-                    />
-                    <span className="slider"></span>
-                    </label>
-                </div>
-                </div>
 
-                <button type="submit" className="create-button">
-                    회의 생성 +
-                </button>
+                <div className='toggle-and-submit'>
+                    <div className="toggle-group">
+                        <span className="toggle-label-text">AI 요약</span>
+                        <label className="toggle-switch">
+                        <input 
+                            type="checkbox" 
+                            checked={isAiSummaryOn} 
+                            onChange={() => setAiSummaryOn(!isAiSummaryOn)}
+                        />
+                        <span className="slider"></span>
+                        </label>
+                    </div>
+
+                    <button type="submit" className="create-button">
+                        회의 생성 +
+                    </button>
+                </div>
             </div>
+            {error && <p className="form-error">{error}</p>}
         </form>
     );
 }
+
+export default CreateMeetingContent;

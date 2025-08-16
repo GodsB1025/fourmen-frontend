@@ -9,7 +9,7 @@ export interface SignupRequest {
 
 export interface CreateMeetingRequest {
   title : string,
-  scheduleAt: string,
+  scheduledAt: string,
   useAiMinutes: boolean,
   participantEmails: string[],
 }
@@ -30,12 +30,11 @@ export interface SignupResponse {
 }
 
 export interface User {
-  id : string;
   userId: number;
   name: string;
   email: string;
   role: 'USER' | 'ADMIN' | 'CONTRACT_ADMIN';
-  companyId: number | null;
+  company: number | null;
 }
 
 // 로그인 api 연동을 위한 타입 정의
@@ -50,3 +49,11 @@ export interface LoginResponse {
   data: User;
 }
 
+export interface GetMeResponse {
+  id: number;
+  name: string;
+  email: string;
+  role: 'USER' | 'ADMIN' | 'CONTRACT_ADMIN';
+  company: number | null;
+  phone: string;
+}

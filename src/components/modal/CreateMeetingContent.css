@@ -68,15 +68,10 @@
 /* 하단 액션 영역 */
 .form-actions {
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
-    align-items: center;
+    /* align-items: center; */
     margin-top: 10px;
-}
-
-.left-actions {
-    display: flex;
-    align-items: center;
-    gap: 16px;
 }
 
 /* 초대 버튼 */
@@ -90,6 +85,11 @@
     justify-content: center;
     align-items: center;
     cursor: pointer;
+}
+
+/* 토글 스위치와 내보내기 버튼 묶기 */
+.toggle-and-submit {
+    display: flex;
 }
 
 /* AI 요약 토글 스위치 */

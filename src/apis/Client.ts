@@ -1,6 +1,9 @@
 import axios from 'axios';
 import type { AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
-import { useAuthStore } from '../stores/auths';
+import { useAuthStore } from '../stores/authStore';
+import type { ApiError } from '../types/error';
+import Cookies from 'js-cookie';
+
 
 // const baseURL = import.meta.env.DEV
 //   ? '/api'
@@ -13,15 +16,6 @@ const api = axios.create({
   timeout: 5000,
 })
 
-// export async function initCsrf() {
-//   try {
-//     // 서버 구현에 맞게 경로 확인 (예: '/csrf' or '/auth/csrf')
-//     await api.get('/csrf');
-//   } catch {
-//     // noop (로그만 필요하면 추가)
-//   }
-// }
-
 let isRefreshing = false;
 let pendingQueue: Array<(ok: boolean) => void> = [];
 const enqueue = (cb: (ok: boolean) => void) => pendingQueue.push(cb);
@@ -30,8 +24,7 @@ const flushQueue = (ok: boolean) => { pendingQueue.forEach(cb => cb(ok)); pendin
 // 요청 인터셉터
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    // 바디가 있는 메서드에만 Content-Type 기본값 설정
-    console.log("요청 URL 확인:",baseURL)
+    // console.log("요청 URL 확인:",baseURL)
     const method = (config.method || 'get').toLowerCase();
     const hasBody = ['post', 'put', 'patch', 'delete'].includes(method);
     config.headers = config.headers ?? {};
@@ -42,6 +35,14 @@ api.interceptors.request.use(
     if (!config.headers['Accept']) {
       config.headers['Accept'] = 'application/json';
     }
+
+    // 쿠키에서 XSRF-TOKEN 값을 읽어오고, 있으면 헤더에 추가
+    const csrfToken = Cookies.get('XSRF-TOKEN');
+    console.log("csrfToken 확인:",csrfToken)
+    if (csrfToken) {
+      config.headers['X-XSRF-TOKEN'] = csrfToken;
+    }
+
     return config;
   },
   (error: AxiosError) => Promise.reject(error)
@@ -63,17 +64,6 @@ api.interceptors.response.use(
     const urlPath = (original?.url || '').toLowerCase();
     const isRefreshCall = urlPath.includes('/auth/refresh');
 
-    // 403: CSRF 실패 가능 → unsafe 메서드에서만 1회 /csrf 후 재시도
-    // if (status === 403 && original && !original._retry && isUnsafe) {
-    //   original._retry = true;
-    //   try {
-    //     await initCsrf();
-    //     return api(original);
-    //   } catch {
-    //     return Promise.reject(error);
-    //   }
-    // }
-
     // 401: 액세스 토큰 만료 → refresh (단, refresh 요청 자신은 재시도 금지)
     if (status === 401 && original && !original._retry && !isRefreshCall) {
       original._retry = true;
@@ -86,9 +76,11 @@ api.interceptors.response.use(
 
       isRefreshing = true;
       try {
+        console.log("refresh토큰 만료, 재발급 시도")
         await api.post('/auth/refresh');   // 서버 경로/메서드 확인
         isRefreshing = false;
         flushQueue(true);
+        console.log("refresh토큰 재발급 성공")
         return api(original);
       } catch (refreshErr) {
         isRefreshing = false;
@@ -105,7 +97,7 @@ api.interceptors.response.use(
     }
 
     // 그 외 에러는 그대로 전달(서버 메시지 노출 보정)
-    const data = error.response.data as any;
+    const data = error.response.data as ApiError;
     let serverMsg: string | undefined;
     if (data) {
       if (typeof data === 'string') serverMsg = data;

@@ -1,23 +1,9 @@
 import { useMemo, type JSX } from "react";
 import "./Sidebar.css";
 import { PATH } from "../../types/paths";
-import { useAuthStore } from "../../stores/auths";
+import { useAuthStore } from "../../stores/authStore";
 import { logout as apiLogout } from "../../apis/Auth";
 import { useNavigate } from "react-router-dom";
-
-type NavItem = {
-  key: string;
-  label: string;
-  icon: JSX.Element;
-  onClick?: () => void; // 각 아이템에 대한 커스텀 클릭 핸들러 (선택 사항)
-};
-
-type SidebarProps = {
-  onNavigate?: (key: string) => void;
-  activeKey?: string;
-  onOpenCreateModal?: () => void; // 모달을 열기 위한 함수들을 props로 받음
-  onOpenJoinModal?: () => void;
-};
 
 function IconHome() {
   return (
@@ -67,6 +53,20 @@ function IconPower() {
   );
 }
 
+type NavItem = {
+  key: string;
+  label: string;
+  icon: JSX.Element;
+  onClick?: () => void; // 각 아이템에 대한 커스텀 클릭 핸들러 (선택 사항)
+};
+
+type SidebarProps = {
+  onNavigate?: (key: string) => void;
+  activeKey?: string;
+  onOpenCreateModal?: () => void; // 모달을 열기 위한 함수들을 props로 받음
+  onOpenJoinModal?: () => void;
+};
+
 export default function Sidebar({
   onNavigate,
   activeKey,
@@ -95,10 +95,6 @@ export default function Sidebar({
     } finally{
       logoutFromStore();
       nav(PATH.ROOT, {replace: true})
-
-      setTimeout(() => {
-        logoutFromStore();
-      }, 0);
     }
   };
 

@@ -1,14 +1,17 @@
 import React from 'react'
-import './PrivateLobbyPage.css'; // 페이지 전용 CSS 추가
+import './PrivateLobbyPage.css'
+import { useModalStore } from '../../stores/modalStore'
 
 const PrivateLobbyPage = () => {
+  const { openModal } = useModalStore()
+
   return (
     <div className="lobby-page-container">
       <div className="action-cards">
-        <div className="card">
+        <div className="card" onClick={() => openModal('create')}>
           회의 생성
         </div>
-        <div className="card">
+        <div className="card" onClick={() => openModal('join')}>
             회의 참여
         </div>
         <div className="card">

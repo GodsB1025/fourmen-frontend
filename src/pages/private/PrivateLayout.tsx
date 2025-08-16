@@ -5,19 +5,13 @@ import Modal from '../../components/modal/Modal';
 import CreateMeetingContent from '../../components/modal/CreateMeetingContent';
 import JoinMeetingContent from '../../components/modal/JoinMeetingContent';
 import './PrivateLayout.css';
-
-type ModalType = 'create' | 'join';
+import { useModalStore } from '../../stores/modalStore';
 
 const PrivateLayout = () => {
-    const [activeModal, setActiveModal] = useState<ModalType | null>(null);
+    const { activeModal, openModal, closeModal } = useModalStore();
 
     const navigate = useNavigate();
     const location = useLocation();
-
-    const dummyUser = {
-        name: "홍길동",
-        email: "test@email.com",
-    };
 
     const getModalTitle = () => {
         switch (activeModal) {
@@ -44,27 +38,22 @@ const PrivateLayout = () => {
 
     return (
         <div className="layout-container">
-            <Sidebar 
-                userName={dummyUser.name}
-                userEmail={dummyUser.email}
-                onLogout={() => console.log('로그아웃 클릭됨')}
-                onNavigate={(path: string) => {
-                    navigate(path);
-                }}
-                activeKey={location.pathname}
-                onOpenCreateModal={() => setActiveModal('create')}
-                onOpenJoinModal={() => setActiveModal('join')}
+            <Sidebar
+                onNavigate={(path: string) => { navigate(path) }}
+                activeKey={ location.pathname }
+                onOpenCreateModal={ () => openModal('create') }
+                onOpenJoinModal={ () => openModal('join') }
             />
             <main className="layout-content">
                 <Outlet />
             </main>
 
             <Modal
-                isOpen={activeModal !== null}
-                onClose={() => setActiveModal(null)}
-                title={getModalTitle()}
+                isOpen={ activeModal !== null }
+                onClose={ () => closeModal() }
+                title={ getModalTitle() }
             >
-                {renderModalContent()}
+                { renderModalContent() }
             </Modal>
         </div>
     );
