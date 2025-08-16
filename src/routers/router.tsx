@@ -8,6 +8,9 @@ import NotFoundPage from "../pages/public/NotFoundPage";
 import PublicLayout from "../pages/public/PublicLayout";
 import App from "../App";
 import PrivateLayout from "../pages/private/PrivateLayout";
+import ProfilePage from "../pages/private/dashboard/ProfilePage";
+import CompanyPage from '../pages/private/dashboard/CompanyPage'
+import DocumentsPage from "../pages/private/dashboard/DocumentsPage";
 
 const LobbyPage = lazy(() => import('../pages/public/LobbyPage'));
 const SignInPage = lazy(() => import('../pages/public/SignInPage'));
@@ -32,7 +35,13 @@ const routes: RouteObject[] = [
                         {
                             element: <PrivateLayout />,
                             children: [
-                                { path: PATH.DASHBOARD, element: <DashboardPage /> },
+                                { path: PATH.DASHBOARD, element: <DashboardPage />,
+                                    children:[
+                                        {path: PATH.PROFILE, element: <ProfilePage/>},
+                                        {path: PATH.COMPANY, element: <CompanyPage/>},
+                                        {path: PATH.DOCUMENTS, element: <DocumentsPage/>},
+                                    ]
+                                },
                                 { path: PATH.CONTRACT, element: <ContractPage />},
                                 { path: PATH.COMMANDER, element: <PrivateLobbyPage />},
                                 { path: PATH.MEETING_ROOM, element: <MeetingRoomPage />},
