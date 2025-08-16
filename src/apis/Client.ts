@@ -1,6 +1,7 @@
 import axios from 'axios';
 import type { AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
 import { useAuthStore } from '../stores/authStore';
+import type { ApiError } from '../types/error';
 
 // const baseURL = import.meta.env.DEV
 //   ? '/api'
@@ -106,7 +107,7 @@ api.interceptors.response.use(
     }
 
     // 그 외 에러는 그대로 전달(서버 메시지 노출 보정)
-    const data = error.response.data as any;
+    const data = error.response.data as ApiError;
     let serverMsg: string | undefined;
     if (data) {
       if (typeof data === 'string') serverMsg = data;
