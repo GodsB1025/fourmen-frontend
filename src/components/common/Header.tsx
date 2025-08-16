@@ -12,9 +12,9 @@ export default function Header({ onLogin, brandHref = "/" }: HeaderProps) {
   return (
     <header className="header" role="banner">
       <div className="inner">
-        <a href={brandHref} className="brand" aria-label="4MEN Home">
+        <Link to={brandHref} className="brand" aria-label="4MEN Home">
           4MEN
-        </a>
+        </Link>
         <nav aria-label="Primary" className="nav">
           {onLogin ? (
             <button type="button" className="loginBtn" onClick={onLogin}>
