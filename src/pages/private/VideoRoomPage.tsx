@@ -67,10 +67,12 @@ const VideoRoomPage = () => {
   //  조회했을 때 url이 있다면 회의 참여 버튼이 뜨도록 해야 한다.
   return (
     <div>
+      {/* iframe 이긴한데... */}
       <iframe
       src={videoURL}
       style={{ width: '100%', height: '80vh', border: 'none' }}
       />
+
       <br />{meetingId}번 비디오룸입니다.
       <br />
       <button
