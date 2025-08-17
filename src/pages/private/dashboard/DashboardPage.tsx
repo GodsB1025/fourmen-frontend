@@ -14,6 +14,9 @@ const DashboardPage = (props: Props) => {
             <NavLink to="profile" end className="dash-tab">
               프로필
             </NavLink>
+            <NavLink to="company" end className="dash-tab">
+              회사
+            </NavLink>
             <NavLink to="documents" className="dash-tab">
               문서
             </NavLink>

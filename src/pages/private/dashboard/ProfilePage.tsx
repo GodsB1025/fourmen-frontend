@@ -1,6 +1,6 @@
 import React from 'react'
 import "./Dashboard.css"
-import { useAuthStore } from '../../../stores/auths'
+import { useAuthStore } from '../../../stores/authStore'
 
 type Props = {}
 
