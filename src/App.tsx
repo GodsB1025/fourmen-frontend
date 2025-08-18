@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react';
 import { useAuthStore } from './stores/authStore';
 import { Outlet, useNavigation } from 'react-router-dom';
+import { initCsrf } from './api/Client';
 import Loading from './components/common/Loading';
 import './App.css';
 
 function App() {
+  initCsrf();
   const navigation = useNavigation();
   // const checkAuth = useAuthStore((state) => state.checkAuth);
   const { checkAuth, isAuthChecked } = useAuthStore()

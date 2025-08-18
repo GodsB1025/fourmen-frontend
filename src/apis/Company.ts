@@ -29,25 +29,22 @@ function mapToCompanyMember(raw: any): CompanyMember {
   };
 }
 
-// 멤버 목록 조회 (최종 수정된 함수)
+// 멤버 목록 조회
 export async function fetchCompanyMembers(): Promise<CompanyMember[]> {
   const { data } = await api.get(`/companies/members`);
-
-  // ✅ 해결: 서버 응답 구조에 맞게 data.data에서 배열을 추출합니다.
   const memberList = data?.data;
 
-  // 추출된 값이 배열인지 확인합니다.
   if (!Array.isArray(memberList)) {
     console.error("API 응답의 'data' 속성이 배열이 아닙니다:", data);
-    return []; // 에러 방지를 위해 빈 배열 반환
+    return [];
   }
 
   return memberList.map(mapToCompanyMember);
 }
 
-// 초대 API
+// 초대 API (✅ 수정: 변경된 API 주소로 수정)
 export async function inviteCompanyMember(body: InviteMemberRequest) {
-  const { data } = await api.post(`/companies/addMembers`, body);
+  const { data } = await api.post(`/companies/members`, body); // '/addMembers' -> '/members'
   const member = data?.member ? mapToCompanyMember(data.member) : undefined;
   return { ok: !!data?.ok, member } as { ok: boolean; member?: CompanyMember };
 }
