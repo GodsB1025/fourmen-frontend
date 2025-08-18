@@ -6,8 +6,5 @@ export const PATH = {
     CONTRACT: '/contract',
     COMMANDER: '/commander',
     MEETING_ROOM: '/meetingroom',
-    VIDEO_ROOM: '/videoroom',
-    PROFILE: 'profile',
-    COMPANY: 'company',
-    DOCUMENTS: 'documents'
+    VIDEO_ROOM: '/videoroom/:meetingId',
 } as const

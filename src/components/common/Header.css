@@ -36,12 +36,6 @@
   line-height: 1;
 }
 
-.nav {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
 /* 링크/버튼 공통 느낌 맞추기 */
 .loginLink,
 .loginBtn {
