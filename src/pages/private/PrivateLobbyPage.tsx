@@ -1,9 +1,12 @@
 import React from 'react'
 import './PrivateLobbyPage.css'
 import { useModalStore } from '../../stores/modalStore'
+import { useNavigate } from 'react-router-dom'
+import { PATH } from '../../types/paths'
 
 const PrivateLobbyPage = () => {
   const { openModal } = useModalStore()
+  const navigate = useNavigate()
 
   return (
     <div className="lobby-page-container">
@@ -14,10 +17,10 @@ const PrivateLobbyPage = () => {
         <div className="card" onClick={() => openModal('join')}>
             회의 참여
         </div>
-        <div className="card">
+        <div className="card" onClick={() => { navigate(PATH.CONTRACT) }}>
           전자 계약
         </div>
-        <div className="card">
+        <div className="card" onClick={() => { navigate(PATH.DASHBOARD) }}>
           대시보드
         </div>
       </div>

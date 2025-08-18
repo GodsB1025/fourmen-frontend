@@ -1,8 +1,6 @@
 import React from 'react'
 
-type Props = {}
-
-const NotFoundPage = (props: Props) => {
+const NotFoundPage = () => {
   return (
     <div>
         404 페이지입니다.

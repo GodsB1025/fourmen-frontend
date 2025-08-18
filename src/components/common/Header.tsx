@@ -2,24 +2,25 @@ import React from "react";
 import "./Header.css";
 import { Link } from "react-router-dom";
 import { PATH } from "../../types/paths";
+import { useAuthStore } from "../../stores/authStore";
+import type { User } from "../../apis/Types";
 
-type HeaderProps = {
-  onLogin?: () => void;
-  brandHref?: string;
-};
+const Header = () => {
 
-export default function Header({ onLogin, brandHref = "/" }: HeaderProps) {
+  const user : User | null = useAuthStore((state)=>state.user)
+  const isAuthenticated : boolean = useAuthStore((state)=>state.isAuthenticated)
+
   return (
     <header className="header" role="banner">
       <div className="inner">
-        <a href={brandHref} className="brand" aria-label="4MEN Home">
+        <Link to={PATH.ROOT} className="brand" aria-label="4MEN Home">
           4MEN
-        </a>
-        <nav aria-label="Primary" className="nav">
-          {onLogin ? (
-            <button type="button" className="loginBtn" onClick={onLogin}>
-              Log In
-            </button>
+        </Link>
+        <nav aria-label="Primary">
+          {isAuthenticated && user? (
+            <Link to={PATH.COMMANDER} className="loginLink">
+              {user.name}님 안녕하세요.
+            </Link>
           ) : (
             <Link to={PATH.SIGN_IN} className="loginLink">Log in</Link>
           )}
@@ -28,3 +29,5 @@ export default function Header({ onLogin, brandHref = "/" }: HeaderProps) {
     </header>
   );
 }
+
+export default Header
