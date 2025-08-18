@@ -183,6 +183,15 @@ const VideoRoomPage = () => {
     }
   };
 
+  const handleEndMeeting = () => {
+    if(meetingId) {
+      navigate(PATH.COMMANDER)
+      disableMeetingRoom(meetingId)
+    } else {
+      console.log("회의 삭제 실패")
+    }
+  }
+
   return (
     <div>
       <iframe
