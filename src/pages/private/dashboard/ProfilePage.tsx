@@ -1,8 +1,9 @@
-import React from 'react'
-import "./Dashboard.css"
-import { useAuthStore } from '../../../stores/authStore'
+import React, { useState } from 'react';
+import ProfileCalendar from '../../../components/common/ProfileCalendar';
+import "./Dashboard.css";
+import { useAuthStore } from '../../../stores/authStore';
 
-type Props = {}
+type Props = {};
 
 const ProfilePage = (props: Props) => {
   const storeUser = useAuthStore((s) => s.user);
@@ -16,7 +17,11 @@ const ProfilePage = (props: Props) => {
     (typeof user?.company === "string" ? user.company : "") ??
     "";
 
-  const monthLabel = `${new Date().getMonth() + 1}월 일정`;
+  // 달력이 월 이동할 때 타이틀 갱신
+  const [monthLabel, setMonthLabel] = useState<string>(`${new Date().getMonth() + 1}월 일정`);
+  const handleMonthChange = (d: Date) => {
+    setMonthLabel(`${d.getMonth() + 1}월 일정`);
+  };
 
   return (
     <div>
@@ -31,6 +36,7 @@ const ProfilePage = (props: Props) => {
 
         <div className="summary-right">
           <ul className="summary-bullets">
+            {/* TODO: /calendar/today 연동 시 동적으로 교체 */}
             <li>오늘은 “기업 미팅”이(가) 예정됐습니다.</li>
             <li>3일 후 “미팅2”이(가) 있습니다.</li>
           </ul>
@@ -41,11 +47,11 @@ const ProfilePage = (props: Props) => {
 
       {/* 캘린더 자리 */}
       <h3 className="calendar-title">{monthLabel}</h3>
-      <div className="calendar-frame">
-        <div className="calendar-empty">📅 달력 추가 예정</div>
+      <div>
+        <ProfileCalendar onMonthChange={handleMonthChange} />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ProfilePage
+export default ProfilePage;

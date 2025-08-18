@@ -1,0 +1,73 @@
+/* 컨테이너/기본 폰트 */
+.profile-cal { padding: 8px 12px 16px; }
+.profile-cal .fc { font-family: inherit; font-size: 14px; }
+
+/* 날짜 라벨을 좌측 정렬 */
+.profile-cal .fc .fc-daygrid-day-top {
+  display: flex !important;
+  align-items: center;
+  justify-content: flex-start !important;
+  gap: 6px;
+}
+.profile-cal .fc .fc-daygrid-day-number {
+  margin-left: 0 !important;
+  margin-right: auto !important;
+}
+
+/* 오늘 표시 */
+.profile-cal .fc-day-today { background: rgba(17,24,39,0.04); }
+
+/* 선택된 날짜 */
+.profile-cal .fc-daygrid-day.is-selected .fc-daygrid-day-number {
+  background: #111827; color: #fff;
+  width: 28px; height: 28px; line-height: 28px; text-align: center;
+  border-radius: 9999px; display: inline-block;
+}
+
+/* + 버튼: 우상단 절대배치 */
+.profile-cal .fc-daygrid-day-frame { position: relative; }
+.profile-cal .day-add-btn {
+  position: absolute !important;
+  top: 4px; right: 4px;
+  width: 22px; height: 22px; line-height: 20px;
+  border-radius: 9999px; border: 1px solid #e5e7eb; background: #fff;
+  font-weight: 700; padding: 0; cursor: pointer;
+  opacity: 0; transition: opacity .12s ease;
+}
+.profile-cal .fc-daygrid-day:hover .day-add-btn { opacity: 1; }
+.profile-cal .day-add-btn:hover { background: #f3f4f6; }
+
+/* 이벤트 여백 */
+.profile-cal .fc-daygrid-event { margin-top: 2px; }
+
+/* ===== 모달 ===== */
+.cal-modal { position: fixed; inset: 0; z-index: 50; }
+.cal-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.35); }
+.cal-dialog {
+  position: absolute; inset: 0; margin: auto;
+  width: 520px; max-width: calc(100% - 32px);
+  background: #fff; border-radius: 12px; overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,.25);
+  display: flex; flex-direction: column;
+}
+.cal-dialog-head { padding: 14px 16px; border-bottom: 1px solid #eee; display:flex; justify-content:space-between; align-items:center; }
+.cal-dialog-title { font-weight: 600; }
+.cal-x { border: none; background: transparent; font-size: 22px; line-height: 1; cursor: pointer; }
+
+.cal-dialog-body { padding: 16px; display: grid; gap: 16px; }
+.cal-dialog-foot { padding: 12px 16px; border-top: 1px solid #eee; display:flex; justify-content:flex-end; gap: 8px; }
+
+.cal-create { display: grid; gap: 8px; }
+.cal-create-row { display: grid; gap: 6px; }
+.cal-create-row input { border: 1px solid #e5e7eb; border-radius: 8px; padding: 8px 10px; outline: none; }
+.cal-create-row input:focus { border-color: #111827; }
+
+.cal-empty { color:#6b7280; font-size: 14px; }
+.cal-list { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 8px; }
+.cal-list-item { display:flex; justify-content: space-between; align-items:center; border:1px solid #eee; border-radius: 10px; padding: 8px 10px; }
+.cal-title { font-weight: 500; }
+.cal-actions { display:flex; gap: 6px; }
+.cal-btn { border: 1px solid #e5e7eb; background:#fff; border-radius:8px; padding:6px 10px; cursor:pointer; }
+.cal-btn:hover { background:#f9fafb; }
+.cal-primary { border-color:#111827; }
+.cal-danger { border-color:#ef4444; color:#b91c1c; }
