@@ -1,0 +1,9 @@
+.company-wrap { padding: 24px; }
+.company-columns { display: grid; grid-template-columns: 1.5fr 1fr; gap: 24px; }
+.company-section-title { font-weight: 600; margin-bottom: 12px; }
+.company-error { color: #d33; margin-bottom: 8px; }
+.company-left, .company-right { background: #fff; border: 1px solid #eee; border-radius: 14px; padding: 16px; }
+.company-guard { padding: 48px; text-align: center; color: #666; }
+@media (max-width: 1024px){
+  .company-columns{ grid-template-columns: 1fr; }
+}

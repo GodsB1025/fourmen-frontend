@@ -1,0 +1,62 @@
+/* 레이아웃 공통 */
+.dash-wrap { display: flex; flex-direction: column; }
+.dash-header { padding: 12px 0; }
+.dash-body { padding: 0 24px 24px; }
+
+/* 탭 중앙 정렬 */
+.dash-tabs-center { display: flex; justify-content: center; }
+.dash-tabs {
+  display: inline-flex; gap: 6px; padding: 4px;
+  border: 1px solid #e6e8ee; border-radius: 999px; background: #f6f8fc;
+}
+.dash-tab {
+  padding: 8px 16px; border-radius: 999px; font-size: 14px;
+  color: #4b5563; text-decoration: none;
+}
+.dash-tab[aria-current="page"] { color: #0b57d0; background: #e7f0ff; }
+
+/* 상단 요약 영역 */
+.summary {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 24px;
+  padding: 8px 24px 16px;
+}
+.summary-left {
+  padding-right: 24px;
+  border-right: 1px solid #eceff4;
+}
+.summary-right { display: flex; align-items: flex-start; }
+.summary-bullets { margin: 0; padding-left: 20px; color: #374151; }
+.summary-bullets li { line-height: 1.7; }
+
+.summary-name { font-size: 18px; font-weight: 700; }
+.summary-email { font-size: 14px; color: #6b7280; margin-top: 4px; }
+.summary-company { font-size: 14px; color: #374151; margin-top: 10px; }
+.summary-phone { font-size: 14px; color: #374151; margin-top: 6px; }
+
+.dash-sep {
+  border: 0; height: 1px; background: #edf1f5;
+  margin: 8px 24px 16px;
+}
+
+/* 캘린더 프레임 (그리드 느낌만) */
+.calendar-title { font-weight: 700; margin: 0 24px 12px; }
+.calendar-frame {
+  position: relative;
+  margin: 0 24px;
+  height: 460px;
+  border: 1px solid #dfe3eb;
+  border-radius: 12px;
+  background-image:
+    linear-gradient(to right, rgba(0,0,0,0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0,0,0,0.06) 1px, transparent 1px);
+  background-size: calc(100%/7) calc(100%/6);
+  background-position: top left;
+  background-repeat: repeat;
+}
+.calendar-empty {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  color: #6b7280; font-size: 16px;
+}
