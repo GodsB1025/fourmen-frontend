@@ -37,9 +37,9 @@ const routes: RouteObject[] = [
                             children: [
                                 { path: PATH.DASHBOARD, element: <DashboardPage />,
                                     children:[
-                                        {path: PATH.PROFILE, element: <ProfilePage/>},
-                                        {path: PATH.COMPANY, element: <CompanyPage/>},
-                                        {path: PATH.DOCUMENTS, element: <DocumentsPage/>},
+                                        { path: PATH.PROFILE, element: <ProfilePage/> },
+                                        { path: PATH.COMPANY, element: <CompanyPage/> },
+                                        { path: PATH.DOCUMENTS, element: <DocumentsPage/> },
                                     ]
                                 },
                                 { path: PATH.CONTRACT, element: <ContractPage />},
