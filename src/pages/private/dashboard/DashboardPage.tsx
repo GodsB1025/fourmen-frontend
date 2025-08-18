@@ -1,6 +1,7 @@
 import React from 'react'
 import { Outlet, NavLink } from 'react-router-dom'
 import "./Dashboard.css"
+import { PATH } from '../../../types/paths'
 
 type Props = {}
 
@@ -11,13 +12,13 @@ const DashboardPage = (props: Props) => {
         {/* 가운데 정렬된 탭 */}
         <div className="dash-tabs-center">
           <nav className="dash-tabs" aria-label="Dashboard Tabs">
-            <NavLink to="profile" end className="dash-tab">
+            <NavLink to={PATH.PROFILE} end className="dash-tab">
               프로필
             </NavLink>
-            <NavLink to="company" end className="dash-tab">
+            <NavLink to={PATH.COMPANY} end className="dash-tab">
               회사
             </NavLink>
-            <NavLink to="documents" className="dash-tab">
+            <NavLink to={PATH.DOCUMENTS} className="dash-tab">
               문서
             </NavLink>
           </nav>
