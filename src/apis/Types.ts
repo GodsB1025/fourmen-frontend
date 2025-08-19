@@ -92,3 +92,11 @@ export interface GetMeResponse {
   company: number | null;
   phone: string;
 }
+
+export interface Contract {
+  templateId: number,
+  templateName: string,
+  eformsignTemplateId: string,
+  previewImageUrl: string,
+  dataSchema: unknown,
+}

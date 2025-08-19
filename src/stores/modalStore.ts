@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 // 모달 타입 정의
-type ModalType = 'create' | 'join';
+type ModalType = 'create' | 'join' | 'contractForm';
 
 // 스토어의 상태와 액션에 대한 타입 정의
 interface ModalState {

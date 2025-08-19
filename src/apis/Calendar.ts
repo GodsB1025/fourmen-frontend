@@ -1,9 +1,3 @@
-// 서버 규격(Swagger) 맞춘 캘린더 API 레이어
-// - POST /calendar/add : body { title, startTime, endTime }  (*추가 필드 전송 금지*)
-// - GET  /calendar
-// - PATCH /calendar/{id} : body { title?, startTime?, endTime? } (있는 키만 전송)
-// - DELETE /calendar/{id}
-
 import api from "../apis/Client";
 
 // ------ 응답 표준화: 어떤 형태여도 항상 배열로 반환 ------
