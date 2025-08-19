@@ -28,14 +28,14 @@ export const getMeetingInfo = async (meetingId: string): Promise<Meeting> => {
 
 // 회의방 URL 생성
 export const createMeetingURL = async (meetingId: string, payload: CreateMeetingURLRequest): Promise<MeetingURLResponse> => {
-    const { data } = await api.post(`/meetings/${meetingId}/video-room?${meetingId}`, { payload })
+    const { data } = await api.post(`/meetings/${meetingId}/video-room?meetingId=${meetingId}`, payload)
     // console.log("URL 생성하기 데이터 확인:", data)
     return data.data
 }
 
 // 회의방 URL 생성
 export const getMeetingURL = async (meetingId: string): Promise<MeetingURLResponse> => {
-    const { data } = await api.post(`/meetings/${meetingId}/enter-video?${meetingId}`)
+    const { data } = await api.post(`/meetings/${meetingId}/enter-video?meetingId=${meetingId}`)
     // console.log("URL 불러오기 데이터 확인:", data)
     return data.data
 }
