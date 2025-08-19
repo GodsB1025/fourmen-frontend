@@ -1,22 +1,18 @@
 import api from "../apis/Client";
 
-// ------ 응답 표준화: 어떤 형태여도 항상 배열로 반환 ------
 function normalizeList(data: any): any[] {
   if (Array.isArray(data)) return data;
   if (Array.isArray(data?.data)) return data.data;
   if (Array.isArray(data?.content)) return data.content;
-  return []; // null/undefined/기타 형태 → 빈 배열
+  return []; 
 }
-
-// ------ 서버 이벤트 타입(참조용) ------
 export type ServerCalendarEvent = {
   id: string | number;
   title: string;
-  startTime: string; // ISO8601 with Z
-  endTime: string;   // ISO8601 with Z
+  startTime: string; 
+  endTime: string;   
 };
 
-// ------ FullCalendar용 매핑 (널 안전) ------
 export function mapToEventInput(ev: any) {
   const start =
     ev.startTime ?? ev.startAt ?? ev.start ?? ev.begin ?? ev.start_date ?? null;
