@@ -29,9 +29,10 @@ const ContractPage = () => {
         }
     }
 
-    const openContract = () => {
-        console.log("contract 실행")
-        openModal('contractForm')
+    const openContract = (templateId: number) => {
+        console.log("contract 실행, ID:", templateId);
+        // 모달을 열 때 타입과 함께 데이터를 전달합니다.
+        openModal('contractForm', { templateId: String(templateId) });
     }
 
     useEffect(() => {
@@ -54,7 +55,7 @@ const ContractPage = () => {
                     contracts.map((contract) => (
                         <ContractCard 
                             contract={contract}
-                            handleClick={openContract}
+                            handleClick={() => openContract(contract.templateId)}
                         />
                     ))
                 )}

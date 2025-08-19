@@ -9,7 +9,7 @@ import { useModalStore } from '../../stores/modalStore';
 import ContractContent from '../../components/modal/ContractContent';
 
 const PrivateLayout = () => {
-    const { activeModal, openModal, closeModal } = useModalStore();
+    const { activeModal, modalData, openModal, closeModal } = useModalStore();
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -33,7 +33,7 @@ const PrivateLayout = () => {
             case 'join':
                 return <JoinMeetingContent />;
             case 'contractForm':
-                return <ContractContent />;
+                return  modalData?.templateId ? <ContractContent templateId={modalData.templateId} /> : null;
             default:
                 return null;
         }
@@ -53,7 +53,7 @@ const PrivateLayout = () => {
 
             <Modal
                 isOpen={ activeModal !== null }
-                onClose={ () => closeModal() }
+                onClose={ closeModal }
                 title={ getModalTitle() }
             >
                 { renderModalContent() }
