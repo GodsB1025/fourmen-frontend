@@ -158,3 +158,79 @@ input:checked + .slider:before {
 .create-button:hover {
     background-color: #1D4ED8;
 }
+
+.participant-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 1rem;
+}
+
+.participant-section label {
+    font-weight: bold;
+    color: #ccc;
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+}
+
+.participant-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.participant-input-wrapper input {
+    flex-grow: 1; /* 입력창이 가능한 많은 공간을 차지하도록 */
+}
+
+.add-button {
+    background-color: #007bff;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.add-button:hover {
+    background-color: #0056b3;
+}
+
+.participant-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-top: 8px;
+}
+
+.participant-tag {
+    background-color: #333;
+    color: #fff;
+    border-radius: 16px;
+    padding: 6px 12px;
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+}
+
+.participant-tag span {
+    margin-right: 8px;
+}
+
+.participant-tag button {
+    background: none;
+    border: none;
+    color: #aaa;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 0;
+    line-height: 1;
+}
+
+.participant-tag button:hover {
+    color: #fff;
+}
