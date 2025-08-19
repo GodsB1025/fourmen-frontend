@@ -187,6 +187,7 @@ const VideoRoomPage = () => {
     if(meetingId) {
       navigate(PATH.COMMANDER)
       disableMeetingRoom(meetingId)
+      alert(`${meetingId}번 회의가 성공적으로 삭제됐습니다.`)
     } else {
       console.log("회의 삭제 실패")
     }
@@ -225,7 +226,7 @@ const VideoRoomPage = () => {
         )}
       </div>
 
-      <br/>{meetingId && <button onClick={()=>disableMeetingRoom(meetingId)}>회의 종료</button> }
+      <br/>{meetingId && <button onClick={handleEndMeeting}>회의 종료</button> }
       <br/><button onClick={()=>navigate(PATH.COMMANDER)}>회의 나가기</button>
       <br/>{error && <p style={{ color: 'red' }}>{error}</p>}
     </div>

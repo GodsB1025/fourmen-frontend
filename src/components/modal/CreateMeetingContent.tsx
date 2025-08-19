@@ -3,9 +3,10 @@ import './CreateMeetingContent.css';
 import TextInput from '../common/TextInput';
 import { useAuthStore } from '../../stores/authStore';
 import formatToISO from '../../utils/formatToISO';
-import type { CreateMeetingRequest } from '../../apis/Types';
+import type { CreateMeetingRequest, User } from '../../apis/Types';
 import { createMeetingRoom } from '../../apis/Meeting';
 import { useModalStore } from '../../stores/modalStore';
+import { replace, useNavigate } from 'react-router-dom';
 
 // 사용자 추가 아이콘 SVG를 별도 컴포넌트로 분리하여 가독성을 높입니다.
 const PersonPlusIcon = () => (
@@ -36,26 +37,57 @@ const CreateMeetingContent = () => {
         };
     };
     
+    const navigate = useNavigate()
     const { closeModal } = useModalStore();
+    const user = useAuthStore((state) => state.user)
 
     const [isAiSummaryOn, setAiSummaryOn] = useState<boolean>(true); // AI 요약 토글 스위치
     const [meetingName, setMeetingName] = useState<string>(""); // 회의실 이름
     const [date, setDate] = useState(getInitialDateTime().date);
     const [time, setTime] = useState(getInitialDateTime().time);
-    const [participantEmails, setParticipantEmails] = useState<string[]>([])
+    const [participantEmails, setParticipantEmails] = useState<string[]>([]);
+    const [currentEmail, setCurrentEmail] = useState<string>(""); // <-- 현재 입력 중인 이메일 상태 추가
     const [error, setError] = useState<string | null>(null);
     const [busy, setBusy] = useState(false);
 
-    // user 정보가 로드되면 참가자 이메일에 추가
-    // useEffect(() => {
-    //     if (user?.email && !participantEmails.includes(user.email)) {
-    //         setParticipantEmails([user.email]);
-    //     }
-    // }, [user]);
+    // 이메일 추가 핸들러
+    const handleAddParticipant = () => {
+        // 간단한 이메일 형식 유효성 검사
+        if (!currentEmail.includes('@')) {
+            setError("올바른 이메일 형식이 아닙니다.");
+            return;
+        }
+        // 중복 이메일 방지
+        if (user && currentEmail === user.email
+            || participantEmails.includes(currentEmail)
+        ) {
+            setError("이미 추가된 이메일입니다.");
+            setCurrentEmail(""); // 입력 필드 초기화
+            return;   
+        }
 
+        setParticipantEmails([...participantEmails, currentEmail]);
+        setCurrentEmail(""); // 입력 필드 초기화
+        setError(null); // 에러 메시지 초기화
+    };
+
+    // Enter 키로 이메일 추가를 위한 핸들러
+    const handleEmailInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            e.preventDefault(); // Form 전체 제출 방지
+            handleAddParticipant();
+        }
+    };
+
+    // 이메일 삭제 핸들러
+    const handleRemoveParticipant = (emailToRemove: string) => {
+        setParticipantEmails(participantEmails.filter(email => email !== emailToRemove));
+    };
+
+    // 회의 생성 submit 핸들러
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setError(null)
+        setError(null);
 
         if (!meetingName.trim()) {
             setError("회의실 이름을 입력해주세요.");
@@ -64,20 +96,21 @@ const CreateMeetingContent = () => {
         setBusy(true);
         try {
             const scheduledAtISOString = formatToISO(date, time);
-            const uniqueParticipantEmails = Array.from(new Set(participantEmails.filter((email): email is string => !!email)));
+            // participantEmails 상태를 그대로 사용 (이미 생성자는 제외되어 있음)
+            const uniqueParticipantEmails = Array.from(new Set(participantEmails.filter(Boolean)));
             
             const payload: CreateMeetingRequest = {
                 title: meetingName,
                 scheduledAt: scheduledAtISOString,
                 useAiMinutes: isAiSummaryOn,
-                participantEmails: uniqueParticipantEmails,
+                participantEmails: uniqueParticipantEmails, // 생성자가 제외된 순수 초대자 목록
             };
+            
             console.log("API 요청 페이로드:", payload);
             await createMeetingRoom(payload);
 
-            console.log("회의 생성 데이터:", meetingName, date, time);
             alert('회의가 성공적으로 생성되었습니다!');
-            closeModal()
+            closeModal();
         } catch (err: any) {
             console.error("회의 생성 실패:", err);
             setError(err.message || "회의 생성 중 오류가 발생했습니다.");
@@ -133,28 +166,61 @@ const CreateMeetingContent = () => {
                 </div>
             </div>
             
-            <div className="form-actions">
-                <button type="button" className="invite-button" aria-label="참석자 초대">
-                    <PersonPlusIcon />
-                </button>
-
-                <div className='toggle-and-submit'>
-                    <div className="toggle-group">
-                        <span className="toggle-label-text">AI 요약</span>
-                        <label className="toggle-switch">
-                        <input 
-                            type="checkbox" 
-                            checked={isAiSummaryOn} 
-                            onChange={() => setAiSummaryOn(!isAiSummaryOn)}
-                        />
-                        <span className="slider"></span>
-                        </label>
-                    </div>
-
-                    <button type="submit" className="create-button">
-                        회의 생성 +
+            {/* 참석자 초대 UI */}
+            <div className="form-group participant-section">
+                <label>참석자 초대</label>
+                <div className="participant-input-wrapper">
+                    <TextInput
+                        type='email'
+                        placeholder='이메일로 초대하기'
+                        value={currentEmail}
+                        onChange={e => setCurrentEmail(e.target.value)}
+                        onKeyDown={handleEmailInputKeyDown}
+                    />
+                    {/* PersonPlusIcon을 추가 버튼으로 활용 */}
+                    <button type="button" onClick={handleAddParticipant} className="add-button" aria-label="참석자 추가">
+                        <PersonPlusIcon />
                     </button>
                 </div>
+
+                {/* 추가된 이메일 목록 (태그 형태) */}
+                <div className="participant-list">
+                    {/* 1. 생성자(본인) 태그를 먼저 표시 */}
+                    {user?.email && (
+                        <div className="participant-tag me">
+                            <span>{user.email} (나)</span>
+                            {/* 본인 태그에는 삭제 버튼 없음 */}
+                        </div>
+                    )}
+
+                    {/* 2. participantEmails 상태에 있는 초대자 목록을 표시 */}
+                    {participantEmails.map((email, index) => (
+                        <div key={index} className="participant-tag">
+                            <span>{email}</span>
+                            <button type="button" onClick={() => handleRemoveParticipant(email)}>
+                                &times;
+                            </button>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            <div className='toggle-and-submit'>
+                <div className="toggle-group">
+                    <span className="toggle-label-text">AI 요약</span>
+                    <label className="toggle-switch">
+                    <input 
+                        type="checkbox" 
+                        checked={isAiSummaryOn} 
+                        onChange={() => setAiSummaryOn(!isAiSummaryOn)}
+                    />
+                    <span className="slider"></span>
+                    </label>
+                </div>
+
+                <button type="submit" className="create-button">
+                    회의 생성 +
+                </button>
             </div>
             {error && <p className="form-error">{error}</p>}
         </form>
