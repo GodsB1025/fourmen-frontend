@@ -7,9 +7,11 @@ import type { Meeting } from '../../apis/Types'
 import MeetingRoomList from './MeetingRoomList'
 import { useNavigate } from 'react-router-dom'
 import { PATH } from '../../types/paths'
+import { useModalStore } from '../../stores/modalStore'
 
 const JoinMeetingContent = () => {
     const navigate = useNavigate()
+    const closeModal = useModalStore((state) => state.closeModal)
 
     const [selectedOption, setSelectedOption] = useState('my')
     const [meetingRooms, setMeetingRooms] = useState<Meeting[]>([]);
@@ -28,6 +30,7 @@ const JoinMeetingContent = () => {
     const navigateMeetingRoom = (meetingId : number) => {
         const destination = PATH.VIDEO_ROOM.replace(':meetingId', meetingId.toString())
         navigate(destination)
+        closeModal()
     }
 
     // 컴포넌트가 처음 마운트될 때와 selectedOption이 바뀔 때 회의 목록을 불러옴
