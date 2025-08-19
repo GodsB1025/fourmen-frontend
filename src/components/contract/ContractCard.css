@@ -1,0 +1,13 @@
+.contract-card-container {
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.contract-card-container img {
+    width: 200px;
+    height: auto;
+    margin-bottom: 8px;
+}

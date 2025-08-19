@@ -6,6 +6,7 @@ import CreateMeetingContent from '../../components/modal/CreateMeetingContent';
 import JoinMeetingContent from '../../components/modal/JoinMeetingContent';
 import './PrivateLayout.css';
 import { useModalStore } from '../../stores/modalStore';
+import ContractContent from '../../components/modal/ContractContent';
 
 const PrivateLayout = () => {
     const { activeModal, openModal, closeModal } = useModalStore();
@@ -31,6 +32,8 @@ const PrivateLayout = () => {
                 return <CreateMeetingContent />;
             case 'join':
                 return <JoinMeetingContent />;
+            case 'contractForm':
+                return <ContractContent />;
             default:
                 return null;
         }
