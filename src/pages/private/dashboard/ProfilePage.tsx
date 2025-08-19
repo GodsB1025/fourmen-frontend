@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import ProfileCalendar from '../../../components/common/ProfileCalendar';
 import "./Dashboard.css";
 import { useAuthStore } from '../../../stores/authStore';
+import MemoAlerts from '../../../pages/private/dashboard/MemoAlerts'; // ✅ 추가
 
 type Props = {};
 
@@ -35,11 +36,8 @@ const ProfilePage = (props: Props) => {
         </div>
 
         <div className="summary-right">
-          <ul className="summary-bullets">
-            {/* TODO: /calendar/today 연동 시 동적으로 교체 */}
-            <li>오늘은 “기업 미팅”이(가) 예정됐습니다.</li>
-            <li>3일 후 “미팅2”이(가) 있습니다.</li>
-          </ul>
+          {/* 🔔 메모칸 일정 알림 (오늘/내일/며칠 후) */}
+          <MemoAlerts daysWindow={14} maxLines={4} />
         </div>
       </section>
 

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useAuthStore } from './stores/authStore';
 import { Outlet, useNavigation } from 'react-router-dom';
-import { initCsrf } from './api/Client';
+import { initCsrf } from './apis/Client';
 import Loading from './components/common/Loading';
 import './App.css';
 

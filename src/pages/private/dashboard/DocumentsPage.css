@@ -1,143 +1,140 @@
+/* 레이아웃 */
 .docs-grid {
   display: grid;
-  grid-template-columns: 320px 1fr;
-  gap: 24px;
-  height: 100%;
-  padding: 16px 20px;
-  background: #f5f7fb;
+  grid-template-columns: 300px 1fr;
+  gap: 20px;
 }
+
 .left-col {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
+
+.right-col {
+  background: #fff;
+  border-radius: 10px;
+  padding: 16px;
+}
+
+/* 제목 */
+.list-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+/* 섹션 묶음 */
+.group { margin-top: 8px; }
+.group-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 6px 0 10px;
+  padding-left: 2px;
+}
+
+/* 날짜 그룹 */
+.day-group h3 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 8px 0 6px;
+}
+
+/* 카드 */
+.note-card {
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 12px;
+  margin: 10px 0;
+  background: #fafafa;
+}
+
+.note-card .title {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+/* 파일 리스트 */
+.files {
+  list-style: disc;
+  padding-left: 18px;
+  margin: 6px 0 0;
+}
+.files li { margin: 2px 0; }
+
+/* 스켈레톤 */
+.skeleton {
+  height: 50px;
+  background: #eee;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  animation: pulse 1.5s infinite;
+}
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: .5; }
+  100% { opacity: 1; }
+}
+
+/* 빈 상태 */
+.empty {
+  color: #666;
+  font-size: 14px;
+  text-align: center;
+}
+.empty .empty-sub {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #888;
+}
+
+/* 미니 달력 */
 .mini-cal {
   background: #fff;
   border: 1px solid #eee;
-  border-radius: 12px;
+  border-radius: 10px;
   padding: 8px;
 }
-.search {
-  height: 40px;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 0 14px;
-  background: #fff;
-}
-.search:focus {
-  outline: none;
-  border-color: #93c5fd;
-}
-.right-col {
-  background: #fff;
-  border: 1px solid #eee;
-  border-radius: 12px;
-  padding: 16px 18px;
-  overflow: auto;
-}
-.list-title {
-  margin: 0 0 10px;
-  font-size: 18px;
-  font-weight: 800;
-}
-.empty {
-  color: #6b7280;
-  padding: 16px 2px;
-}
-.empty-sub {
-  margin-top: 4px;
-  font-size: 13px;
-}
-.skeleton {
-  height: 68px;
-  border-radius: 10px;
-  background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 37%, #f3f4f6 63%);
-  background-size: 400% 100%;
-  animation: shimmer 1.2s infinite linear;
-  margin-top: 12px;
-}
-@keyframes shimmer {
-  0% { background-position: 100% 0; }
-  100% { background-position:   0   0; }
-}
-.day-group {
-  padding: 8px 0 20px;
-}
-.day-group > h3 {
-  margin: 10px 0 6px;
-  font-size: 16px;
-  font-weight: 800;
-}
-.day-group > hr {
-  border: none;
-  border-top: 1px solid #eee;
-  margin-bottom: 10px;
-}
-.note-card {
-  padding: 8px 0 10px;
-}
-.meta {
+
+/* 검색 영역 */
+.search-wrap {
   display: flex;
-  gap: 16px;
-  font-size: 13px;
-  color: #6b7280;
-  margin-bottom: 4px;
+  gap: 8px;
+  align-items: center;
 }
-.label {
-  font-weight: 800;
-  color: #0f172a;
-}
-.title {
-  font-size: 15px;
-  font-weight: 700;
-  margin-bottom: 6px;
-  color: #0f172a;
-}
-.files {
-  margin: 0;
-  padding-left: 18px;
-  list-style: disc;
-}
-.calendar-compact .react-calendar__month-view__weekdays {
-  display: none;
-}
-.calendar-compact .react-calendar__month-view__days__day,
-.calendar-compact .react-calendar__tile {
-  display: grid;
-  place-items: center;
-  aspect-ratio: 1 / 1;
-  height: 40px;               
-  line-height: 1;
-  border-radius: 9999px;      
-}
-.calendar-compact .react-calendar__tile--now {
-  background: none;
-  border: 1px solid #93c5fd;
-  border-radius: 9999px;
-}
-.calendar-compact .react-calendar__tile:enabled:hover {
-  background: #eff6ff;
-  border-radius: 9999px;
-}
-.calendar-compact .react-calendar__tile--active {
-  background: #3b82f6;
-  color: #fff;
-  border-radius: 9999px;
-}
-.calendar-compact .react-calendar__tile:focus {
+.search {
+  flex: 1;
+  padding: 8px 10px;
+  border: 1px solid #ccd;
+  border-radius: 8px;
   outline: none;
-  box-shadow: 0 0 0 2px rgba(59,130,246,.25);
-  border-radius: 9999px;
 }
-.calendar-compact .react-calendar__month-view__days__day--neighboringMonth {
-  color: #cbd5e1;
+.search:focus { border-color: #94a3b8; }
+.search-btn {
+  padding: 8px 12px;
+  border: 1px solid #ccd;
+  border-radius: 8px;
+  background: #f5f7fb;
+  cursor: pointer;
 }
-.calendar-compact .react-calendar__navigation {
-  margin-bottom: 6px;
-}
-.calendar-compact .react-calendar__navigation button {
+
+/* 기간 선택 */
+.range-picker input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ccd;
   border-radius: 8px;
 }
-.calendar-compact .react-calendar__navigation button:enabled:hover {
-  background: #eef2ff;
+.meta-sub {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #666;
+}
+.meeting-headline {
+  font-weight: 800;     
+  font-size: 16px;
+  letter-spacing: -0.2px;
+}
+.meeting-title {
+  font-weight: 700;
 }
