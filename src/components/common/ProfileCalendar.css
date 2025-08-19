@@ -79,3 +79,31 @@
 .cal-dialog-body > :last-child {
   margin-bottom: 0 !important;
 }
+/* 네비게이션 바 */
+.cal-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.cal-nav-btn {
+  padding: 6px 10px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  border-radius: 10px;
+  font-size: 13px;
+  cursor: pointer;
+}
+.cal-nav-btn:hover { background: #f3f4f6; }
+
+/* 선택된 날짜 표시 (기존 스타일 유지 가능) */
+.is-selected .fc-daygrid-day-frame { outline: 2px solid #2563eb; outline-offset: -2px; }
+
+/* 우상단 + 버튼 (기존과 동일) */
+.day-add-btn {
+  position: absolute; right: 6px; top: 6px;
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 1px solid #e5e7eb; background: #fff; line-height: 20px;
+  font-weight: 600; cursor: pointer;
+}
+.day-add-btn:hover { background: #f3f4f6; }
