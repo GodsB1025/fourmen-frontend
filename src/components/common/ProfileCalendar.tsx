@@ -10,7 +10,7 @@ import {
   updateCalendarEvent,
   deleteCalendarEvent,
 } from "../../apis/Calendar";
-import { initCsrf } from "../../api/Client";
+import { initCsrf } from "../../apis/Client";
 import "./ProfileCalendar.css";
 
 type Props = { onMonthChange?: (date: Date) => void };

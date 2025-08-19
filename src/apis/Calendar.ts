@@ -1,4 +1,4 @@
-import api from "../api/Client";
+import api from "../apis/Client";
 export type CalendarEventDTO = any;
 
 const stripNil = (o: Record<string, any>) => {
