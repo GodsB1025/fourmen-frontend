@@ -10,7 +10,7 @@ import {
   updateCalendarEvent,
   deleteCalendarEvent,
 } from "../../apis/Calendar";
-import { initCsrf } from "../../api/Client";
+import { initCsrf } from "../../apis/Client";
 import "./ProfileCalendar.css";
 
 type Props = { onMonthChange?: (date: Date) => void };
@@ -33,13 +33,16 @@ export default function ProfileCalendar({ onMonthChange }: Props) {
   const ensureCsrf = async () => { try { await initCsrf(); } catch {} };
   const refetch = () => calRef.current?.getApi().refetchEvents();
 
-  /** 특정 날짜 일정 조회 (서버 권위값) */
+  /** 특정 날짜 일정 조회 (서버 권위값, 널 안전) */
   const fetchEventsForDate = async (dateStr: string) => {
-    const list = await fetchCalendar();
-    const mapped = list.map(mapToEventInput);
-    return mapped.filter((ev) => {
-      const s = ev.start.slice(0, 10);
-      const e = (ev.end ? ev.end : ev.start).slice(0, 10);
+    const list = await fetchCalendar(); // 항상 배열 보장
+    const mapped = list
+      .map(mapToEventInput)
+      .filter((ev: any) => !ev.__invalid && typeof ev.start === "string");
+
+    return mapped.filter((ev: any) => {
+      const s = (ev.start as string).slice(0, 10);
+      const e = (ev.end ? (ev.end as string) : s).slice(0, 10);
       return dateStr >= s && dateStr <= e;
     });
   };
@@ -48,17 +51,17 @@ export default function ProfileCalendar({ onMonthChange }: Props) {
     try {
       const events = await fetchEventsForDate(dateStr);
       setModalEvents(events);
-      setModal({ open: true, dateStr });
     } catch (e) {
-      console.error("모달 일정 불러오기 실패:", e);
+      console.warn("모달 일정 불러오기 실패:", e);
       setModalEvents([]);
+    } finally {
       setModal({ open: true, dateStr });
     }
   };
 
   const closeModal = () => {
     setModal({ open: false, dateStr: "" });
-    refetch();
+    try { refetch(); } catch {}
   };
 
   return (
@@ -77,13 +80,17 @@ export default function ProfileCalendar({ onMonthChange }: Props) {
         selectable={false}
         editable={true}
         dayMaxEventRows={2}
+        displayEventTime={false}
         datesSet={(arg) => onMonthChange?.(arg.view.currentStart)}
         events={async (_info, success, failure) => {
           try {
-            const list = await fetchCalendar();
-            success(list.map(mapToEventInput));
+            const list = await fetchCalendar(); // 배열 보장
+            const safe = list.map(mapToEventInput).filter((ev: any) => !ev.__invalid);
+            success(safe as any);
           } catch (e) {
-            failure(e as any);
+            console.error("FullCalendar events load error:", e);
+            success([]); // 실패해도 빈배열 반환해서 UI는 유지
+            // failure(e as any);  // 선택: FullCalendar error 콜백
           }
         }}
         dateClick={(arg) => setSelected(arg.dateStr)}
@@ -110,8 +117,8 @@ export default function ProfileCalendar({ onMonthChange }: Props) {
           try {
             await ensureCsrf();
             await updateCalendarEvent(String(info.event.id), {
-              start: info.event.start?.toISOString(),
-              end: info.event.end?.toISOString(),
+              start: info.event.start?.toISOString() ?? null,
+              end: info.event.end?.toISOString() ?? null,
             });
             refetch();
           } catch (error) {
@@ -123,8 +130,8 @@ export default function ProfileCalendar({ onMonthChange }: Props) {
           try {
             await ensureCsrf();
             await updateCalendarEvent(String(info.event.id), {
-              start: info.event.start?.toISOString(),
-              end: info.event.end?.toISOString(),
+              start: info.event.start?.toISOString() ?? null,
+              end: info.event.end?.toISOString() ?? null,
             });
             refetch();
           } catch (error) {
@@ -146,15 +153,25 @@ export default function ProfileCalendar({ onMonthChange }: Props) {
               <CreateForm
                 dateStr={modal.dateStr}
                 onCreated={async ({ title, startIso, endIso }) => {
+                  // 1) 생성만 따로 처리 (실패 시에만 알림)
                   try {
                     await ensureCsrf();
                     await addCalendarEvent({ title, start: startIso, end: endIso });
-                    // --- 최신값 다시 조회
+                  } catch (error: any) {
+                    console.error("일정 추가 실패:", error?.response || error);
+                    alert("일정 추가에 실패했습니다.");
+                    return;
+                  } finally {
+                    // 생성 성공/실패와 무관하게 캘린더 리패치 시도
+                    try { refetch(); } catch {}
+                  }
+
+                  // 2) 모달 내 목록 갱신(실패해도 알림 X)
+                  try {
                     const updated = await fetchEventsForDate(modal.dateStr);
                     setModalEvents(updated);
-                    refetch();
-                  } catch (error) {
-                    alert("일정 추가 중 오류 발생");
+                  } catch (e) {
+                    console.warn("일정은 추가되었으나 목록 갱신 실패:", e);
                   }
                 }}
               />
@@ -201,7 +218,7 @@ function CreateForm({
   onCreated,
 }: {
   dateStr: string;
-  onCreated: (payload: { title: string; startIso: string; endIso: string; allDay: boolean }) => Promise<void>;
+  onCreated: (payload: { title: string; startIso: string; endIso: string }) => Promise<void>;
 }) {
   const [title, setTitle] = useState("");
   const [allDay, setAllDay] = useState(false);
@@ -220,25 +237,25 @@ function CreateForm({
     setTitle("");
   }, [dateStr]);
 
+  const toIso = (ymd: string, hm: string) => {
+    const [y, m, d] = ymd.split("-").map(Number);
+    const [hh, mm] = hm.split(":").map(Number);
+    return new Date(y, m - 1, d, hh, mm, 0, 0).toISOString();
+  };
+
   const handleSubmit = async () => {
     if (!title.trim() || busy) return;
-    if (endDate < startDate) { alert("종료 날짜가 시작보다 빠를 수 없음"); return; }
+    if (endDate < startDate) { alert("종료 날짜가 시작보다 빠를 수 없습니다."); return; }
     if (!allDay && startDate === endDate && endHM <= startHM) {
-      alert("종료 시간이 시작보다 빨라야 함"); return;
+      alert("종료 시간이 시작보다 빨라야 합니다."); return;
     }
 
-    const toIso = (ymd: string, hm: string) => {
-      const [y, m, d] = ymd.split("-").map(Number);
-      const [hh, mm] = hm.split(":").map(Number);
-      return new Date(y, m - 1, d, hh, mm).toISOString();
-    };
-
     const startIso = allDay ? toIso(startDate, "00:00") : toIso(startDate, startHM);
-    const endIso = allDay ? toIso(addDaysYMD(endDate, 1), "00:00") : toIso(endDate, endHM);
+    const endIso   = allDay ? toIso(addDaysYMD(endDate, 1), "00:00") : toIso(endDate, endHM);
 
     setBusy(true);
     try {
-      await onCreated({ title: title.trim(), startIso, endIso, allDay });
+      await onCreated({ title: title.trim(), startIso, endIso });
       setTitle("");
     } finally { setBusy(false); }
   };
@@ -268,7 +285,9 @@ function CreateForm({
         </label>
       </div>
 
-      <button className="cal-btn cal-primary" onClick={handleSubmit} disabled={busy || !title.trim()}>추가</button>
+      <button className="cal-btn cal-primary" onClick={handleSubmit} disabled={busy || !title.trim()}>
+        추가
+      </button>
     </div>
   );
 }
@@ -286,7 +305,9 @@ function EventList({
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingTitle, setEditingTitle] = useState("");
 
-  if (items.length === 0) return <div className="cal-empty">이 날짜에 일정이 없습니다.</div>;
+  if (!Array.isArray(items) || items.length === 0) {
+    return <div className="cal-empty">이 날짜에 일정이 없습니다.</div>;
+  }
 
   return (
     <ul className="cal-list">
@@ -301,7 +322,7 @@ function EventList({
                 onKeyDown={async (e) => {
                   if (e.key === "Enter") {
                     await onRename(ev.id, editingTitle);
-                    setEditingId(null); // ✅ 엔터로 저장했을 때도 상태 초기화
+                    setEditingId(null);
                   }
                 }}
                 autoFocus
@@ -311,7 +332,7 @@ function EventList({
                   className="cal-btn cal-primary"
                   onClick={async () => {
                     await onRename(ev.id, editingTitle);
-                    setEditingId(null); // ✅ 수정 완료 후 상태 초기화
+                    setEditingId(null);
                   }}
                 >
                   완료

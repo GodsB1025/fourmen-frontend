@@ -1,8 +1,6 @@
 import axios from 'axios';
 import type { AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
 import { useAuthStore } from '../stores/authStore';
-import type { ApiError } from '../types/error';
-import Cookies from 'js-cookie';
 
 const baseURL = import.meta.env.VITE_API_BASE_URL as string;
 
@@ -10,24 +8,30 @@ const api = axios.create({
   baseURL,
   withCredentials: true,
   timeout: 5000,
+  xsrfCookieName: 'XSRF-TOKEN',
+  xsrfHeaderName: 'X-XSRF-TOKEN',
 });
 
-let isRefreshing = false;
-let pendingQueue: Array<(ok: boolean) => void> = [];
-const enqueue = (cb: (ok: boolean) => void) => pendingQueue.push(cb);
-const flushQueue = (ok: boolean) => { pendingQueue.forEach(cb => cb(ok)); pendingQueue = []; };
-
-// --- ✨ CSRF 초기화 (서버에 맞게 한 번 호출해서 쿠키 세팅) ---
-export async function initCsrf() {
-  try {
-    // 서버 구현에 맞춰 경로 선택: 우선순위대로 시도
-    await api.get('/auth/csrf');
-  } catch {
-    try { await api.get('/csrf'); } catch { /* noop */ }
-  }
+function getCookie(name: string) {
+  if (typeof document === 'undefined') return '';
+  const m = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
+  return m ? decodeURIComponent(m[1]) : '';
 }
 
-// 요청 인터셉터
+/** XSRF 준비: /csrf → 실패 시 /calendar GET으로 프리워밍 */
+export async function initCsrf() {
+  const has =
+    getCookie('XSRF-TOKEN') || getCookie('CSRF-TOKEN') || getCookie('csrf_token');
+  if (has) return;
+
+  try { await api.get('/csrf'); return; } catch (e: any) {
+    const s = e?.response?.status;
+    if (s && s !== 403 && s !== 404) return;
+  }
+  try { await api.get('/calendar', { params: { _prewarm: Date.now() } }); } catch {}
+}
+
+/* 요청 인터셉터 */
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const method = (config.method || 'get').toLowerCase();
@@ -36,70 +40,70 @@ api.interceptors.request.use(
     if (hasBody && !config.headers['Content-Type']) {
       config.headers['Content-Type'] = 'application/json';
     }
-    if (!config.headers['Accept']) {
-      config.headers['Accept'] = 'application/json';
-    }
+    if (!config.headers['Accept']) config.headers['Accept'] = 'application/json';
 
-    // 쿠키에서 XSRF-TOKEN 값을 읽어와 헤더로 전달
-    const csrfToken = Cookies.get('XSRF-TOKEN');
-    if (csrfToken) {
-      config.headers['X-XSRF-TOKEN'] = csrfToken;
+    const csrf =
+      getCookie('XSRF-TOKEN') || getCookie('CSRF-TOKEN') || getCookie('csrf_token');
+    if (csrf) {
+      (config.headers as any)['X-XSRF-TOKEN'] = csrf;
+      (config.headers as any)['X-CSRF-TOKEN'] = csrf;
     }
-
     return config;
   },
   (error: AxiosError) => Promise.reject(error)
 );
 
-// 응답 인터셉터
+/* 401/403 처리 */
+let isRefreshing = false;
+let queue: Array<(ok: boolean) => void> = [];
+const enqueue = (cb: (ok: boolean) => void) => queue.push(cb);
+const flush = (ok: boolean) => { queue.forEach(f => f(ok)); queue = []; };
+
 api.interceptors.response.use(
   (res) => res,
   async (error: AxiosError) => {
-    const status = error.response?.status;
+    if (!error.response) return Promise.reject(new Error('네트워크 오류 또는 서버에 연결할 수 없습니다.'));
+    const status = error.response.status;
     const original = error.config as (AxiosRequestConfig & { _retry?: boolean }) | undefined;
-
-    if (!error.response) {
-      return Promise.reject(new Error('네트워크 오류 또는 서버에 연결할 수 없습니다.'));
-    }
-
     const urlPath = (original?.url || '').toLowerCase();
+    const method = (original?.method || 'get').toLowerCase();
+    const isUnsafe = ['post', 'put', 'patch', 'delete'].includes(method);
     const isRefreshCall = urlPath.includes('/auth/refresh');
 
     if (status === 401 && original && !original._retry && !isRefreshCall) {
       original._retry = true;
-
       if (isRefreshing) {
-        return new Promise((resolve, reject) => {
-          enqueue((ok) => (ok ? resolve(api(original)) : reject(error)));
-        });
+        return new Promise((resolve, reject) => enqueue((ok) => (ok ? resolve(api(original)) : reject(error))));
       }
-
       isRefreshing = true;
       try {
         await api.post('/auth/refresh');
-        isRefreshing = false;
-        flushQueue(true);
+        isRefreshing = false; flush(true);
         return api(original);
-      } catch (refreshErr) {
-        isRefreshing = false;
-        flushQueue(false);
+      } catch (e) {
+        isRefreshing = false; flush(false);
         useAuthStore.getState().logout();
-        return Promise.reject(refreshErr);
+        return Promise.reject(e);
       }
     }
 
-    if (status === 403) {
-      return Promise.reject(error);
+    if (status === 403 && original && !original._retry && isUnsafe && !isRefreshCall) {
+      original._retry = true;
+      try { await initCsrf(); return api(original); } catch {}
     }
 
-    const data = error.response.data as ApiError;
-    let serverMsg: string | undefined;
-    if (data) {
-      if (typeof data === 'string') serverMsg = data;
-      else if (typeof (data as any).message === 'string') serverMsg = (data as any).message;
-      else if (typeof (data as any).error === 'string') serverMsg = (data as any).error;
-    }
-    return Promise.reject(new Error(serverMsg || `요청 실패 (${status})`));
+    if (status === 403) return Promise.reject(error);
+
+    const data = error.response.data as any;
+    const msg =
+      typeof data === 'string'
+        ? data
+        : typeof data?.message === 'string'
+        ? data.message
+        : typeof data?.error === 'string'
+        ? data.error
+        : `요청 실패 (${status})`;
+    return Promise.reject(new Error(msg));
   }
 );
 

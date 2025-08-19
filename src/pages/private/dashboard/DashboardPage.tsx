@@ -1,11 +1,13 @@
 import React from 'react'
-import { Outlet, NavLink } from 'react-router-dom'
+import { Outlet, NavLink, Navigate, useLocation } from 'react-router-dom'
 import "./Dashboard.css"
 import { PATH } from '../../../types/paths'
 
 type Props = {}
 
 const DashboardPage = (props: Props) => {
+  const loc = useLocation();
+
   return (
     <div className="dash-wrap">
       <header className="dash-header">
@@ -24,8 +26,13 @@ const DashboardPage = (props: Props) => {
           </nav>
         </div>
       </header>
+    
 
       <main className="dash-body">
+        {/* /dashboard로 진입했을 때 자동으로 /dashboard/profile로 이동 */}
+        {loc.pathname === PATH.DASHBOARD && (
+          <Navigate to={PATH.PROFILE} replace />
+        )}
         <Outlet />
       </main>
     </div>
