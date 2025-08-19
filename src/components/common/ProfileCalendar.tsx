@@ -11,6 +11,7 @@ import {
   deleteCalendarEvent,
 } from "../../apis/Calendar";
 import { initCsrf } from "../../apis/Client";
+import { broadcastCalendarUpdated } from "../../utils/calendarBus";
 import "./ProfileCalendar.css";
 
 type Props = { onMonthChange?: (date: Date) => void };
@@ -22,6 +23,13 @@ const addDaysYMD = (ymd: string, n: number) => {
   const dt = new Date(y, m - 1, d + n);
   return `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())}`;
 };
+
+// 클릭한 이벤트 바가 놓인 날짜 셀을 찾아 YYYY-MM-DD 추출
+function getClickedDateStrFromEventEl(el: HTMLElement, fallbackISO: string) {
+  const cell = el.closest<HTMLElement>('td[data-date], .fc-daygrid-day');
+  const fromCell = cell?.getAttribute('data-date');
+  return fromCell ?? (fallbackISO || "").slice(0, 10);
+}
 
 export default function ProfileCalendar({ onMonthChange }: Props) {
   const [selected, setSelected] = useState<string | null>(null);
@@ -55,6 +63,7 @@ export default function ProfileCalendar({ onMonthChange }: Props) {
       console.warn("모달 일정 불러오기 실패:", e);
       setModalEvents([]);
     } finally {
+      setSelected(dateStr);
       setModal({ open: true, dateStr });
     }
   };
@@ -82,15 +91,14 @@ export default function ProfileCalendar({ onMonthChange }: Props) {
         dayMaxEventRows={2}
         displayEventTime={false}
         datesSet={(arg) => onMonthChange?.(arg.view.currentStart)}
-        events={async (_info, success, failure) => {
+        events={async (_info, success, _failure) => {
           try {
             const list = await fetchCalendar(); // 배열 보장
             const safe = list.map(mapToEventInput).filter((ev: any) => !ev.__invalid);
             success(safe as any);
           } catch (e) {
             console.error("FullCalendar events load error:", e);
-            success([]); // 실패해도 빈배열 반환해서 UI는 유지
-            // failure(e as any);  // 선택: FullCalendar error 콜백
+            success([]); // 실패해도 빈배열 반환
           }
         }}
         dateClick={(arg) => setSelected(arg.dateStr)}
@@ -113,6 +121,14 @@ export default function ProfileCalendar({ onMonthChange }: Props) {
           };
           frame.appendChild(btn);
         }}
+        // 이벤트 바 클릭 → 해당 날짜 모달 열기
+        eventClick={(info) => {
+          info.jsEvent?.preventDefault();
+          info.jsEvent?.stopPropagation();
+          const dateStr = getClickedDateStrFromEventEl(info.el as HTMLElement, info.event.startStr);
+          openModalFor(dateStr);
+        }}
+        // 🔁 드래그로 날짜/시간 이동
         eventDrop={async (info) => {
           try {
             await ensureCsrf();
@@ -121,11 +137,13 @@ export default function ProfileCalendar({ onMonthChange }: Props) {
               end: info.event.end?.toISOString() ?? null,
             });
             refetch();
+            broadcastCalendarUpdated(); // ✅ 메모 알림 즉시 갱신(같은 탭 + 다른 탭)
           } catch (error) {
             alert("일정 이동 중 오류 발생");
             info.revert();
           }
         }}
+        // ↔ 길이 변경(리사이즈)
         eventResize={async (info) => {
           try {
             await ensureCsrf();
@@ -134,6 +152,7 @@ export default function ProfileCalendar({ onMonthChange }: Props) {
               end: info.event.end?.toISOString() ?? null,
             });
             refetch();
+            broadcastCalendarUpdated(); // ✅
           } catch (error) {
             alert("일정 기간 변경 중 오류 발생");
             info.revert();
@@ -153,7 +172,6 @@ export default function ProfileCalendar({ onMonthChange }: Props) {
               <CreateForm
                 dateStr={modal.dateStr}
                 onCreated={async ({ title, startIso, endIso }) => {
-                  // 1) 생성만 따로 처리 (실패 시에만 알림)
                   try {
                     await ensureCsrf();
                     await addCalendarEvent({ title, start: startIso, end: endIso });
@@ -162,14 +180,13 @@ export default function ProfileCalendar({ onMonthChange }: Props) {
                     alert("일정 추가에 실패했습니다.");
                     return;
                   } finally {
-                    // 생성 성공/실패와 무관하게 캘린더 리패치 시도
                     try { refetch(); } catch {}
                   }
-
-                  // 2) 모달 내 목록 갱신(실패해도 알림 X)
+                  // 모달 내 목록 갱신
                   try {
                     const updated = await fetchEventsForDate(modal.dateStr);
                     setModalEvents(updated);
+                    broadcastCalendarUpdated(); // ✅
                   } catch (e) {
                     console.warn("일정은 추가되었으나 목록 갱신 실패:", e);
                   }
@@ -185,6 +202,7 @@ export default function ProfileCalendar({ onMonthChange }: Props) {
                     const updated = await fetchEventsForDate(modal.dateStr);
                     setModalEvents(updated);
                     refetch();
+                    broadcastCalendarUpdated(); // ✅
                   } catch {
                     alert("이름 변경 중 오류 발생");
                   }
@@ -196,6 +214,7 @@ export default function ProfileCalendar({ onMonthChange }: Props) {
                     const updated = await fetchEventsForDate(modal.dateStr);
                     setModalEvents(updated);
                     refetch();
+                    broadcastCalendarUpdated(); // ✅
                   } catch {
                     alert("삭제 중 오류 발생");
                   }

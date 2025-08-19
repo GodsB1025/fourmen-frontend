@@ -37,7 +37,7 @@ const ProfilePage = (props: Props) => {
 
         <div className="summary-right">
           {/* 🔔 메모칸 일정 알림 (오늘/내일/며칠 후) */}
-          <MemoAlerts daysWindow={14} maxLines={4} />
+          <MemoAlerts daysWindow={3} maxLines={4} />
         </div>
       </section>
 

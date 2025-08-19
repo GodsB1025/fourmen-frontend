@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Calendar from "react-calendar";
 import DatePicker from "react-datepicker";
 import { format } from "date-fns";
@@ -39,6 +39,15 @@ export default function DocumentsPage() {
       .finally(() => setLoading(false));
   }, [startDate, endDate]);
 
+  // meetingsWithDocs → (회의 배열) 평탄화(+원본 날짜 포함)
+  const flatMeetings = useMemo(
+    () =>
+      (docs?.meetingsWithDocs ?? []).flatMap((g) =>
+        (g.meetings ?? []).map((m) => ({ ...m, _groupDate: g.date }))
+      ),
+    [docs]
+  );
+
   // 검색 → 첫 매칭 날짜로 이동 (기간 모드 해제)
   const handleSearch = () => {
     if (!docs || !query.trim()) return;
@@ -76,6 +85,8 @@ export default function DocumentsPage() {
     }
   };
 
+  const isRangeMode = Boolean(range[0] && range[1]);
+
   return (
     <div className="docs-grid">
       {/* 왼쪽: 미니 달력 + 검색 + 기간 선택 */}
@@ -85,16 +96,15 @@ export default function DocumentsPage() {
             value={selected}
             onChange={(d) => {
               setSelected(d as Date);
-              // 달력에서 클릭 시 기간 모드 해제
-              if (range[0] || range[1]) setRange([null, null]);
+              if (range[0] || range[1]) setRange([null, null]); // 달력 클릭 시 기간 모드 해제
             }}
             prev2Label={null}
             next2Label={null}
             showNeighboringMonth={false}
             calendarType="gregory"
             locale="ko-KR"
-            formatShortWeekday={() => ""} // 요일 텍스트 제거
-            formatDay={(_, date) => format(date, "d")} // 날짜 숫자만
+            formatShortWeekday={() => ""}                  // 요일 텍스트 제거
+            formatDay={(_, date) => format(date, "d")}     // 날짜 숫자만
           />
         </div>
 
@@ -124,99 +134,80 @@ export default function DocumentsPage() {
         </div>
       </div>
 
-      {/* 오른쪽: 리스트 */}
+      {/* 오른쪽: 넓은 카드 안에 — 날짜 헤더 → 회의 섹션들(제목+불릿) → 계약서 섹션(제목 라인) */}
       <div className="right-col">
         <h2 className="list-title">
-          {range[0] && range[1]
-            ? `${format(range[0], "yyyy년 M월 d일")} ~ ${format(
-                range[1],
-                "yyyy년 M월 d일"
-              )}`
+          {isRangeMode
+            ? `${format(range[0]!, "yyyy년 M월 d일")} ~ ${format(range[1]!, "yyyy년 M월 d일")}`
             : format(selected, "yyyy년 M월 d일")}
         </h2>
 
         {loading ? (
           <>
-            <div className="skeleton" />
-            <div className="skeleton" />
+            <div className="skeleton" /><div className="skeleton" />
           </>
-        ) : !docs ||
-          ((docs.meetingsWithDocs?.length ?? 0) === 0 &&
-            (docs.standaloneContracts?.length ?? 0) === 0) ? (
+        ) : !docs || (flatMeetings.length === 0 && (docs.standaloneContracts?.length ?? 0) === 0) ? (
           <div className="empty">
             표시할 회의록이 없습니다.
-            <div className="empty-sub">
-              검색어를 바꾸거나 다른 날짜/기간을 선택해 주세요.
-            </div>
+            <div className="empty-sub">검색어를 바꾸거나 다른 날짜/기간을 선택해 주세요.</div>
           </div>
         ) : (
           <>
-            {/* ✅ 회의록 섹션 (단일 날짜: '회의록' 대신 회의 제목을 헤더로) */}
-          {(docs.meetingsWithDocs?.length ?? 0) > 0 && (() => {
-            const isRangeMode = Boolean(range[0] && range[1]);
-            // 날짜 그룹을 평탄화해서 회의 목록만 뽑음
-            const meetings = (docs.meetingsWithDocs ?? []).flatMap(g => g.meetings ?? []);
-            const first = meetings[0];
-
-            return (
-              <section className="group">
-                {isRangeMode ? (
-                  <h2 className="group-title">회의록</h2>
-                ) : (
-                  // 단일 날짜 모드: '회의록' 대신 첫 회의 제목을 상단 헤드라인으로
-                  first ? <h2 className="meeting-headline">{first.meetingTitle}</h2> : null
-                )}
-
-                {meetings.map((m, idx) => {
-                  const contracts = (m.minutes ?? []).flatMap(min => min.contracts ?? []);
-
-                  // 단일 날짜 모드 + 첫 회의: 위 헤드라인 바로 아래에 계약서 목록만 노출
-                  if (!isRangeMode && idx === 0) {
-                    return (
-                      <div key={m.meetingId} className="headline-block">
-                        {contracts.length > 0 ? (
-                          <ul className="files headline-files">
-                            {contracts.map(c => <li key={c.contractId}>{c.title}</li>)}
-                          </ul>
-                        ) : (
-                          <div className="no-files headline-files">계약서 없음</div>
-                        )}
-                      </div>
-                    );
-                  }
-
-                  // 나머지 회의(또는 기간 모드): 카드 형태로 제목 + 계약서
+            {/* ✅ 회의 섹션: 탭 없이 ‘제목이 위로’ 올라오는 형태로 스택 */}
+            {flatMeetings.length > 0 && (
+              <section className="meeting-section-stack">
+                {flatMeetings.map((m, idx) => {
+                  const contracts = (m.minutes ?? []).flatMap((min: any) => min.contracts ?? []);
                   return (
-                    <div key={m.meetingId} className="meeting-item">
-                      <div className="meeting-title">{m.meetingTitle}</div>
+                    <article key={m.meetingId ?? `mt-${idx}`} className="meeting-section">
+                      {/* 회의 제목 (회의록 자리를 대체) */}
+                      <h3 className="meeting-title-line">
+                        {m.meetingTitle}
+                        {isRangeMode && m._groupDate && (
+                          <span className="title-chip">
+                            {format(new Date(m._groupDate), "yyyy-MM-dd")}
+                          </span>
+                        )}
+                      </h3>
+
+                      {/* 관련 계약서 - 불릿 */}
                       {contracts.length > 0 ? (
-                        <ul className="files">
-                          {contracts.map(c => <li key={c.contractId}>{c.title}</li>)}
+                        <ul className="bullet-list">
+                          {contracts.map((c: any) => (
+                            <li key={c.contractId}>{c.title}</li>
+                          ))}
                         </ul>
                       ) : (
-                        <div className="no-files">계약서 없음</div>
+                        <div className="no-files-inline">계약서 없음</div>
                       )}
-                    </div>
+                    </article>
                   );
                 })}
               </section>
-            );
-          })()}
+            )}
 
-            {/* ✅ 계약서 섹션 */}
-            {(docs.standaloneContracts?.length ?? 0) > 0 && (
-              <section className="group">
+            {/* ✅ 계약서 섹션도 회의 섹션과 동일한 룩앤필 (제목이 위, 칩 메타, 스택) */}
+            {(docs?.standaloneContracts?.length ?? 0) > 0 && (
+              <section className="group group-contracts">
                 <h2 className="group-title">계약서</h2>
-                {(docs.standaloneContracts ?? []).map((c) => (
-                  <article key={c.contractId} className="note-card">
-                    <div className="title">{c.title}</div>
-                    {c.createdAt && (
-                      <div className="meta-sub">
-                        생성일: {format(new Date(c.createdAt), "yyyy-MM-dd")}
-                      </div>
-                    )}
-                  </article>
-                ))}
+
+                <div className="meeting-section-stack contracts-stack">
+                  {(docs!.standaloneContracts!).map((c, idx) => (
+                    <article key={c.contractId ?? `ct-${idx}`} className="meeting-section contract-section">
+                      <h3 className="meeting-title-line">
+                        {c.title}
+                        {c.createdAt && (
+                          <span className="title-chip">
+                            {format(new Date(c.createdAt), "yyyy-MM-dd")}
+                          </span>
+                        )}
+                      </h3>
+
+                      {/* 필요시 추가 메타를 여기로 (예: 회사/담당자 등) */}
+                      {/* {c.companyName && <div className="contract-sub">{c.companyName}</div>} */}
+                    </article>
+                  ))}
+                </div>
               </section>
             )}
           </>
