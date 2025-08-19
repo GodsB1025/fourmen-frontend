@@ -73,8 +73,20 @@ export default function ProfileCalendar({ onMonthChange }: Props) {
     try { refetch(); } catch {}
   };
 
+  // 커스텀 네비게이션
+  const gotoPrev = () => calRef.current?.getApi().prev();
+  const gotoNext = () => calRef.current?.getApi().next();
+  const gotoToday = () => calRef.current?.getApi().today();
+
   return (
     <div className="profile-cal">
+      {/* 네비게이션 바 */}
+      <div className="cal-toolbar" aria-label="calendar navigation">
+        <button className="cal-nav-btn" onClick={gotoPrev} aria-label="이전달">◀ 이전달</button>
+        <button className="cal-nav-btn" onClick={gotoToday} aria-label="오늘로 이동">오늘</button>
+        <button className="cal-nav-btn" onClick={gotoNext} aria-label="다음달">다음달 ▶</button>
+      </div>
+
       <FullCalendar
         timeZone="local"
         ref={calRef as any}
@@ -90,7 +102,10 @@ export default function ProfileCalendar({ onMonthChange }: Props) {
         editable={true}
         dayMaxEventRows={2}
         displayEventTime={false}
-        datesSet={(arg) => onMonthChange?.(arg.view.currentStart)}
+        datesSet={(arg) => {
+          setSelected(null);
+          onMonthChange?.(arg.view.currentStart);
+        }}
         events={async (_info, success, _failure) => {
           try {
             const list = await fetchCalendar(); // 배열 보장
@@ -98,7 +113,7 @@ export default function ProfileCalendar({ onMonthChange }: Props) {
             success(safe as any);
           } catch (e) {
             console.error("FullCalendar events load error:", e);
-            success([]); // 실패해도 빈배열 반환
+            success([]);
           }
         }}
         dateClick={(arg) => setSelected(arg.dateStr)}
@@ -128,7 +143,7 @@ export default function ProfileCalendar({ onMonthChange }: Props) {
           const dateStr = getClickedDateStrFromEventEl(info.el as HTMLElement, info.event.startStr);
           openModalFor(dateStr);
         }}
-        // 🔁 드래그로 날짜/시간 이동
+        // 드래그로 날짜/시간 이동
         eventDrop={async (info) => {
           try {
             await ensureCsrf();
@@ -137,13 +152,13 @@ export default function ProfileCalendar({ onMonthChange }: Props) {
               end: info.event.end?.toISOString() ?? null,
             });
             refetch();
-            broadcastCalendarUpdated(); // ✅ 메모 알림 즉시 갱신(같은 탭 + 다른 탭)
+            broadcastCalendarUpdated();
           } catch (error) {
             alert("일정 이동 중 오류 발생");
             info.revert();
           }
         }}
-        // ↔ 길이 변경(리사이즈)
+        // 길이 변경(리사이즈)
         eventResize={async (info) => {
           try {
             await ensureCsrf();
@@ -152,7 +167,7 @@ export default function ProfileCalendar({ onMonthChange }: Props) {
               end: info.event.end?.toISOString() ?? null,
             });
             refetch();
-            broadcastCalendarUpdated(); // ✅
+            broadcastCalendarUpdated();
           } catch (error) {
             alert("일정 기간 변경 중 오류 발생");
             info.revert();
@@ -186,7 +201,7 @@ export default function ProfileCalendar({ onMonthChange }: Props) {
                   try {
                     const updated = await fetchEventsForDate(modal.dateStr);
                     setModalEvents(updated);
-                    broadcastCalendarUpdated(); // ✅
+                    broadcastCalendarUpdated();
                   } catch (e) {
                     console.warn("일정은 추가되었으나 목록 갱신 실패:", e);
                   }
@@ -195,16 +210,16 @@ export default function ProfileCalendar({ onMonthChange }: Props) {
               <EventList
                 key={modal.dateStr}
                 items={modalEvents}
-                onRename={async (id, newTitle) => {
+                onEdit={async (id, patch) => {
                   try {
                     await ensureCsrf();
-                    await updateCalendarEvent(String(id), { title: newTitle.trim() });
+                    await updateCalendarEvent(String(id), patch);
                     const updated = await fetchEventsForDate(modal.dateStr);
                     setModalEvents(updated);
                     refetch();
-                    broadcastCalendarUpdated(); // ✅
+                    broadcastCalendarUpdated();
                   } catch {
-                    alert("이름 변경 중 오류 발생");
+                    alert("일정 수정 중 오류 발생");
                   }
                 }}
                 onDelete={async (id) => {
@@ -214,7 +229,7 @@ export default function ProfileCalendar({ onMonthChange }: Props) {
                     const updated = await fetchEventsForDate(modal.dateStr);
                     setModalEvents(updated);
                     refetch();
-                    broadcastCalendarUpdated(); // ✅
+                    broadcastCalendarUpdated();
                   } catch {
                     alert("삭제 중 오류 발생");
                   }
@@ -311,18 +326,85 @@ function CreateForm({
   );
 }
 
-/* ===== 일정 목록 ===== */
+/* ===== 일정 목록 (제목 + 시간 수정 가능) ===== */
 function EventList({
   items,
-  onRename,
+  onEdit,
   onDelete,
 }: {
   items: any[];
-  onRename: (id: string, title: string) => Promise<void>;
+  onEdit: (id: string, patch: { title?: string; start?: string; end?: string }) => Promise<void>;
   onDelete: (id: string) => Promise<void>;
 }) {
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [editingTitle, setEditingTitle] = useState("");
+
+  // 편집 필드
+  const [title, setTitle] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [startHM, setStartHM] = useState("09:00");
+  const [endDate, setEndDate] = useState("");
+  const [endHM, setEndHM] = useState("10:00");
+  const [allDay, setAllDay] = useState(false);
+
+  // 유틸
+  const toIso = (ymd: string, hm: string) => {
+    const [y, m, d] = ymd.split("-").map(Number);
+    const [hh, mm] = hm.split(":").map(Number);
+    return new Date(y, m - 1, d, hh, mm, 0, 0).toISOString();
+  };
+  const toLocalPieces = (iso: string) => {
+    const d = new Date(iso);
+    const y = d.getFullYear();
+    const m = pad(d.getMonth() + 1);
+    const dd = pad(d.getDate());
+    const hh = pad(d.getHours());
+    const mi = pad(d.getMinutes());
+    return { date: `${y}-${m}-${dd}`, hm: `${hh}:${mi}` };
+  };
+  const detectAllDay = (startIso: string, endIso?: string) => {
+    const s = new Date(startIso);
+    const e = new Date(endIso ?? startIso);
+    return (
+      s.getHours() === 0 && s.getMinutes() === 0 &&
+      e.getHours() === 0 && e.getMinutes() === 0 &&
+      e.getTime() > s.getTime()
+    );
+  };
+
+  const beginEdit = (ev: any) => {
+    setEditingId(String(ev.id));
+    setTitle(ev.title || "");
+    const sp = toLocalPieces(ev.start);
+    const ep = toLocalPieces(ev.end ?? ev.start);
+    setStartDate(sp.date); setStartHM(sp.hm);
+    setEndDate(ep.date); setEndHM(ep.hm);
+    setAllDay(detectAllDay(ev.start, ev.end));
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+  };
+
+  const saveEdit = async (ev: any) => {
+    if (!title.trim()) return;
+
+    if (endDate < startDate) { alert("종료 날짜가 시작보다 빠를 수 없습니다."); return; }
+    if (!allDay && startDate === endDate && endHM <= startHM) {
+      alert("종료 시간이 시작보다 빨라야 합니다."); return;
+    }
+
+    const nextStartIso = allDay ? toIso(startDate, "00:00") : toIso(startDate, startHM);
+    const nextEndIso   = allDay ? toIso(addDaysYMD(endDate, 1), "00:00") : toIso(endDate, endHM);
+
+    const patch: { title?: string; start?: string; end?: string } = {};
+    if (title.trim() !== ev.title) patch.title = title.trim();
+    if (nextStartIso !== ev.start) patch.start = nextStartIso;
+    if ((ev.end ?? ev.start) !== nextEndIso) patch.end = nextEndIso;
+
+    if (Object.keys(patch).length === 0) { setEditingId(null); return; }
+    await onEdit(String(ev.id), patch);
+    setEditingId(null);
+  };
 
   if (!Array.isArray(items) || items.length === 0) {
     return <div className="cal-empty">이 날짜에 일정이 없습니다.</div>;
@@ -330,58 +412,57 @@ function EventList({
 
   return (
     <ul className="cal-list">
-      {items.map((ev) => (
-        <li key={ev.id} className="cal-list-item">
-          {editingId === String(ev.id) ? (
-            <>
-              <input
-                className="cal-title-input"
-                value={editingTitle}
-                onChange={(e) => setEditingTitle(e.target.value)}
-                onKeyDown={async (e) => {
-                  if (e.key === "Enter") {
-                    await onRename(ev.id, editingTitle);
-                    setEditingId(null);
-                  }
-                }}
-                autoFocus
-              />
-              <div className="cal-actions">
-                <button
-                  className="cal-btn cal-primary"
-                  onClick={async () => {
-                    await onRename(ev.id, editingTitle);
-                    setEditingId(null);
-                  }}
-                >
-                  완료
-                </button>
-                <button className="cal-btn" onClick={() => setEditingId(null)}>
-                  취소
-                </button>
-              </div>
-            </>
-          ) : (
-            <>
-              <span className="cal-title">{ev.title || "(제목 없음)"}</span>
-              <div className="cal-actions">
-                <button
-                  className="cal-btn"
-                  onClick={() => {
-                    setEditingId(ev.id);
-                    setEditingTitle(ev.title);
-                  }}
-                >
-                  수정
-                </button>
-                <button className="cal-btn cal-danger" onClick={() => onDelete(ev.id)}>
-                  삭제
-                </button>
-              </div>
-            </>
-          )}
-        </li>
-      ))}
+      {items.map((ev) => {
+        const isEdit = editingId === String(ev.id);
+        return (
+          <li key={ev.id} className="cal-list-item">
+            {isEdit ? (
+              <>
+                <div className="cal-edit-grid">
+                  <div className="cal-edit-row">
+                    <label>제목</label>
+                    <input
+                      className="cal-title-input"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="cal-edit-row">
+                    <label>시작</label>
+                    <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+                    <input type="time" value={startHM} onChange={(e) => setStartHM(e.target.value)} disabled={allDay} />
+                  </div>
+
+                  <div className="cal-edit-row">
+                    <label>종료</label>
+                    <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+                    <input type="time" value={endHM} onChange={(e) => setEndHM(e.target.value)} disabled={allDay} />
+                  </div>
+
+                  <label className="cal-edit-row" style={{ alignItems: "center", gap: 8 }}>
+                    <input type="checkbox" checked={allDay} onChange={(e) => setAllDay(e.target.checked)} />
+                    종일
+                  </label>
+                </div>
+
+                <div className="cal-actions">
+                  <button className="cal-btn cal-primary" onClick={() => saveEdit(ev)}>저장</button>
+                  <button className="cal-btn" onClick={cancelEdit}>취소</button>
+                </div>
+              </>
+            ) : (
+              <>
+                <span className="cal-title">{ev.title || "(제목 없음)"}</span>
+                <div className="cal-actions">
+                  <button className="cal-btn" onClick={() => beginEdit(ev)}>수정</button>
+                  <button className="cal-btn cal-danger" onClick={() => onDelete(ev.id)}>삭제</button>
+                </div>
+              </>
+            )}
+          </li>
+        );
+      })}
     </ul>
   );
 }
