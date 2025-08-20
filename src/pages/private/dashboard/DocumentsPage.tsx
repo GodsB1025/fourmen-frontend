@@ -9,12 +9,23 @@ import "./DocumentsPage.css";
 // 경로는 프로젝트 구조에 맞게 조정하세요.
 import { fetchDocuments, type DocumentResponse } from "../../../apis/Documents";
 
+const startOfToday = () => {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  return d;
+};
+const daysAgo = (n: number) => {
+  const d = startOfToday();
+  d.setDate(d.getDate() - n);
+  return d;
+};
+
 export default function DocumentsPage() {
   // 달력 단일 선택
   const [selected, setSelected] = useState<Date>(new Date());
 
   // 기간 선택 (DatePicker range)
-  const [range, setRange] = useState<[Date | null, Date | null]>([null, null]);
+  const [range, setRange] = useState<[Date | null, Date | null]>([daysAgo(7),startOfToday(),]);
 
   // 검색어
   const [query, setQuery] = useState("");
