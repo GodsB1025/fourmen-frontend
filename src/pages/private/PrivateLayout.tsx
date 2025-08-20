@@ -20,6 +20,8 @@ const PrivateLayout = () => {
                 return '새 회의 생성';
             case 'join':
                 return '회의 참가';
+            case 'contractForm':
+                return '전자 계약서 작성'; // 계약서 모달 제목 추가
             default:
                 return '';
         }
@@ -33,7 +35,12 @@ const PrivateLayout = () => {
             case 'join':
                 return <JoinMeetingContent />;
             case 'contractForm':
-                return  modalData?.templateId ? <ContractContent templateId={modalData.templateId} /> : null;
+                return modalData?.templateId && modalData?.eformsignTemplateId ? (
+                    <ContractContent
+                        templateId={modalData.templateId}
+                        eformsignTemplateId={modalData.eformsignTemplateId}
+                    />
+                ) : null;
             default:
                 return null;
         }

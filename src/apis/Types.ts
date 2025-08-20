@@ -51,7 +51,7 @@ export interface MeetingURLResponse {
 
 export interface Company {
   id: number;
-  name: string;
+  name?: string;
 }
 
 export type UserRole = 'USER' | 'ADMIN';
@@ -69,7 +69,8 @@ export interface User {
   name: string;
   email: string;
   role: 'USER' | 'ADMIN' | 'CONTRACT_ADMIN';
-  company: number | null;
+  company: Company | null;
+  phone?: string;
 }
 
 // 로그인 api 연동을 위한 타입 정의

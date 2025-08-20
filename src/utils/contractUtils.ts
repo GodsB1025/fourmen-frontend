@@ -54,7 +54,7 @@ export function createContractPayload(options: CreatePayloadOptions): ContractRe
     const recipient: Recipient = {
         step_type: "01", // 고정값
         use_mail: true,  // 고정값
-        use_sms: true,   // 고정값
+        use_sms: false,   // 고정값
         member: {
             name: recipientInfo.name,
             id: recipientInfo.email,

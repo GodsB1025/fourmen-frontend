@@ -6,6 +6,7 @@ type ModalType = 'create' | 'join' | 'contractForm';
 // 모달에 전달할 데이터 타입을 확장 가능하게 정의
 interface ModalData {
     templateId?: string;
+    eformsignTemplateId?: string; // eformsignTemplateId 추가
 }
 
 // 스토어의 상태와 액션에 대한 타입 정의

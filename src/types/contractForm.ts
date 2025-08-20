@@ -1,6 +1,13 @@
 export interface ContractData_201 {
-    name: string,
-    amount: string
+    "근로자": string,
+    "시작년": string,
+    "시작월": string,
+    "시작일": string,
+    "끝년": string,
+    "끝월": string,
+    "끝일": string,
+    "업무내용": string,
+    "월급": string,
 }
 
 export interface ContractData_202 {
