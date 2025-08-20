@@ -107,3 +107,8 @@
   font-weight: 600; cursor: pointer;
 }
 .day-add-btn:hover { background: #f3f4f6; }
+.profile-cal .fc .fc-more-popover {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}

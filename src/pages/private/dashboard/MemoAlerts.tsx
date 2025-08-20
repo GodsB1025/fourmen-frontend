@@ -28,7 +28,7 @@ function minutesUntil(d: Date, now = new Date()) {
 export default function MemoAlerts({
   daysWindow = 14,
   maxLines = 4,
-  refreshMs = 60000,
+  refreshMs = 0,
   notifyMinutes = 0,
 }: Props) {
   const [lines, setLines] = useState<string[]>([]);
