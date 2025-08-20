@@ -1,63 +1,137 @@
-import React from 'react';
-import './ContractContent.css'; // 스타일을 위한 CSS 파일을 import 합니다.
-import Contract_202 from '../contract/forms/contract_202';
+import React, { useEffect, useState, Suspense } from 'react';
+import './ContractContent.css';
+import type { AllContractData } from '../../types/contractForm';
+import { contractFormComponents, initialContractData } from '../../utils/contractRegistry';
+import { createContractPayload, type RecipientInfo, type UserInfo } from '../../utils/contractUtils';
+import { sendContract } from '../../apis/Contract';
+import { useAuthStore } from '../../stores/authStore';
+import { getUser } from '../../apis/User';
+import TextInput from '../common/TextInput';
 
-const submitContract = async () => {
-    // 계약서를 전달할 로직
+interface ContractContentProps {
+    templateId: string;
+    eformsignTemplateId: string; // prop 추가
 }
 
-const ContractContent: React.FC = () => {
+const ContractContent: React.FC<ContractContentProps> = ({ templateId, eformsignTemplateId }) => { // prop 받기
+    const [step, setStep] = useState<number>(0)
+    const [data, setData] = useState<AllContractData>(initialContractData[templateId]);
+    const [recipientData, setRecipientData] = useState({ name: "", email: "", phoneNumber: "" })
+    const [busy, setBusy] = useState<boolean>(false);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        setData(initialContractData[templateId]);
+    }, [templateId]);
+
+    const handleDataChange = (updatedFields: Partial<AllContractData>) => {
+        setData(prevData => ({
+            ...prevData,
+            ...updatedFields,
+        }));
+    };
+
+    const submitContract = async () => {
+        setBusy(true)
+        setError(null)
+        try {
+            const user = await getUser()
+            const recipientInfo: RecipientInfo = recipientData;
+            const userInfo: UserInfo = { name: user!.name, email: user!.email, phoneNumber: user!.phone! };
+            const documentTitle = `${recipientInfo.name}님의 전자 계약서 (템플릿 ID: ${templateId})`;
+
+            const payload = createContractPayload({
+                formData: data,
+                recipientInfo,
+                userInfo,
+                documentTitle,
+            });
+            console.log("API에 전송할 최종 데이터:", JSON.stringify(payload, null, 2));
+            await sendContract(payload, eformsignTemplateId); // 전달받은 eformsignTemplateId 사용
+            alert("계약서가 성공적으로 발송되었습니다.");
+        } catch (error) {
+            console.error("계약서 발송 실패:", error);
+            setError("계약서 발송에 실패했습니다.");
+        } finally {
+            setBusy(false)
+        }
+    }
+
+    const FormComponent = contractFormComponents[templateId];
+
     return (
         <div className="contract-container">
-            {/* 왼쪽 폼 섹션 */}
             <div className="form-section">
-                <h2>계약서 내용</h2>
-                <div>
-                    <Contract_202 />
-                </div>
-                <div>
-                    <button
-                    onClick={submitContract}
-                    > 전송 </button>
-                </div>
+                { step === 0 ? (
+                        <h2>계약서 내용</h2>
+                    ) : (
+                        <h2>수신자 정보</h2>
+                )}
+
+                {FormComponent ? (
+                    <div>
+                        { step === 0 && (
+                            <div>
+                                <Suspense fallback={<div>Loading...</div>}>
+                                    <FormComponent data={data} onChange={handleDataChange} />
+                                </Suspense>
+                                <div>
+                                    <button onClick={() => setStep(1)}>
+                                        다음으로
+                                    </button>
+                                </div>
+                            </div>
+                        ) }
+                        { step === 1 && (
+                            <div>
+                                <div className='form-group'>
+                                    <label>이름</label>
+                                    <TextInput
+                                    type='text'
+                                    value={recipientData.name}
+                                    onChange={e=>setRecipientData({...recipientData, name : e.target.value})}
+                                    />
+                                </div>
+                                <div className='form-group'>
+                                    <label>이메일</label>
+                                    <TextInput
+                                    type='text'
+                                    value={recipientData.email}
+                                    onChange={e=>setRecipientData({...recipientData, email : e.target.value})}
+                                    />
+                                </div>
+                                <div className='form-group'>
+                                    <label>전화번호</label>
+                                    <TextInput
+                                    type='text'
+                                    value={recipientData.phoneNumber}
+                                    onChange={e=>setRecipientData({...recipientData, phoneNumber : e.target.value})}
+                                    />
+                                </div>
+                                <div>
+                                    <button onClick={() => setStep(0)}>
+                                        이전으로
+                                    </button>
+                                    <button onClick={submitContract} disabled={busy}>
+                                        {busy ? "전송 중..." : "전송"}
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                ) : (
+                    <div>유효하지 않은 계약서 템플릿입니다. (ID: {templateId})</div>
+                )}
+
+                {error && <p className='error-text'>{error}</p>}
             </div>
 
-            {/* 오른쪽 회의록 섹션 */}
             <div className="content-section">
                 <h2>회의록_제목1</h2>
                 <div className="content-body">
-                    <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-                        Suspendisse quis ipsum placerat, sollicitudin eu, cursus arcu. 
-                        Suspendisse pulvinar consectetuer vitae rhoncus. Praesent ante metus, 
-                        efficitur at magna vitae, elementum ac velit. Donec justo elit, 
-                        varius molestie at, venenatis non eros. Phasellus dignissim auctor porta. 
-                        Proin commodo eget ligula in fermentum. Quisque elementum vestibulum condimentum.
-                    </p>
-                    <p>
-                        Interdum et malesuada fames ac ante ipsum primis in faucibus. 
-                        Suspendisse vitae enim a diam pulvinar dapibus. Sed posuere dictum turpis, 
-                        feugiat efficitur leo viverra ut. Mauris suscipit scelerisque lectus, 
-                        at molestie feugiat sem congue ut. Pellentesque curabitur tellus in justo lobortis iaculis.
-                    </p>
-                    <p>
-                        Mauris sodales, metus et pharetra condimentum, nisl nisi scelerisque ante, 
-                        eget vestibulum eros justo et justo. Curabitur nec feugiat lorem. 
-                        Aliquam accumsan turpis nibh, vel mattis lacus tempus eu. 
-                        Suspendisse sed ullamcorper augue, vitae pretium mauris.
-                    </p>
-                    <p>
-                        Pellentesque nec turpis sodales, fringilla turpis sed, ultrices ex. 
-                        Suspendisse id augue quis nibh pulvinar cursus. Duis pharetra commodo urna, 
-                        in mollis orci iaculis in. Vestibulum pharetra tincidunt ligula. 
-                        Fusce tristique convallis nisl, id finibus enim dignissim non. 
-                        Nulla a blandit ante. Fusce cursus, purus non bibendum congue, dui velit dignissim risus, 
-                        ut consectetur ex massa quis ex. Nunc ac dolor pharetra, bibendum eros sagittis, 
-                        vulputate orci. Donec gravida.
-                    </p>
+                    {/* ... 회의록 내용 ... */}
                 </div>
             </div>
-            {/* 참고: 이미지의 빨간색 X 버튼은 일반적으로 부모 Modal 컴포넌트에서 관리합니다. */}
         </div>
     );
 };

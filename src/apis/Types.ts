@@ -51,7 +51,7 @@ export interface MeetingURLResponse {
 
 export interface Company {
   id: number;
-  name: string;
+  name?: string;
 }
 
 export type UserRole = 'USER' | 'ADMIN';
@@ -69,7 +69,8 @@ export interface User {
   name: string;
   email: string;
   role: 'USER' | 'ADMIN' | 'CONTRACT_ADMIN';
-  company: number | null;
+  company: Company | null;
+  phone?: string;
 }
 
 // 로그인 api 연동을 위한 타입 정의
@@ -99,4 +100,76 @@ export interface Contract {
   eformsignTemplateId: string,
   previewImageUrl: string,
   dataSchema: unknown,
+}
+
+// API 페이로드 전체 구조
+export interface ContractRequest {
+    document: DocumentPayload;
+}
+
+// document 객체의 전체 구조
+export interface DocumentPayload {
+  document_name: string;
+  comment: string;
+  recipients: Recipient[];
+  fields: Field[];
+  select_group_name: string;      // 고정값 : "" 
+  notification: NotificationRecipient[];
+}
+
+// notification 객체의 전체 구조 (알림을 받을 사람)
+export interface NotificationRecipient {
+  name: string;
+  email: string;
+  sms: SmsInfo;
+  auth: NotificationAuth;
+}
+
+// notification 객체에서 알림을 보내는 사람(수신자) 인증 정보
+export interface NotificationAuth {
+  password: string;
+  password_hint: string;
+  mobile_verification: boolean;
+  valid: AuthValid;
+}
+
+// 폼 데이터 형식
+export interface Field {
+    id: string;
+    value: string;
+}
+
+// 서명할 수신자의 정보
+export interface Recipient {
+  step_type: string;  // 고정값 : "01"
+  use_mail: boolean;  // 고정값 : true
+  use_sms: boolean;   // 고정값 : true
+  member: MemberInfo;
+  auth: RecipientAuth;
+}
+
+// 수신자의 인증 정보
+export interface RecipientAuth {
+  password: string;       // 예: 휴대폰 번호 뒤 4자리
+  password_hint: string;  // 예: "휴대폰번호 뒷자리를 입력해주세요."
+  valid: AuthValid;
+}
+
+// 수신자의 멤버 정보
+export interface MemberInfo {
+  name: string;
+  id: string; // 이메일 주소
+  sms: SmsInfo;
+}
+
+// 인증 유효 기간 정보
+export interface AuthValid {
+  day: number;  // 고정값 : 7
+  hour: number; // 고정값 : 0
+}
+
+// 국가 코드 및 전화번호 정보
+export interface SmsInfo {
+  country_code: string; // 예: "+82"
+  phone_number: string;
 }

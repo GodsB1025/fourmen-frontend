@@ -162,7 +162,7 @@ export default function SignupWizard() {
                     phone: f.phone.trim(),
                     adminCode: f.type === "ADMIN" ? f.adminKey.trim() : "",
                   };
-                console.log(payload);
+                  console.log(payload);
                 
                   await signup(payload);
                   alert("회원가입이 완료되었습니다. 로그인 페이지로 이동합니다.");

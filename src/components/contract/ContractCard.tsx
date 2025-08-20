@@ -15,7 +15,6 @@ const ContractCard = ({
     return (
         <div
         className='contract-card-container'
-        key={contract.templateId}
         onClick={()=>handleClick()}
         >
             <img 

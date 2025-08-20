@@ -1,32 +1,28 @@
 import React, { useState } from 'react'
 import TextInput from '../../common/TextInput'
+import type { ContractData_202, ContractFormProps } from '../../../types/contractForm';
 
-type Props = {}
-
-const Contract_202 = (props: Props) => {
-    const [item, setItem] = useState<string>("")
-    const [quantity, setQuantity] = useState<string>("")
-
+const Contract_202: React.FC<ContractFormProps<ContractData_202>> = ({ data, onChange }) => {
     return (
         <form>
             <div className="form-group">
                 <label>물품</label>
                 <TextInput
                 type='text'
-                value={item}
-                onChange={(e)=>setItem(e.target.value)}
+                value={data.item}
+                onChange={(e)=>onChange({ item: e.target.value })} // 변경된 부분만 포함하는 객체를 전달
                 />
             </div>
             <div className="form-group">
                 <label>양</label>
                 <TextInput
                 type='text'
-                value={item}
-                onChange={(e)=>setQuantity(e.target.value)}
+                value={data.quantity}
+                onChange={(e)=>onChange({ quantity: e.target.value })} // 변경된 부분만 포함하는 객체를 전달
                 />
             </div>
         </form>
-    )
-}
+    );
+};
 
 export default Contract_202

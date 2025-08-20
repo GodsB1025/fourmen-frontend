@@ -9,7 +9,7 @@ import { useModalStore } from '../../stores/modalStore';
 import ContractContent from '../../components/modal/ContractContent';
 
 const PrivateLayout = () => {
-    const { activeModal, openModal, closeModal } = useModalStore();
+    const { activeModal, modalData, openModal, closeModal } = useModalStore();
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -20,6 +20,8 @@ const PrivateLayout = () => {
                 return '새 회의 생성';
             case 'join':
                 return '회의 참가';
+            case 'contractForm':
+                return '전자 계약서 작성'; // 계약서 모달 제목 추가
             default:
                 return '';
         }
@@ -33,7 +35,12 @@ const PrivateLayout = () => {
             case 'join':
                 return <JoinMeetingContent />;
             case 'contractForm':
-                return <ContractContent />;
+                return modalData?.templateId && modalData?.eformsignTemplateId ? (
+                    <ContractContent
+                        templateId={modalData.templateId}
+                        eformsignTemplateId={modalData.eformsignTemplateId}
+                    />
+                ) : null;
             default:
                 return null;
         }
@@ -53,7 +60,7 @@ const PrivateLayout = () => {
 
             <Modal
                 isOpen={ activeModal !== null }
-                onClose={ () => closeModal() }
+                onClose={ closeModal }
                 title={ getModalTitle() }
             >
                 { renderModalContent() }

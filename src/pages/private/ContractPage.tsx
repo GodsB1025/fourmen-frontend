@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { getContractTemplate } from '../../apis/Contract'
 import type { Contract } from '../../apis/Types';
-import SkeletonCard from '../../components/contract/SkeletonCard'; // 1. 스켈레톤 컴포넌트 import
+import SkeletonCard from '../../components/contract/SkeletonCard';
 import ContractCard from '../../components/contract/ContractCard';
 import { useModalStore } from '../../stores/modalStore';
 
@@ -9,15 +9,14 @@ const ContractPage = () => {
     const openModal = useModalStore((state)=>state.openModal)
 
     const [contracts, setContracts] = useState<Contract[]>([]);
-    const [busy, setBusy] = useState<boolean>(false); // 초기 로딩을 위해 true로 변경
+    const [busy, setBusy] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
 
     const loadContracts = async () => {
-        // 이미 busy 상태가 아니면 다시 호출하지 않도록 처리
-        if (busy) return; 
+        if (busy) return;
 
-        setBusy(true) 
-        setError(null)      
+        setBusy(true)
+        setError(null)
         try {
             const data : Contract[] = await getContractTemplate();
             setContracts(data);
@@ -29,9 +28,13 @@ const ContractPage = () => {
         }
     }
 
-    const openContract = () => {
-        console.log("contract 실행")
-        openModal('contractForm')
+    const openContract = (contract: Contract) => {
+        console.log("contract 실행, ID:", contract.templateId, "eformsign ID:", contract.eformsignTemplateId);
+        // 모달을 열 때 타입과 함께 templateId와 eformsignTemplateId를 데이터로 전달합니다.
+        openModal('contractForm', {
+            templateId: String(contract.templateId),
+            eformsignTemplateId: contract.eformsignTemplateId,
+        });
     }
 
     useEffect(() => {
@@ -43,18 +46,16 @@ const ContractPage = () => {
             <h1>전자 계약</h1>
             {error && <p style={{ color: 'red' }}>{error}</p>}
             <div style={{ marginTop: '20px', display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
-                {/* busy 상태일 때 스켈레톤 UI 렌더링 */}
                 {busy ? (
-                    // 로딩 중일 때 보여줄 스켈레톤 카드의 개수 length로 정하기 (예: 3개)
                     Array.from({ length: 3 }).map((_, index) => (
                         <SkeletonCard key={index} />
                     ))
                 ) : (
-                    // 로딩이 끝나면 실제 데이터 렌더링
                     contracts.map((contract) => (
-                        <ContractCard 
+                        <ContractCard
+                            key={contract.templateId}
                             contract={contract}
-                            handleClick={openContract}
+                            handleClick={() => openContract(contract)}
                         />
                     ))
                 )}
