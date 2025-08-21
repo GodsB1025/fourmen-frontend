@@ -1,9 +1,9 @@
 /* --- 전체 페이지 레이아웃 --- */
 .docs-page-layout {
     display: grid;
-    grid-template-columns: 280px 1fr; /* 사이드바 고정 너비, 나머지는 콘텐츠 */
+    grid-template-columns: 280px 1fr;
     gap: 2rem;
-    height: 100%;
+    /* height: 100%; 삭제 -> 콘텐츠 길이에 따라 자연스럽게 늘어남 */
     background-color: #f8fafc;
 }
 
@@ -13,26 +13,31 @@
     border-right: 1px solid #e5e7eb;
     padding: 1.5rem;
     position: sticky;
-    top: 0;
-    height: 100vh;
+    top: 0; /* 스크롤 시 상단에 고정 */
+    /* 뷰포트 높이에서 부모의 패딩값을 뺀 만큼으로 높이 설정 */
+    height: calc(100vh - 4rem);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
 }
 
 .sidebar-title {
     font-size: 1.25rem;
     font-weight: 700;
-    margin-bottom: 1.5rem;
+    margin-bottom: 0;
     color: #111827;
 }
 
-.datepicker-container {
+.filter-group {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
 }
 
-.datepicker-container label {
+.filter-group label {
     font-weight: 500;
     color: #4b5563;
+    font-size: 0.9rem;
 }
 
 .datepicker-input {
@@ -44,10 +49,83 @@
     cursor: pointer;
 }
 
+/* --- 달력 스타일 --- */
+.calendar-container {
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 8px;
+}
+
+.react-calendar {
+    width: 100%;
+    border: none;
+    font-family: inherit;
+}
+.react-calendar__navigation button {
+    min-width: 30px;
+    font-size: 1rem;
+}
+.react-calendar__navigation__label {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+.react-calendar__month-view__weekdays__weekday {
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #6b7280;
+    text-decoration: none;
+    padding-bottom: 0.5em;
+}
+.react-calendar__tile {
+    border-radius: 8px;
+    height: 34px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 2px;
+}
+.react-calendar__tile--now {
+    background-color: #f0f9ff;
+    color: #0284c7;
+}
+.react-calendar__tile:enabled:hover,
+.react-calendar__tile:enabled:focus,
+.react-calendar__tile--active {
+    background-color: #eef2ff;
+    color: #4338ca;
+}
+.meeting-dot {
+    height: 6px;
+    width: 6px;
+    background-color: #f43f5e;
+    border-radius: 50%;
+    margin-top: 2px;
+}
+
+/* --- 검색창 스타일 --- */
+.search-container {
+    width: 100%;
+}
+.search-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.search-input:focus {
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
 /* --- 오른쪽 메인 콘텐츠 --- */
 .docs-content {
-    padding: 2rem;
-    overflow-y: auto;
+    /* overflow-y: auto; 삭제 -> 이중 스크롤의 원인이므로 제거 */
+    padding: 0 1rem; /* 좌우 여백만 조절 */
 }
 
 .docs-section {
@@ -136,7 +214,6 @@
     gap: 0.5rem;
 }
 
-/* 하위 아이템 들여쓰기 효과 */
 .accordion-content .accordion-sub-item {
     margin-left: 1.5rem;
 }
@@ -148,10 +225,14 @@
     background-color: #f9fafb;
 }
 .accordion-header.sub-header:hover {
-    background-color: #f3f4f6;
+    background-color: #f0f3ff;
 }
 .accordion-header.sub-header svg {
     color: #9ca3af;
+}
+
+.accordion-content.contract-list {
+    margin-left: 1.5rem;
 }
 
 .document-leaf {
@@ -159,22 +240,32 @@
     align-items: center;
     gap: 0.75rem;
     padding: 0.75rem 1rem;
-    margin-left: 3rem; /* 계약서 단계에서 더 들여쓰기 */
     font-size: 0.9rem;
     color: #374151;
     background-color: #f9fafb;
     border-radius: 8px;
 }
+.document-leaf.clickable {
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+.document-leaf.clickable:hover {
+    background-color: #eef2ff;
+    color: #4338ca;
+}
 
 .document-leaf svg {
     color: #a5b4fc;
+    flex-shrink: 0;
+}
+.document-leaf.clickable:hover svg {
+    color: #6366f1;
 }
 
 .no-sub-item {
     font-size: 0.85rem;
     color: #9ca3af;
     padding: 0.75rem 1rem;
-    margin-left: 3rem;
     text-align: center;
 }
 
@@ -186,7 +277,6 @@
 }
 
 .document-leaf.standalone {
-    margin-left: 0;
     background-color: #ffffff;
     border: 1px solid #e5e7eb;
     border-radius: 12px;
@@ -220,10 +310,143 @@
     border: 1px solid #e5e7eb;
 }
 
+/* --- 회의록 상세 보기 모달 --- */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 16px;
+    width: 700px;
+    max-width: 90%;
+    max-height: 80vh;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+.modal-header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+}
+.modal-close-btn {
+    background: none;
+    border: none;
+    font-size: 1.75rem;
+    cursor: pointer;
+    color: #9ca3af;
+}
+
+.modal-subheader {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1.5rem;
+    background-color: #f9fafb;
+}
+.badge {
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+}
+.badge.type-summary {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+.badge.type-auto {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+.badge.type-self {
+    background-color: #e5e7eb;
+    color: #374151;
+}
+.meta {
+    font-size: 0.8rem;
+    color: #6b7280;
+}
+
+.modal-body {
+    padding: 1.5rem 2rem;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+/* react-markdown 스타일 */
+.markdown-body {
+    line-height: 1.7;
+    color: #374151;
+}
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3 {
+    font-weight: 700;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 0.5em;
+    margin-top: 1.5em;
+    margin-bottom: 1em;
+}
+.markdown-body h1 {
+    font-size: 1.8em;
+}
+.markdown-body h2 {
+    font-size: 1.5em;
+}
+.markdown-body h3 {
+    font-size: 1.2em;
+}
+.markdown-body p {
+    margin-bottom: 1em;
+}
+.markdown-body ul,
+.markdown-body ol {
+    padding-left: 2em;
+    margin-bottom: 1em;
+}
+.markdown-body li {
+    margin-bottom: 0.5em;
+}
+.markdown-body blockquote {
+    border-left: 4px solid #d1d5db;
+    padding-left: 1em;
+    margin-left: 0;
+    color: #6b7280;
+}
+.markdown-body code {
+    background-color: #f3f4f6;
+    padding: 0.2em 0.4em;
+    border-radius: 6px;
+    font-size: 85%;
+}
+.markdown-body pre {
+    background-color: #f3f4f6;
+    padding: 1em;
+    border-radius: 8px;
+    overflow-x: auto;
+}
+
 /* --- 반응형 --- */
 @media (max-width: 1024px) {
     .docs-page-layout {
-        grid-template-columns: 1fr; /* 화면이 좁아지면 세로로 배치 */
+        grid-template-columns: 1fr;
     }
     .docs-sidebar {
         position: static;

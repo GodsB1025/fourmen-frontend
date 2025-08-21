@@ -1,19 +1,22 @@
-/* src/components/modal/JoinMeetingContent.css */
 .join-meeting-container {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem; /* 요소 간 간격 */
-    /* min-width: 500px; <- 이 속성을 제거하여 부모 너비에 맞게 조정 */
+    gap: 1.5rem;
+    width: 550px;
+    padding: 1.5rem; /* ✅ 패딩 추가 */
+    box-sizing: border-box; /* ✅ 패딩이 너비에 포함되도록 설정 */
+    flex-grow: 1;
 }
 
-/* 추가된 부분: 스위치(탭)를 감싸는 영역을 중앙 정렬 */
 .switch-wrapper {
     display: flex;
     justify-content: center;
+    flex-shrink: 0;
 }
 
 .search-bar-container {
     width: 100%;
+    flex-shrink: 0;
 }
 
 .search-input {
@@ -28,5 +31,5 @@
 
 .search-input:focus {
     border-color: #4f46e5;
-    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
 }
