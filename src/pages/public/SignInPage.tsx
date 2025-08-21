@@ -40,7 +40,9 @@ const SignInPage = () => {
     };
 
     return (
-        <div className="signin-page">
+        <div
+        className="signin-page"
+        >
             <AssetPreloader /> {/* ✨ 여기에 Preloader 컴포넌트를 추가합니다 */}
             <Login email={email} password={password} setEmail={setEmail} setPassword={setPassword} handleSubmit={handleLogin} />
             {err && <div style={{ color: "#b91c1c", marginTop: 12 }}>{err}</div>}

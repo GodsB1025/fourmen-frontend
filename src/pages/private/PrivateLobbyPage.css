@@ -132,8 +132,22 @@
     cursor: pointer;
     aspect-ratio: 1 / 1;
     position: relative; /* z-index를 적용하기 위해 필요 */
-
     transition: all 0.2s ease;
+
+    backface-visibility: hidden;
+    transform: translateZ(0); /* 3D 변형을 사용한다고 알려 GPU 가속을 유도 */
+}
+.lobby-action-button:nth-child(1) {
+    transform-origin: right bottom; /* 1. 좌측 상단 버튼 */
+}
+.lobby-action-button:nth-child(2) {
+    transform-origin: left bottom; /* 2. 우측 상단 버튼 */
+}
+.lobby-action-button:nth-child(3) {
+    transform-origin: right top; /* 3. 좌측 하단 버튼 */
+}
+.lobby-action-button:nth-child(4) {
+    transform-origin: left top; /* 4. 우측 하단 버튼 */
 }
 
 .action-button__label {
@@ -141,7 +155,7 @@
 }
 
 .lobby-action-button:hover {
-    transform: scale(1.1);
+    transform: translateZ(0) scale(1.1);
     z-index: 10;
     /* border-color: #a5b4fc; */
 }

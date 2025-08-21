@@ -13,7 +13,6 @@ const PrivateLayout = () => {
     const { activeModal, modalData, openModal, closeModal } = useModalStore();
     const navigate = useNavigate();
     const location = useLocation();
-
     // 현재 경로가 화상회의실인지 확인
     const isVideoRoom = location.pathname.startsWith(PATH.VIDEO_ROOM.split("/:")[0]);
 
