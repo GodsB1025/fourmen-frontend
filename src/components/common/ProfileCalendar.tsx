@@ -139,7 +139,6 @@ export default function ProfileCalendar({ onMonthChange }: Props) {
         editable={true}
         dayMaxEventRows={2}
         displayEventTime={false}
-        /** ✅ NEW: 안정 옵션 */
         allDayMaintainDuration={true}
         forceEventDuration={true}
         nextDayThreshold={"00:00"}
