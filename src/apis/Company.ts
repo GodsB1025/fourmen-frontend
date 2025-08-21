@@ -1,21 +1,5 @@
 import api from "./Client";
-
-export type MemberRole = "ADMIN" | "USER" | "CONTRACT_ADMIN";
-export type MemberStatus = "ACTIVE" | "INVITED" | "SUSPENDED";
-
-export interface CompanyMember {
-  id: number;
-  name: string;
-  email: string;
-  role: MemberRole;
-  status?: MemberStatus;
-  joinedAt?: string;
-}
-
-export interface InviteMemberRequest {
-  email: string;
-  role: MemberRole;
-}
+import type { CompanyMember, InviteMemberRequest, MemberRole, MemberStatus } from "./Types";
 
 // 내부 유틸: 서버 → 프론트 모델 매핑
 function mapToCompanyMember(raw: any): CompanyMember {
