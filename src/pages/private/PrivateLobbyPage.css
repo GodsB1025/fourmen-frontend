@@ -1,11 +1,12 @@
 /* 기본 레이아웃 */
 .lobby-container {
     display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
     gap: 2rem;
     padding: 2rem;
     width: 100%;
     height: 100%;
-    background-color: #f8fafc;
 }
 
 /* 👇👇👇 로딩 및 컨텐츠 표시 관련 스타일 수정/추가 👇👇👇 */
@@ -26,21 +27,23 @@
 /* --- 이하 스타일은 대부분 유지되며, svg 스타일에 flex-shrink가 추가됩니다 --- */
 
 .main-content {
-    flex: 3;
-    background: #ffffff;
+    flex: 2;
     border-radius: 16px;
     padding: 1.5rem 2rem;
+    margin: 0px 3rem;
     border: 1px solid #e5e7eb;
     display: flex;
     flex-direction: column;
+    min-height: 50%;
+    box-shadow: inset 0 0 10rem #eeeeee ;
 }
 
 .side-panel {
-    flex: 1;
+    flex: 3;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     gap: 1.5rem;
-    min-width: 0;
 }
 
 .section-title {
@@ -107,40 +110,43 @@
 
 .action-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 0.2fr 0.2fr;
     gap: 1rem;
+
+    justify-content: center; /* 그리드 가운데 정렬 */
 }
 
-.action-button {
+.lobby-action-button {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
     padding: 1rem;
-    border: 1px solid #e5e7eb;
-    background-color: #ffffff;
-    border-radius: 12px;
+    border: none;
+    background-color: #4B52FF;
+    border-radius: 34px;
     font-size: 0.9rem;
     font-weight: 500;
-    color: #374151;
+    color: #fff;
     cursor: pointer;
-    transition: all 0.2s ease;
     aspect-ratio: 1 / 1;
+    position: relative; /* z-index를 적용하기 위해 필요 */
+
+    transition: all 0.2s ease;
 }
 
 .action-button__label {
     white-space: nowrap;
 }
 
-.action-button:hover {
-    transform: translateY(-4px);
-    border-color: #a5b4fc;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-    color: #4338ca;
+.lobby-action-button:hover {
+    transform: scale(1.1);
+    z-index: 10;
+    /* border-color: #a5b4fc; */
 }
 
-.action-button svg {
+.lobby-action-button svg {
     width: 28px;
     height: 28px;
     color: #6b7280;
@@ -148,7 +154,7 @@
     flex-shrink: 0; /* ✨ 아이콘이 찌그러지지 않도록 크기 고정 */
 }
 
-.action-button:hover svg {
+.lobby-action-button:hover svg {
     color: #4338ca;
 }
 
@@ -156,6 +162,7 @@
     background: #ffffff;
     border-radius: 16px;
     padding: 1.5rem;
+    margin-top: 1.5rem;
     border: 1px solid #e5e7eb;
     flex-grow: 1;
 }

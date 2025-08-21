@@ -114,7 +114,7 @@ export default function Sidebar({
           <button
             key={item.key}
             type="button"
-            className={`nav-item ${activeKey === item.key ? "is-active" : ""}`} //
+            className={`nav-item ${activeKey === item.key ? "is-active-sidebar" : ""}`} //
             onClick={() => {
               if (item.onClick) {
                 item.onClick(); // 커스텀  onClick이 있으면 그걸 실행
