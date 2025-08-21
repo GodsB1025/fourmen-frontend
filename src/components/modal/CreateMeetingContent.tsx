@@ -1,39 +1,40 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./CreateMeetingContent.css";
 import { useAuthStore } from "../../stores/authStore";
 import { createMeetingRoom } from "../../apis/Meeting";
-import type { CreateMeetingRequest } from "../../apis/Types";
+import type { CreateMeetingRequest, CompanyMember } from "../../apis/Types";
 import { useModalStore } from "../../stores/modalStore";
-import { fetchCompanyMembers, type CompanyMember } from "../../apis/Company";
+import { fetchCompanyMembers } from "../../apis/Company";
+import TextInput from "../common/TextInput";
+import InvitePanelDropdown from "./InvitePanelDropDown";
 
 // --- Helper Functions ---
 const getInitialDateTimeLocal = () => {
     const now = new Date();
     const timeZoneOffset = now.getTimezoneOffset() * 60000;
-    return new Date(now - timeZoneOffset).toISOString().slice(0, 16);
+    return new Date(now.getTime() - timeZoneOffset).toISOString().slice(0, 16);
 };
 
 // --- Main Component ---
 const CreateMeetingContent = () => {
     const { closeModal } = useModalStore();
     const user = useAuthStore((state) => state.user);
-
-    // --- State Management ---
-    const [isInviting, setIsInviting] = useState(false);
+    
+    const [isInvitePanelOpen, setInvitePanelOpen] = useState(false);
     const [meetingName, setMeetingName] = useState("");
     const [scheduledAt, setScheduledAt] = useState(getInitialDateTimeLocal());
     const [isAiSummaryOn, setAiSummaryOn] = useState(true);
     const [participantEmails, setParticipantEmails] = useState<string[]>([]);
-
     const [companyMembers, setCompanyMembers] = useState<CompanyMember[]>([]);
-    const [pendingInvites, setPendingInvites] = useState<Set<string>>(new Set());
-    const [searchQuery, setSearchQuery] = useState("");
+
     const [emailInput, setEmailInput] = useState("");
 
     const [error, setError] = useState<string | null>(null);
     const [busy, setBusy] = useState(false);
 
-    // --- Effects ---
+    // 드롭다운의 위치 기준이 될 요소에 대한 ref
+    const inviteSectionRef = useRef<HTMLDivElement>(null);
+
     useEffect(() => {
         if (user?.company) {
             fetchCompanyMembers()
@@ -42,51 +43,32 @@ const CreateMeetingContent = () => {
         }
     }, [user]);
 
-    // --- Memoized Values ---
-    const companyMembersToShow = useMemo(() => {
-        if (!isInviting) return [];
-        const lowercasedQuery = searchQuery.toLowerCase();
-
-        return companyMembers.filter(
-            (member) =>
-                member.email !== user?.email &&
-                !pendingInvites.has(member.email) &&
-                (member.name.toLowerCase().includes(lowercasedQuery) || member.email.toLowerCase().includes(lowercasedQuery))
-        );
-    }, [searchQuery, companyMembers, pendingInvites, isInviting, user]);
-
-    // --- Event Handlers ---
     const handleRemoveParticipant = (emailToRemove: string) => {
         setParticipantEmails((emails) => emails.filter((email) => email !== emailToRemove));
     };
 
-    const handleTogglePendingInvite = (email: string) => {
-        setPendingInvites((prev) => {
-            const newSelection = new Set(prev);
-            if (newSelection.has(email)) {
-                newSelection.delete(email);
-            } else {
-                newSelection.add(email);
-            }
-            return newSelection;
-        });
-    };
-
+    // 이메일을 직접 추가하는 핸들러
     const handleAddExternalEmail = () => {
-        if (emailInput && emailInput.includes("@")) {
-            handleTogglePendingInvite(emailInput);
-            setEmailInput("");
+        const newEmail = emailInput.trim();
+        if (newEmail && newEmail.includes("@") && !participantEmails.includes(newEmail)) {
+            setParticipantEmails(prev => [...prev, newEmail]);
+            setEmailInput(""); // 입력창 비우기
         }
     };
 
-    const handleOpenInvitePanel = () => {
-        setPendingInvites(new Set(participantEmails));
-        setIsInviting(true);
+    // 드롭다운에서 멤버 선택 핸들러
+    const handleSelectParticipant = (email: string) => {
+        if (!participantEmails.includes(email)) {
+            setParticipantEmails(prev => [...prev, email]);
+        }
+
+        // setInvitePanelOpen(false); // 바로 드롭 다운 닫는 건 보류
     };
 
-    const handleConfirmInvites = () => {
-        setParticipantEmails(Array.from(pendingInvites));
-        setIsInviting(false);
+    const handleConfirmInvites = (emails: Set<string>) => {
+        const combinedEmails = new Set([...participantEmails, ...Array.from(emails)]); //중복 제거 로직
+        setParticipantEmails(Array.from(combinedEmails));
+        setInvitePanelOpen(false);
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -116,139 +98,93 @@ const CreateMeetingContent = () => {
         }
     };
 
-    // --- Render Logic ---
     return (
-        <div className="create-meeting-container">
-            <div className={`panel-wrapper ${isInviting ? "show-invite-panel" : ""}`}>
-                {/* Panel 1: Main Form */}
-                <form className="panel main-form-panel" onSubmit={handleSubmit}>
-                    <div className="form-group">
-                        <label htmlFor="meeting-name">회의 이름</label>
-                        <input
-                            id="meeting-name"
-                            type="text"
-                            placeholder="예: 3분기 실적 리뷰"
-                            value={meetingName}
-                            onChange={(e) => setMeetingName(e.target.value)}
-                            className="form-input"
-                        />
-                    </div>
+        <>
+            <form className="panel main-form-panel" style={{ width: '100%' }} onSubmit={handleSubmit}>
+                <div className="form-group">
+                    <label htmlFor="meeting-name">회의 이름</label>
+                    <TextInput
+                        id="meeting-name"
+                        type="text"
+                        placeholder="예: 3분기 실적 리뷰"
+                        value={meetingName}
+                        onChange={(e) => setMeetingName(e.target.value)}
+                    />
+                </div>
 
-                    <div className="form-group">
-                        <label htmlFor="meeting-time">회의 시간</label>
-                        <input
-                            id="meeting-time"
-                            type="datetime-local"
-                            value={scheduledAt}
-                            onChange={(e) => setScheduledAt(e.target.value)}
-                            className="form-input"
-                        />
-                    </div>
+                <div className="form-group">
+                    <label htmlFor="meeting-time">회의 시간</label>
+                    <TextInput
+                        id="meeting-time"
+                        type="datetime-local"
+                        value={scheduledAt}
+                        onChange={(e) => setScheduledAt(e.target.value)}
+                    />
+                </div>
 
-                    <div className="form-group">
-                        <label>참여자</label>
-                        <div className="participant-controls">
-                            <button type="button" className="invite-btn" onClick={handleOpenInvitePanel}>
-                                초대하기
-                            </button>
-                        </div>
-                        <div className="participant-list">
-                            {user && <span className="participant-tag self">{user.name} (나)</span>}
-                            {participantEmails.map((email) => (
-                                <span key={email} className="participant-tag">
-                                    {email}
-                                    <button type="button" onClick={() => handleRemoveParticipant(email)}>
-                                        &times;
-                                    </button>
-                                </span>
-                            ))}
+                <div className="form-group" ref={inviteSectionRef}>
+                    <label>참여자</label>
+                    <div className="participant-controls">
+                        <div className="invite-add-email" style={{ flexGrow: 1 }}>
+                            <input 
+                                type="email" 
+                                placeholder="이메일로 직접 초대" 
+                                value={emailInput} 
+                                onChange={(e) => setEmailInput(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        e.preventDefault();
+                                        handleAddExternalEmail();
+                                    }
+                                }}
+                            />
+                            <button type="button" onClick={handleAddExternalEmail} disabled={!emailInput.includes("@")}>추가</button>
                         </div>
                     </div>
-
-                    <div className="form-footer">
-                        <div className="ai-toggle">
-                            <label htmlFor="ai-summary">AI 요약 사용</label>
-                            <label className="switch">
-                                <input id="ai-summary" type="checkbox" checked={isAiSummaryOn} onChange={() => setAiSummaryOn(!isAiSummaryOn)} />
-                                <span className="slider round"></span>
-                            </label>
-                        </div>
-                        <button type="submit" className="create-btn" disabled={busy}>
-                            {busy ? "생성 중..." : "회의 생성하기"}
-                        </button>
-                    </div>
-
-                    {error && <p className="form-error-msg">{error}</p>}
-                </form>
-
-                {/* Panel 2: Invite Panel */}
-                <div className="panel invite-panel">
-                    <div className="invite-header">
-                        <h3>참여자 초대</h3>
-                    </div>
-
-                    <div className="invite-add-email">
-                        <input
-                            type="email"
-                            placeholder="이메일 주소로 직접 초대"
-                            value={emailInput}
-                            onChange={(e) => setEmailInput(e.target.value)}
-                            onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleAddExternalEmail())}
-                        />
-                        <button type="button" onClick={handleAddExternalEmail} disabled={!emailInput.includes("@")}>
-                            추가
-                        </button>
-                    </div>
-
-                    {companyMembers.length > 0 && (
-                        <div className="company-member-section">
-                            <div className="invite-search">
-                                <input
-                                    type="text"
-                                    placeholder="팀원 이름 또는 이메일로 검색"
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                />
-                            </div>
-                            <ul className="member-list">
-                                {companyMembersToShow.map((member) => (
-                                    <li key={member.id} className="member-item" onClick={() => handleTogglePendingInvite(member.email)}>
-                                        <div className="member-info">
-                                            <span className="member-name">{member.name}</span>
-                                            <span className="member-email">{member.email}</span>
-                                        </div>
-                                        <span className="add-indicator">+</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    )}
-
-                    <div className="pending-invites-section">
-                        <h4>초대할 사람 ({pendingInvites.size}명)</h4>
-                        <div className="pending-list">
-                            {Array.from(pendingInvites).map((email) => (
-                                <span key={email} className="participant-tag">
-                                    {email}
-                                    <button type="button" onClick={() => handleTogglePendingInvite(email)}>
-                                        &times;
-                                    </button>
-                                </span>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div className="invite-footer">
-                        <button type="button" onClick={() => setIsInviting(false)} className="btn-secondary">
-                            취소
-                        </button>
-                        <button type="button" onClick={handleConfirmInvites} className="btn-primary">
-                            완료
+                    <div className="participant-list">
+                        {user && <span className="participant-tag self">{user.name} (나)</span>}
+                        {participantEmails.map((email) => (
+                            <span key={email} className="participant-tag">
+                                {email}
+                                <button type="button" onClick={() => handleRemoveParticipant(email)}>
+                                    &times;
+                                </button>
+                            </span>
+                        ))}
+                        <button type="button" className="invite-btn" onClick={() => setInvitePanelOpen(true)}>
+                            목록에서 선택
                         </button>
                     </div>
                 </div>
-            </div>
-        </div>
+
+                <div className="form-footer">
+                    <div className="ai-toggle">
+                        <label htmlFor="ai-summary">AI 요약 사용</label>
+                        <label className="switch">
+                            <input id="ai-summary" type="checkbox" checked={isAiSummaryOn} onChange={() => setAiSummaryOn(!isAiSummaryOn)} />
+                            <span className="slider round"></span>
+                        </label>
+                    </div>
+                    <button type="submit" className="create-btn" disabled={busy}>
+                        {busy ? "생성 중..." : "회의 생성하기"}
+                    </button>
+                </div>
+
+                {error && <p className="form-error-msg">{error}</p>}
+            </form>
+
+            <InvitePanelDropdown
+                isOpen={isInvitePanelOpen}
+                onClose={() => setInvitePanelOpen(false)}
+                onConfirm={handleConfirmInvites}
+                anchorRef={inviteSectionRef}
+                initialInvites={participantEmails}
+                companyMembers={companyMembers}
+                currentUserEmail={user?.email}
+                currentParticipants={participantEmails}
+                onSelectParticipant={handleSelectParticipant}
+            />
+        </>
     );
 };
 

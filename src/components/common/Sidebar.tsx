@@ -45,7 +45,7 @@ function IconContract() {
 }
 function IconPower() {
   return (
-    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" color="#F93737" >
       <path d="M12 2v10" stroke="currentColor" strokeWidth="1.6" />
       <path d="M5.3 6.8a8 8 0 1 0 13.4 0"
         fill="none" stroke="currentColor" strokeWidth="1.6" />
@@ -80,9 +80,9 @@ export default function Sidebar({
     () => [
       { key: PATH.COMMANDER, label: "HOME", icon: <IconHome /> },
       { key: PATH.DASHBOARD, label: "대시보드", icon: <IconCalendar /> },
+      { key: PATH.CONTRACT,  label: "전자 계약", icon: <IconContract /> },
       { key: "create", label: "회의 생성", icon: <IconVideo />, onClick: onOpenCreateModal },
       { key: "join", label: "회의 참가", icon: <IconVideo />, onClick: onOpenJoinModal },
-      { key: PATH.CONTRACT,  label: "전자 계약", icon: <IconContract /> },
     ],
     [onOpenCreateModal, onOpenJoinModal] //
   );
@@ -114,7 +114,7 @@ export default function Sidebar({
           <button
             key={item.key}
             type="button"
-            className={`nav-item ${activeKey === item.key ? "is-active-sidebar" : ""}`} //
+            className={`nav-item ${activeKey?.startsWith(item.key) ? "is-active-sidebar" : ""}`} //
             onClick={() => {
               if (item.onClick) {
                 item.onClick(); // 커스텀  onClick이 있으면 그걸 실행

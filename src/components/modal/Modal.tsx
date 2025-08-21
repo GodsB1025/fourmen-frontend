@@ -24,13 +24,13 @@ export default function Modal({
             {/* 실제 모달 컨텐츠, 이벤트 버블링 방지 */}
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                 <header className="modal-header">
-                <h2 className="modal-title">{title}</h2>
-                <button type="button" className="modal-close-btn" onClick={onClose} aria-label="닫기">
-                    &times;
-                </button>
+                    <h2 className="modal-title">{title}</h2>
+                    <button type="button" className="modal-close-btn" onClick={onClose} aria-label="닫기">
+                        &times;
+                    </button>
                 </header>
                 <main className="modal-body">
-                {children}
+                    {children}
                 </main>
             </div>
         </div>
