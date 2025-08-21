@@ -1,40 +1,56 @@
-// API 클라이언트 (응답이 result/message/data 래퍼로 감싸져 있음)
-
 import api from "../apis/Client";
 
-// 공통 래퍼
+// --- 타입 정의 ---
 type ApiEnvelope<T> = {
-  result: "SUCCESS" | "FAIL";
-  message?: string;
-  data: T;
+    result: "SUCCESS" | "FAIL";
+    message?: string;
+    data: T;
 };
 
-export type MeetingDoc = {
-  meetingId: number;
-  meetingTitle: string;
-  minutes: {
+export interface ContractInfo {
+    contractId: number;
+    title: string;
+    completedPdfUrl: string; // PDF URL 포함
+}
+
+export interface MinuteInfo {
     minuteId: number;
-    type: string; // "AUTO" | "MANUAL" 등
-    contracts: { contractId: number; title: string }[];
-  }[];
-};
+    type: "AUTO" | "SELF" | "SUMMARY";
+    contracts: ContractInfo[];
+}
 
-export type StandaloneContract = {
-  contractId: number;
-  title: string;
-  createdAt?: string; // 백엔드에서 없을 수도 있어 optional
-};
+export interface MeetingDoc {
+    meetingId: number;
+    meetingTitle: string;
+    minutes: MinuteInfo[];
+}
 
-export type DocumentResponse = {
-  // 백엔드가 키를 누락할 수도 있어 optional
-  meetingsWithDocs?: { date: string; meetings: MeetingDoc[] }[];
-  standaloneContracts?: StandaloneContract[];
-};
+export interface StandaloneContract {
+    contractId: number;
+    title: string;
+    createdAt?: string;
+    completedPdfUrl: string; // PDF URL 포함
+}
 
-export async function fetchDocuments(startDate: string, endDate: string) {
-  const res = await api.get<ApiEnvelope<DocumentResponse>>("/documents", {
-    params: { startDate, endDate },
-  });
-  // ✅ data 래퍼 해제
-  return res.data.data;
+export interface DocumentResponse {
+    meetingsWithDocs?: { date: string; meetings: MeetingDoc[] }[];
+    standaloneContracts?: StandaloneContract[];
+}
+
+// 회의록 상세 보기 응답 타입
+export interface MinuteDetail {
+    minuteId: number;
+    meetingTitle: string;
+    type: "AUTO" | "SELF" | "SUMMARY";
+    authorName: string;
+    createdAt: string;
+    content: string;
+}
+
+// --- API 호출 함수 ---
+export async function fetchDocuments(startDate: string, endDate: string): Promise<DocumentResponse> {
+    const res = await api.get<ApiEnvelope<DocumentResponse>>("/documents", {
+        params: { startDate, endDate },
+    });
+    return res.data.data;
 }

@@ -1,114 +1,312 @@
-/* 컨테이너/기본 폰트 */
-.profile-cal { padding: 8px 12px 16px; }
-.profile-cal .fc { font-family: inherit; font-size: 14px; }
+/* ALL/frontend/components/common/ProfileCalendar.css */
 
-/* 날짜 라벨을 좌측 정렬 */
-.profile-cal .fc .fc-daygrid-day-top {
-  display: flex !important;
-  align-items: center;
-  justify-content: flex-start !important;
-  gap: 6px;
-}
-.profile-cal .fc .fc-daygrid-day-number {
-  margin-left: 0 !important;
-  margin-right: auto !important;
+/* --- Calendar Wrapper & Font --- */
+.profile-cal {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
-/* 오늘 표시 */
-.profile-cal .fc-day-today { background: rgba(17,24,39,0.04); }
-
-/* 선택된 날짜 */
-.profile-cal .fc-daygrid-day.is-selected .fc-daygrid-day-number {
-  background: #111827; color: #fff;
-  width: 28px; height: 28px; line-height: 28px; text-align: center;
-  border-radius: 9999px; display: inline-block;
+/* --- Header Toolbar --- */
+.profile-cal .fc-header-toolbar {
+    margin: 0 0 1.5rem !important;
+    padding: 0 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+@media (min-width: 768px) {
+    .profile-cal .fc-header-toolbar {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+}
+.profile-cal .fc-toolbar-title {
+    font-size: 1.25rem !important;
+    font-weight: 600 !important;
+    color: #1f2937;
+}
+.profile-cal .fc-button,
+.profile-cal .fc-button-primary {
+    background-color: #ffffff !important;
+    border: 1px solid #d1d5db !important;
+    color: #374151 !important;
+    box-shadow: none !important;
+    transition: background-color 0.2s ease !important;
+    padding: 0.5rem 1rem !important;
+    font-size: 0.875rem !important;
+    text-transform: none !important;
+    font-weight: 500 !important;
+}
+.profile-cal .fc-button-primary:not(:disabled):hover,
+.profile-cal .fc-button:not(:disabled):hover {
+    background-color: #f9fafb !important;
+}
+.profile-cal .fc-button-primary:disabled {
+    opacity: 0.6;
+}
+.profile-cal .fc-button-group {
+    gap: -1px;
+}
+.profile-cal .fc-button-group > .fc-button {
+    border-radius: 0 !important;
+}
+.profile-cal .fc-button-group > .fc-button:first-child {
+    border-top-left-radius: 8px !important;
+    border-bottom-left-radius: 8px !important;
+}
+.profile-cal .fc-button-group > .fc-button:last-child {
+    border-top-right-radius: 8px !important;
+    border-bottom-right-radius: 8px !important;
+}
+.profile-cal .fc-today-button {
+    border-radius: 8px !important;
+}
+.profile-cal .fc-button-primary.fc-button-active {
+    background-color: #eef2ff !important;
+    border-color: #a5b4fc !important;
+    color: #3730a3 !important;
 }
 
-/* + 버튼: 우상단 절대배치 */
-.profile-cal .fc-daygrid-day-frame { position: relative; }
-.profile-cal .day-add-btn {
-  position: absolute !important;
-  top: 4px; right: 4px;
-  width: 22px; height: 22px; line-height: 20px;
-  border-radius: 9999px; border: 1px solid #e5e7eb; background: #fff;
-  font-weight: 700; padding: 0; cursor: pointer;
-  opacity: 0; transition: opacity .12s ease;
+/* --- Main Calendar View --- */
+.profile-cal .fc-view-harness {
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
 }
-.profile-cal .fc-daygrid-day:hover .day-add-btn { opacity: 1; }
-.profile-cal .day-add-btn:hover { background: #f3f4f6; }
+.profile-cal .fc-col-header-cell {
+    background-color: #f9fafb;
+    color: #6b7280;
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 0.75rem 0;
+    border-bottom-width: 1px !important;
+}
+.profile-cal .fc-daygrid-day {
+    border-color: #f3f4f6;
+}
+.profile-cal .fc-day-today {
+    background-color: #f0f9ff !important;
+}
+.profile-cal .fc-daygrid-day-frame {
+    position: relative;
+    min-height: 100px;
+    transition: background-color 0.3s;
+}
+.profile-cal .fc-daygrid-day-number {
+    padding: 0.5rem;
+    font-size: 0.875rem;
+    color: #374151;
+}
+.profile-cal .fc-day-other .fc-daygrid-day-number {
+    color: #9ca3af;
+}
 
-/* 이벤트 여백 */
-.profile-cal .fc-daygrid-event { margin-top: 2px; }
+/* --- ★★★ KEY CHANGE: Hover Effect & '+' Icon Logic (SVG Image Version) ★★★ --- */
 
-/* ===== 모달 ===== */
-.cal-modal { position: fixed; inset: 0; z-index: 50; }
-.cal-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.35); }
+/* 1. 일정이 없는 날짜 셀(.fc-day-no-events)에만 호버 효과를 적용합니다. */
+.profile-cal .fc-daygrid-day.fc-day-no-events:hover .fc-daygrid-day-frame {
+    background-color: #f9fafb; /* 은은한 회색 배경 */
+}
+
+/* 2. '+' 아이콘 역할을 할 가상 요소를 만들고, SVG 아이콘을 배경 이미지로 설정합니다. */
+.profile-cal .fc-day-no-events .fc-daygrid-day-frame::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* 정확한 중앙 정렬 */
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+
+    /* SVG 아이콘을 배경으로 설정 */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='12' y1='5' x2='12' y2='19'%3E%3C/line%3E%3Cline x1='5' y1='12' x2='19' y2='12'%3E%3C/line%3E%3C/svg%3E");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 16px 16px; /* 아이콘 크기 조절 */
+
+    opacity: 0; /* 기본적으로 숨김 */
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+/* 3. '.fc-day-no-events' 셀에 호버 시 '+' 아이콘을 보여줍니다. */
+.profile-cal .fc-day-no-events:hover .fc-daygrid-day-frame::after {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.1); /* 살짝 커지는 효과 */
+}
+
+/* --- Improved Event Block Style --- */
+.profile-cal .fc-daygrid-event {
+    background-color: #dbeafe;
+    border: 1px solid #bfdbfe;
+    color: #1e40af;
+    border-radius: 6px;
+    padding: 3px 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin: 2px 4px;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+.profile-cal .fc-daygrid-event:hover {
+    background-color: #bfdbfe;
+    border-color: #93c5fd;
+}
+.profile-cal .fc-event-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* --- More... link --- */
+.profile-cal .fc-daygrid-more-link {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #6b7280;
+    padding: 2px 4px;
+    cursor: pointer;
+}
+.profile-cal .fc-daygrid-more-link:hover {
+    text-decoration: underline;
+}
+
+/* --- Modal --- */
+.cal-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+}
+.cal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(4px);
+}
 .cal-dialog {
-  position: absolute;
-  left: 50%; top: 50%;
-  transform: translate(-50%, -50%);
-  width: 520px; max-width: calc(100% - 32px);
-  background: #fff; border-radius: 12px; overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0,0,0,.25);
-  display: flex; flex-direction: column;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 520px;
+    max-width: calc(100% - 32px);
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
 }
-.cal-dialog-head { padding: 14px 16px; border-bottom: 1px solid #eee; display:flex; justify-content:space-between; align-items:center; }
-.cal-dialog-title { font-weight: 600; }
-.cal-x { border: none; background: transparent; font-size: 22px; line-height: 1; cursor: pointer; }
-
+.cal-dialog-head {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.cal-dialog-title {
+    font-weight: 600;
+    font-size: 1.125rem;
+}
+.cal-x {
+    border: none;
+    background: transparent;
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+    color: #6b7280;
+}
 .cal-dialog-body {
-  padding: 16px 16px 0 !important;  
-  display: flow-root;               
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
 }
-.cal-dialog-foot { padding: 12px 16px; border-top: 1px solid #eee; display:flex; justify-content:flex-end; gap: 8px; }
-
-.cal-create { display: grid; gap: 8px; }
-.cal-create-row { display: grid; gap: 6px; }
-.cal-create-row input { border: 1px solid #e5e7eb; border-radius: 8px; padding: 8px 10px; outline: none; }
-.cal-create-row input:focus { border-color: #111827; }
-
-.cal-empty { color:#6b7280; font-size: 14px; }
-.cal-list { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 8px; }
-.cal-list-item { display:flex; justify-content: space-between; align-items:center; border:1px solid #eee; border-radius: 10px; padding: 8px 10px; }
-.cal-title { font-weight: 500; }
-.cal-actions { display:flex; gap: 6px; }
-.cal-btn { border: 1px solid #e5e7eb; background:#fff; border-radius:8px; padding:6px 10px; cursor:pointer; }
-.cal-btn:hover { background:#f9fafb; }
-.cal-primary { border-color:#111827; }
-.cal-danger { border-color:#ef4444; color:#b91c1c; }
-.cal-dialog-body > :last-child {
-  margin-bottom: 0 !important;
+.cal-dialog-foot {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    background-color: #f9fafb;
 }
-/* 네비게이션 바 */
-.cal-toolbar {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  margin-bottom: 8px;
+.cal-create {
+    display: grid;
+    gap: 1rem;
 }
-.cal-nav-btn {
-  padding: 6px 10px;
-  border: 1px solid #e5e7eb;
-  background: #fff;
-  border-radius: 10px;
-  font-size: 13px;
-  cursor: pointer;
+.cal-create-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 }
-.cal-nav-btn:hover { background: #f3f4f6; }
-
-/* 선택된 날짜 표시 (기존 스타일 유지 가능) */
-.is-selected .fc-daygrid-day-frame { outline: 2px solid #2563eb; outline-offset: -2px; }
-
-/* 우상단 + 버튼 (기존과 동일) */
-.day-add-btn {
-  position: absolute; right: 6px; top: 6px;
-  width: 22px; height: 22px; border-radius: 50%;
-  border: 1px solid #e5e7eb; background: #fff; line-height: 20px;
-  font-weight: 600; cursor: pointer;
+.cal-create-row label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
 }
-.day-add-btn:hover { background: #f3f4f6; }
-.profile-cal .fc .fc-more-popover {
-  display: none !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
+.cal-create-row input[type="text"],
+.cal-create-row input[type="date"],
+.cal-create-row input[type="time"] {
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 8px 12px;
+    outline: none;
+    transition: all 0.2s ease;
+}
+.cal-create-row input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+.cal-empty {
+    color: #6b7280;
+    font-size: 14px;
+    text-align: center;
+    padding: 2rem;
+    background-color: #f9fafb;
+    border-radius: 8px;
+}
+.cal-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.75rem;
+}
+.cal-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+}
+.cal-title {
+    font-weight: 500;
+}
+.cal-btn {
+    border: 1px solid #d1d5db;
+    background: #fff;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-weight: 500;
+}
+.cal-btn:hover {
+    background: #f9fafb;
+}
+.cal-primary {
+    border-color: #3b82f6;
+    background-color: #3b82f6;
+    color: white;
+}
+.cal-primary:hover {
+    background-color: #2563eb;
+}
+.cal-danger {
+    border-color: #ef4444;
+    color: #ef4444;
+}
+.cal-danger:hover {
+    background-color: #fef2f2;
 }

@@ -1,115 +1,322 @@
-.create-meeting-form {
+/* --- 기본 레이아웃 및 뷰 전환 --- */
+.create-meeting-container {
+    width: 100%;
+    flex-grow: 1;
+    overflow: hidden;
+    position: relative;
+    border-radius: 8px;
+}
+
+.panel-wrapper {
+    display: flex;
+    width: 200%;
+    height: 100%; /* ✅ 높이가 부모를 따르도록 추가 */
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateX(0);
+}
+
+.panel-wrapper.show-invite-panel {
+    transform: translateX(-50%);
+}
+
+.panel {
+    width: 50%;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    padding: 2rem; /* ✅ 패딩 증가 (1.5rem -> 2rem) */
     display: flex;
     flex-direction: column;
-    gap: 20px; /* 각 요소 사이의 간격 */
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    gap: 1.5rem;
 }
 
-.form-group, .form-row, .form-actions {
-    width: 100%;
+/* --- 메인 폼 스타일 --- */
+.main-form-panel {
+    /* 메인 패널 스타일 */
 }
-
-.form-group .text-input-wrapper input {
-    width: 100%;
-    padding: 14px 16px;
-    font-size: 16px;
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 }
-
-/* 회의실 이름 입력란 */
-.meeting-name-input {
+.form-group label {
+    font-weight: 500;
+    font-size: 0.875rem;
+    color: #374151;
+}
+.form-input {
     width: 100%;
-    padding: 14px 16px;
-    border: 1px solid #E0E0E0;
+    padding: 0.75rem 1rem;
+    border: 1px solid #d1d5db;
     border-radius: 8px;
-    font-size: 16px;
+    font-size: 0.9rem;
     outline: none;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.form-input:focus {
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+.participant-controls .invite-btn {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background-color: #f3f4f6;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    color: #374151;
+}
+.participant-controls .invite-btn:hover {
+    background-color: #e5e7eb;
+}
+
+.participant-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    min-height: 28px;
+}
+.participant-tag {
+    display: inline-flex;
+    align-items: center;
+    background-color: #e5e7eb;
+    border-radius: 999px;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.875rem;
+    color: #4b5563;
+}
+.participant-tag.self {
+    background-color: #dbeafe;
+    color: #1e40af;
+    font-weight: 500;
+}
+.participant-tag button {
     background: none;
+    border: none;
+    margin-left: 0.25rem;
+    cursor: pointer;
+    font-size: 1rem;
+    color: #9ca3af;
+}
+.participant-tag button:hover {
+    color: #374151;
 }
 
-.form-group .text-input-wrapper input::placeholder {
-    color: #b7b7b7;
-}
-
-.form-group .text-input-wrapper input:focus {
-    border-color: #4b52ff;
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
-}
-
-/* 날짜 및 시간 입력란 행 */
-.form-row {
+.form-footer {
     display: flex;
     justify-content: space-between;
-    gap: 10px;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid #f3f4f6;
 }
-
-.date-input-group, .time-input-group {
+.ai-toggle {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 0.75rem;
 }
-
-.date-input-group input, .time-input-group input {
-    width: 50px;
-    height: 50px;
-    border: 1px solid #E0E0E0;
-    border-radius: 8px;
-    text-align: center;
-    font-size: 16px;
-    font-weight: 500;
-}
-
-.time-input-group span {
-    font-size: 16px;
-    font-weight: 500;
-    color: #333;
-}
-
-/* 하단 액션 영역 */
-.form-actions {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    /* align-items: center; */
-    margin-top: 10px;
-}
-
-/* 초대 버튼 */
-.invite-button {
-    width: 50px;
-    height: 50px;
-    background-color: #212121;
+.create-btn {
+    padding: 0.7rem 1.5rem;
+    background-color: #4f46e5;
+    color: white;
     border: none;
     border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.create-btn:hover {
+    background-color: #4338ca;
+}
+.create-btn:disabled {
+    background-color: #a5b4fc;
+    cursor: not-allowed;
+}
+.form-error-msg {
+    color: #ef4444;
+    font-size: 0.875rem;
+    text-align: center;
+    margin-top: 0.5rem;
+}
+
+/* --- 초대 패널 스타일 --- */
+.invite-panel {
+    /* 초대 패널 스타일 */
+}
+.invite-header {
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+    margin-bottom: 0;
+    flex-shrink: 0;
+}
+.invite-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+.invite-add-email,
+.invite-search {
+    position: relative;
     display: flex;
-    justify-content: center;
     align-items: center;
+    flex-shrink: 0;
+}
+.invite-add-email input,
+.invite-search input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 2.5rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    background-color: #f3f4f6;
+    border: 1px solid #f3f4f6;
+    outline: none;
+    transition: all 0.2s;
+}
+.invite-add-email input:focus,
+.invite-search input:focus {
+    border-color: #a5b4fc;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+.invite-add-email::before,
+.invite-search::before {
+    content: "";
+    position: absolute;
+    left: 1rem;
+    width: 16px;
+    height: 16px;
+    opacity: 0.5;
+}
+.invite-add-email::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z'%3E%3C/path%3E%3Cpolyline points='22,6 12,13 2,6'%3E%3C/polyline%3E%3C/svg%3E");
+}
+.invite-search::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'%3E%3C/line%3E%3C/svg%3E");
+}
+
+.invite-add-email button {
+    margin-left: 0.5rem;
+    padding: 0 1rem;
+    height: 42px;
+    border: none;
+    background-color: #4f46e5;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+.invite-add-email button:disabled {
+    background-color: #a5b4fc;
+}
+
+.company-member-section {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-height: 200px;
+    overflow: hidden;
+    gap: 0.75rem;
+}
+
+.member-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+.member-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.6rem 0.5rem;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+}
+.member-item:hover {
+    background-color: #eef2ff;
+}
+.member-info {
+    display: flex;
+    flex-direction: column;
+}
+.member-name {
+    font-weight: 500;
+}
+.member-email {
+    font-size: 0.8rem;
+    color: #6b7280;
+}
+.add-indicator {
+    font-size: 1.5rem;
+    font-weight: 300;
+    color: #9ca3af;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+.member-item:hover .add-indicator {
+    opacity: 1;
+    color: #4f46e5;
+}
+
+.pending-invites-section {
+    flex-shrink: 0;
+    padding-top: 1rem;
+    border-top: 1px solid #e5e7eb;
+}
+.pending-invites-section h4 {
+    font-size: 0.9rem;
+    color: #374151;
+    margin: 0 0 0.75rem 0;
+}
+.pending-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    max-height: 70px;
+    overflow-y: auto;
+}
+.invite-footer {
+    padding-top: 1rem;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    flex-shrink: 0;
+    margin-top: auto;
+}
+.invite-footer .btn-primary,
+.invite-footer .btn-secondary {
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    font-weight: 500;
     cursor: pointer;
 }
-
-/* 토글 스위치와 내보내기 버튼 묶기 */
-.toggle-and-submit {
-    display: flex;
+.invite-footer .btn-primary {
+    background-color: #4f46e5;
+    color: white;
+}
+.invite-footer .btn-secondary {
+    background-color: #f3f4f6;
+    border-color: #d1d5db;
+    color: #374151;
+}
+.invite-footer .btn-secondary:hover {
+    background-color: #e5e7eb;
 }
 
-/* AI 요약 토글 스위치 */
-.toggle-group {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-.toggle-label-text {
-    font-size: 14px;
-    font-weight: 500;
-    color: #333;
-}
-.toggle-switch {
+/* --- AI 토글 스위치 --- */
+.switch {
     position: relative;
     display: inline-block;
-    width: 54px;
+    width: 50px;
     height: 28px;
 }
-.toggle-switch input {
+.switch input {
     opacity: 0;
     width: 0;
     height: 0;
@@ -122,115 +329,27 @@
     right: 0;
     bottom: 0;
     background-color: #ccc;
-    border-radius: 28px;
-    transition: .4s;
+    transition: 0.4s;
 }
 .slider:before {
     position: absolute;
     content: "";
-    height: 22px;
-    width: 22px;
-    left: 3px;
-    bottom: 3px;
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
     background-color: white;
-    border-radius: 50%;
-    transition: .4s;
+    transition: 0.4s;
 }
 input:checked + .slider {
-    background: linear-gradient(90deg, #60A5FA 0%, #D879FF 100%);
+    background-color: #4f46e5;
 }
 input:checked + .slider:before {
-    transform: translateX(26px);
+    transform: translateX(22px);
 }
-
-/* 회의 생성 버튼 */
-.create-button {
-    background-color: #2563EB;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 14px 24px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color .3s;
+.slider.round {
+    border-radius: 28px;
 }
-.create-button:hover {
-    background-color: #1D4ED8;
-}
-
-.participant-section {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 1rem;
-}
-
-.participant-section label {
-    font-weight: bold;
-    color: #ccc;
-    font-size: 0.9rem;
-    margin-bottom: 4px;
-}
-
-.participant-input-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.participant-input-wrapper input {
-    flex-grow: 1; /* 입력창이 가능한 많은 공간을 차지하도록 */
-}
-
-.add-button {
-    background-color: #007bff;
-    border: none;
+.slider.round:before {
     border-radius: 50%;
-    width: 36px;
-    height: 36px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.add-button:hover {
-    background-color: #0056b3;
-}
-
-.participant-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    padding-top: 8px;
-}
-
-.participant-tag {
-    background-color: #333;
-    color: #fff;
-    border-radius: 16px;
-    padding: 6px 12px;
-    display: flex;
-    align-items: center;
-    font-size: 0.9rem;
-}
-
-.participant-tag span {
-    margin-right: 8px;
-}
-
-.participant-tag button {
-    background: none;
-    border: none;
-    color: #aaa;
-    cursor: pointer;
-    font-size: 1.2rem;
-    padding: 0;
-    line-height: 1;
-}
-
-.participant-tag button:hover {
-    color: #fff;
 }
