@@ -1,13 +1,20 @@
 .layout-container {
     display: flex;
-    background-color: var(--bg-hover, #f8fafc); /* 사이드바의 호버 배경색과 통일 */
-    font-family: 'Noto Sans KR', sans-serif; /* 폰트 일관성 유지 */
+    background-color: var(--bg-hover, #f8fafc);
+    font-family: "Noto Sans KR", sans-serif;
 }
 
 .layout-content {
     flex: 1;
-    padding: 2rem 2.5rem; /* 패딩값 미세 조정 */
+    padding: 2rem 2.5rem;
     height: 100vh;
     overflow-y: auto;
     box-sizing: border-box;
+}
+
+/* 사이드바가 없을 때 content가 전체 너비를 차지하도록 하는 스타일 추가 */
+.layout-content.full-width {
+    padding: 0; /* 전체 화면을 사용하므로 패딩 제거 */
+    height: 100vh;
+    max-width: 100vw;
 }

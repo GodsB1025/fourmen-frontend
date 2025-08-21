@@ -1,29 +1,27 @@
-import React from 'react'
-import './ContractCard.css'
-import type { Contract } from '../../apis/Types'
+// ALL/frontend/components/contract/ContractCard.tsx
+import React from "react";
+import "./ContractCard.css"; // Import the new robust CSS
+import type { Contract } from "../../apis/Types";
 
 interface ContractCardProps {
-    contract : Contract,
-    handleClick : () => void
+    contract: Contract;
+    handleClick: () => void;
 }
 
-const ContractCard = ({
-    contract,
-    handleClick
-}: ContractCardProps) => {
+const ContractCard = ({ contract, handleClick }: ContractCardProps) => {
     const baseURL = import.meta.env.VITE_API_BASE_URL as string;
-    return (
-        <div
-        className='contract-card-container'
-        onClick={()=>handleClick()}
-        >
-            <img 
-            src={`${baseURL}${contract.previewImageUrl}.png`} 
-            alt={contract.templateName} 
-            />
-            <p>{contract.templateName}</p>
-        </div>
-    )
-}
+    const imageUrl = `${baseURL}${contract.previewImageUrl}.png`;
 
-export default ContractCard
+    return (
+        <button className="card-item" onClick={handleClick}>
+            <div className="card-item__figure">
+                <img src={imageUrl} alt={contract.templateName} className="card-item__image" />
+            </div>
+            <div className="card-item__body">
+                <p className="card-item__title">{contract.templateName}</p>
+            </div>
+        </button>
+    );
+};
+
+export default ContractCard;

@@ -1,100 +1,98 @@
 import React from "react";
 import type { CompanyMember, MemberRole } from "../../apis/Company";
-
-type Props = {
-  items: CompanyMember[];
-  busy?: boolean;
-  myRole?: MemberRole;
-  meId?: number | string;
-  onChangeRole?: (m: CompanyMember, role: MemberRole) => void;
-  getAllowedRoles?: (m: CompanyMember) => MemberRole[];
-  canManage?: (m: CompanyMember) => boolean;
-};
+import "./MemberList.css";
 
 const roleLabel: Record<MemberRole, string> = {
-  ADMIN: "관리자",
-  CONTRACT_ADMIN: "계약 관리자",
-  USER: "일반 직원",
+    ADMIN: "관리자",
+    CONTRACT_ADMIN: "계약 관리자",
+    USER: "일반 직원",
 };
 
-// 역할 정렬 순서 정의 (관리자 > 계약 관리자 > 일반 직원)
 const roleOrder: Record<MemberRole, number> = {
-  ADMIN: 0,
-  CONTRACT_ADMIN: 1,
-  USER: 2,
+    ADMIN: 0,
+    CONTRACT_ADMIN: 1,
+    USER: 2,
 };
 
 const statusLabel = {
-  ACTIVE: "활성",
-  INVITED: "초대됨",
-  SUSPENDED: "정지",
+    ACTIVE: "활성",
+    INVITED: "초대됨",
+    SUSPENDED: "정지",
 } as const;
 
-export default function MemberList({
-  items,
-  busy,
-  meId,
-  onChangeRole,
-  getAllowedRoles,
-  canManage,
-}: Props) {
-  const initialList = Array.isArray(items) ? items : [];
+type Props = {
+    items: CompanyMember[];
+    busy?: boolean;
+    myRole?: MemberRole;
+    meId?: number | string;
+    onManageRole?: (m: CompanyMember) => void; // onManageRole prop 추가
+    canManage?: (m: CompanyMember) => boolean;
+    className?: string;
+};
 
-  // 1. 본인 제외
-  const filteredList = meId ? initialList.filter((m) => String(m.id) !== String(meId)) : initialList;
+export default function MemberList({ items, busy, meId, onManageRole, canManage, className }: Props) {
+    const initialList = Array.isArray(items) ? items : [];
 
-  // 2. 역할에 따라 목록을 정렬
-  const list = filteredList.sort((a, b) => {
-    const orderA = roleOrder[a.role] ?? 99; // 혹시 모를 예외 역할은 맨 뒤로
-    const orderB = roleOrder[b.role] ?? 99;
-    return orderA - orderB;
-  });
+    const me = meId ? initialList.find((m) => String(m.id) === String(meId)) : undefined;
+    const others = meId ? initialList.filter((m) => String(m.id) !== String(meId)) : initialList;
 
-  if (busy) return <div className="company-loading">불러오는 중...</div>;
-  if (!list.length) return <div className="company-empty">멤버가 없습니다.</div>;
+    const sortedOthers = others.sort((a, b) => {
+        const orderA = roleOrder[a.role] ?? 99;
+        const orderB = roleOrder[b.role] ?? 99;
+        if (orderA !== orderB) return orderA - orderB;
+        return a.name.localeCompare(b.name);
+    });
 
-  return (
-    <ul className="member-list">
-      {list.map((m) => {
-        const manageable = canManage ? canManage(m) : false;
-        const allowed = getAllowedRoles ? getAllowedRoles(m) : [m.role];
-        const statusKey = (m.status ?? "ACTIVE") as keyof typeof statusLabel;
+    const list = me ? [me, ...sortedOthers] : sortedOthers;
 
-        return (
-          <li key={m.id ?? m.email} className="member-item">
-            <div className="member-main">
-              <span className="member-name">{m.name}</span>
-              {' '} {/* ✅ 수정: 이름과 이메일 사이에 공백 추가 */}
-              <span className="member-email">{m.email}</span>
-            </div>
+    const containerClassName = `member-list-wrapper ${className || ""}`.trim();
 
-            <div className="member-meta">
-              <span className="member-role-badge">{roleLabel[m.role]}</span>
-              {statusKey !== "ACTIVE" && (
-                <span className={`member-status-badge status-${String(statusKey).toLowerCase()}`}>
-                  {statusLabel[statusKey]}
-                </span>
-              )}
-            </div>
+    return (
+        <div className={containerClassName}>
+            {busy ? (
+                <div className="member-list-status">멤버 목록을 불러오는 중...</div>
+            ) : !list.length ? (
+                <div className="member-list-status">표시할 멤버가 없습니다.</div>
+            ) : (
+                <ul className="member-list">
+                    {list.map((m) => {
+                        const isMe = String(m.id) === String(meId);
+                        const manageable = !isMe && canManage ? canManage(m) : false;
+                        const statusKey = (m.status ?? "ACTIVE") as keyof typeof statusLabel;
 
-            {manageable && allowed.length > 1 && onChangeRole ? (
-              <div className="member-actions">
-                <select
-                  className="member-role-select"
-                  value={m.role}
-                  onChange={(e) => onChangeRole(m, e.target.value as MemberRole)}
-                >
-                  {allowed.map((r) => (
-                    <option key={r} value={r}>
-                      {roleLabel[r]}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            ) : null}
-          </li>
-        );
-      })}
-    </ul>
-  );
+                        return (
+                            <li key={m.id ?? m.email} className={`member-item ${isMe ? "is-me" : ""}`}>
+                                <div className="member-info">
+                                    <span className="member-name">
+                                        {m.name}
+                                        {isMe && <span className="my-badge">나</span>}
+                                    </span>
+                                    <span className="member-email">{m.email}</span>
+                                </div>
+
+                                <div className="member-meta">
+                                    <span className={`member-role-badge role-${m.role.toLowerCase()}`}>{roleLabel[m.role]}</span>
+                                    {statusKey !== "ACTIVE" && (
+                                        <span className={`member-status-badge status-${String(statusKey).toLowerCase()}`}>
+                                            {statusLabel[statusKey]}
+                                        </span>
+                                    )}
+                                </div>
+
+                                <div className="member-actions">
+                                    {manageable ? (
+                                        <button className="manage-role-btn" onClick={() => onManageRole?.(m)}>
+                                            권한 관리
+                                        </button>
+                                    ) : (
+                                        <div className="action-placeholder" />
+                                    )}
+                                </div>
+                            </li>
+                        );
+                    })}
+                </ul>
+            )}
+        </div>
+    );
 }

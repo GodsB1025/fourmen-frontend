@@ -1,236 +1,307 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { createMeetingURL, disableMeetingRoom, getMeetingInfo, getMeetingURL } from '../../apis/Meeting';
-import type { CreateMeetingURLRequest } from '../../apis/Types';
-import { PATH } from '../../types/paths';
+import React, { useEffect, useRef, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+    createMeetingURL,
+    disableMeetingRoom,
+    getMeetingInfo,
+    getMeetingURL,
+    getMinutesForMeeting,
+    getMinuteDetails,
+    submitManualMinute,
+    updateManualMinute,
+} from "../../apis/Meeting";
+import type { Meeting, ManualMinuteResponse, CreateMeetingURLRequest } from "../../apis/Types";
+import { PATH } from "../../types/paths";
+import "./VideoRoomPage.css";
+import { useAuthStore } from "../../stores/authStore";
 
-// 서버로부터 받을 STT 데이터 타입 정의
+// STT 데이터 타입 정의
 interface SttData {
-  sttId: number;
-  speaker: string;
-  text: string;
-  timestamp: string;
+    sttId: number;
+    speaker: string;
+    text: string;
+    timestamp: string;
 }
 
 const VideoRoomPage = () => {
-  const navigate = useNavigate()
+    const navigate = useNavigate();
+    const { meetingId } = useParams<{ meetingId: string }>();
+    const user = useAuthStore((state) => state.user);
 
-  const { meetingId } = useParams<{ meetingId: string }>();
+    // --- State Management ---
+    const [meetingInfo, setMeetingInfo] = useState<Meeting | null>(null);
+    const [videoURL, setVideoURL] = useState<string>("");
+    const [isMinutesVisible, setIsMinutesVisible] = useState(false);
 
-  const [error, setError] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
-  const [videoURL, setVideoURL] = useState<string>("");
+    // 수동 회의록
+    const [isWritingMinute, setIsWritingMinute] = useState(false);
+    const [manualMinuteId, setManualMinuteId] = useState<number | null>(null);
+    const [manualMinuteContent, setManualMinuteContent] = useState("");
 
-  // --- 음성 녹음 및 WebSocket 관련 상태/Ref ---
-  const [isRecording, setIsRecording] = useState(false);
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const mediaStreamRef = useRef<MediaStream | null>(null);
-  const socketRef = useRef<WebSocket | null>(null);
-  
-  // 서버로부터 받은 STT 결과를 저장할 State
-  const [sttResults, setSttResults] = useState<SttData[]>([]);
+    // AI 회의록 (STT)
+    const [isRecording, setIsRecording] = useState(false);
+    const [sttResults, setSttResults] = useState<SttData[]>([]);
 
-  // --- 모든 리소스 정리 및 상태 초기화 함수 ---
-  const stopRecordingAndStreaming = () => {
-    console.log("Cleanup: Stopping recording and closing connections.");
+    const [error, setError] = useState<string | null>(null);
+    const [busy, setBusy] = useState({ video: false, minute: false });
 
-    if (mediaRecorderRef.current && mediaRecorderRef.current.state === "recording") {
-      mediaRecorderRef.current.stop();
-    }
-    if (mediaStreamRef.current) {
-      mediaStreamRef.current.getTracks().forEach(track => track.stop());
-    }
-    if (socketRef.current && socketRef.current.readyState < WebSocket.CLOSING) {
-      socketRef.current.close(1000, "User clicked stop button");
-    }
+    // --- Refs for WebSocket and Media ---
+    const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+    const mediaStreamRef = useRef<MediaStream | null>(null);
+    const socketRef = useRef<WebSocket | null>(null);
 
-    mediaRecorderRef.current = null;
-    mediaStreamRef.current = null;
-    socketRef.current = null;
-    
-    setIsRecording(false);
-  };
+    // --- Data Loading Effect ---
+    useEffect(() => {
+        if (!meetingId) return;
+        const loadMeetingData = async () => {
+            try {
+                const info = await getMeetingInfo(meetingId);
+                setMeetingInfo(info);
 
-  // --- 녹음 및 WebSocket 전송 시작 함수 ---
-  const startRecordingAndStreaming = async () => {
-    // 이전 상태 초기화
-    setError(null);
-    setSttResults([]);
+                const minutes = await getMinutesForMeeting(meetingId);
+                const manualMinuteInfo = minutes.find((m) => m.type === "SELF");
 
-    if (!meetingId) {
-      setError("회의 ID가 없어 STT를 시작할 수 없습니다.");
-      return;
-    }
-
-    setIsRecording(true); // UI 즉시 업데이트
-
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      mediaStreamRef.current = stream;
-
-      const apiUrl = import.meta.env.VITE_API_BASE_URL || window.location.origin;
-      const url = new URL(apiUrl);
-      const wsProtocol = url.protocol === 'https:' ? 'wss' : 'ws';
-      const wsURL = `${wsProtocol}://${url.host}/api/ws/audio/${meetingId}`;
-      console.log(`Connecting to WebSocket: ${wsURL}`);
-
-      const socket = new WebSocket(wsURL);
-      socketRef.current = socket;
-
-      socket.onopen = () => {
-        console.log("✅ WebSocket 연결 성공. 녹음을 시작합니다.");
-        
-        const options = { mimeType: 'audio/webm;codecs=opus' };
-        const mediaRecorder = new MediaRecorder(stream, options);
-        mediaRecorderRef.current = mediaRecorder;
-
-        mediaRecorder.ondataavailable = (event) => {
-          if (event.data.size > 0 && socket?.readyState === WebSocket.OPEN) {
-            // console.log(`Sending audio data chunk: ${event.data.size} bytes`);
-            socket.send(event.data);
-          }
-        };
-
-        // 400ms 간격으로 데이터를 분할하여 전송 (HTML 예제와 동일)
-        mediaRecorder.start(400);
-      };
-
-      socket.onmessage = (event) => {
-        console.log("⬇️ STT 결과 수신:", event.data);
-        try {
-            const result = JSON.parse(event.data);
-            if (result.result === "SUCCESS" && Array.isArray(result.data)) {
-              setSttResults(prevResults => [...prevResults, ...result.data]);
+                if (manualMinuteInfo) {
+                    const details = await getMinuteDetails(meetingId, manualMinuteInfo.minuteId);
+                    setManualMinuteId(details.minuteId);
+                    setManualMinuteContent(details.content);
+                }
+            } catch (err: any) {
+                setError(err.message || "회의 정보를 불러오는 중 오류가 발생했습니다.");
             }
-        } catch(e) {
-            console.error("수신 메시지 파싱 오류:", e);
-        }
-      };
-
-      socket.onerror = (event) => {
-        console.error('❌ WebSocket 오류:', event);
-        setError('웹소켓 연결에 실패했습니다. 서버 상태나 인증 정보를 확인해주세요.');
-        stopRecordingAndStreaming();
-      };
-
-      socket.onclose = (event) => {
-        console.log(`👋 WebSocket 연결 종료: 코드=${event.code}, 이유=${event.reason || '없음'}`);
-        stopRecordingAndStreaming();
-      };
-
-    } catch (err) {
-      console.error('마이크 접근 오류:', err);
-      setError('마이크에 접근할 수 없습니다. 권한을 확인해주세요.');
-      setIsRecording(false);
-    }
-  };
-
-  const handleRecordButtonClick = () => {
-    if (isRecording) {
-      stopRecordingAndStreaming();
-    } else {
-      startRecordingAndStreaming();
-    }
-  };
-
-  // 컴포넌트가 언마운트될 때 모든 리소스를 정리
-  useEffect(() => {
-    return () => {
-      stopRecordingAndStreaming();
-    };
-  }, []);
-
-  // 회의 URL 관련 함수들
-  const createURL = async () => {
-    setError(null);
-    setBusy(true);
-    try {
-      if(meetingId) {
-        const { scheduledAt } = await getMeetingInfo(meetingId);
-        const payload : CreateMeetingURLRequest = {
-          description: "",
-          password: "",
-          manuallyApproval: true,
-          canAutoRoomCompositeRecording: true,
-          scheduledAt: scheduledAt
         };
-        const { embedUrl } = await createMeetingURL(meetingId, payload);
-        setVideoURL(embedUrl);
-      }
-    } catch (err : unknown) {
-      let errorMessage = "회의 URL 생성 중 오류가 발생했습니다.";
-      if(err instanceof Error) errorMessage = err.message;
-      setError(errorMessage);
-    } finally {
-      setBusy(false);
-    }
-  };
+        loadMeetingData();
 
-  const loadURL = async () => {
-    setError(null);
-    setBusy(true);
-    try {
-      if(meetingId) {
-        const { videoMeetingUrl } = await getMeetingURL(meetingId);
-        setVideoURL(videoMeetingUrl);
-      }
-    } catch (err : unknown) {
-      let errorMessage = "회의 URL 조회 중 오류가 발생했습니다.";
-      if(err instanceof Error) errorMessage = err.message;
-      setError(errorMessage);
-    } finally {
-      setBusy(false);
-    }
-  };
+        // 컴포넌트 언마운트 시 모든 스트리밍 및 녹음 정리
+        return () => {
+            stopRecordingAndStreaming();
+        };
+    }, [meetingId]);
 
-  const handleEndMeeting = () => {
-    if(meetingId) {
-      navigate(PATH.COMMANDER)
-      disableMeetingRoom(meetingId)
-      alert(`${meetingId}번 회의가 성공적으로 삭제됐습니다.`)
-    } else {
-      console.log("회의 삭제 실패")
-    }
-  }
+    // --- Main Action Handlers ---
+    const handleVideoAction = async () => {
+        // ... (이전과 동일)
+        if (!meetingId || !meetingInfo) return;
+        setBusy((prev) => ({ ...prev, video: true }));
+        try {
+            let response;
+            if (meetingInfo.roomId) {
+                response = await getMeetingURL(meetingId);
+            } else {
+                const payload: CreateMeetingURLRequest = {
+                    description: meetingInfo.title,
+                    password: "",
+                    manuallyApproval: true,
+                    canAutoRoomCompositeRecording: true,
+                    scheduledAt: meetingInfo.scheduledAt,
+                };
+                response = await createMeetingURL(meetingId, payload);
+                const updatedInfo = await getMeetingInfo(meetingId);
+                setMeetingInfo(updatedInfo);
+            }
+            setVideoURL(response.embedUrl || response.videoMeetingUrl);
+        } catch (err: any) {
+            setError(err.message || "화상회의 처리 중 오류가 발생했습니다.");
+        } finally {
+            setBusy((prev) => ({ ...prev, video: false }));
+        }
+    };
 
-  return (
-    <div>
-      <iframe
-        src={videoURL}
-        style={{ width: '100%', height: '80vh', border: 'none' }}
-        allow="camera; microphone; fullscreen; speaker; display-capture"
-      />
+    const handleSaveOrUpdateMinute = async () => {
+        // ... (이전과 동일)
+        if (!meetingId || !manualMinuteContent.trim()) return;
+        setBusy((prev) => ({ ...prev, minute: true }));
+        try {
+            const action = manualMinuteId ? updateManualMinute : submitManualMinute;
+            const updatedMinute = await action(meetingId, manualMinuteId!, manualMinuteContent);
 
-      <br />{meetingId}번 비디오룸입니다.
-      <br />
-      <button onClick={createURL} disabled={busy}>URL 생성</button>
-      <button onClick={loadURL} disabled={busy}>URL 불러오기</button>
+            if (!manualMinuteId) setManualMinuteId(updatedMinute.minuteId);
+            setIsWritingMinute(false);
+        } catch (err: any) {
+            setError(err.message || "회의록 저장에 실패했습니다.");
+        } finally {
+            setBusy((prev) => ({ ...prev, minute: false }));
+        }
+    };
 
-      {/* --- 음성 녹음/전송 관련 UI --- */}
-      <br/>
-      <button onClick={handleRecordButtonClick} disabled={busy}>
-        {isRecording ? 'AI 회의록 기록 중지' : 'AI 회의록 기록 시작'}
-      </button>
-      
-      {/* --- 실시간 STT 결과 표시 영역 --- */}
-      <div style={{ marginTop: '20px', border: '1px solid #ccc', padding: '10px', height: '200px', overflowY: 'auto' }}>
-        <h4>실시간 회의록</h4>
-        {sttResults.length > 0 ? (
-          sttResults.map((stt, index) => (
-            <p key={`${stt.sttId}-${index}`}>
-              <strong>{stt.speaker}</strong> ({stt.timestamp}): {stt.text}
-            </p>
-          ))
-        ) : (
-          <p>{isRecording ? "음성을 듣고 있습니다..." : "AI 회의록 기록을 시작하세요."}</p>
-        )}
-      </div>
+    const handleEndMeeting = async () => {
+        // ... (이전과 동일)
+        if (!meetingId || !window.confirm("정말로 회의를 종료하시겠습니까?")) return;
+        try {
+            await disableMeetingRoom(meetingId);
+            alert("회의가 종료되었습니다.");
+            navigate(PATH.COMMANDER);
+        } catch (err: any) {
+            setError(err.message || "회의 종료에 실패했습니다.");
+        }
+    };
 
-      <br/>{meetingId && <button onClick={handleEndMeeting}>회의 종료</button> }
-      <br/><button onClick={()=>navigate(PATH.COMMANDER)}>회의 나가기</button>
-      <br/>{error && <p style={{ color: 'red' }}>{error}</p>}
-    </div>
-  );
+    // --- AI Recording Logic ---
+    const stopRecordingAndStreaming = () => {
+        if (mediaRecorderRef.current && mediaRecorderRef.current.state === "recording") {
+            mediaRecorderRef.current.stop();
+        }
+        if (mediaStreamRef.current) {
+            mediaStreamRef.current.getTracks().forEach((track) => track.stop());
+        }
+        if (socketRef.current && socketRef.current.readyState < WebSocket.CLOSING) {
+            socketRef.current.close(1000, "Recording stopped");
+        }
+        mediaRecorderRef.current = null;
+        mediaStreamRef.current = null;
+        socketRef.current = null;
+        setIsRecording(false);
+    };
+
+    const startRecordingAndStreaming = async () => {
+        if (!meetingId) {
+            setError("회의 ID가 없어 AI 기록을 시작할 수 없습니다.");
+            return;
+        }
+        setIsRecording(true);
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaStreamRef.current = stream;
+
+            const apiUrl = import.meta.env.VITE_API_BASE_URL || window.location.origin;
+            const url = new URL(apiUrl);
+            const wsProtocol = url.protocol === "https:" ? "wss" : "ws";
+            const wsURL = `${wsProtocol}://${url.host}/api/ws/audio/${meetingId}`;
+
+            const socket = new WebSocket(wsURL);
+            socketRef.current = socket;
+
+            socket.onopen = () => {
+                const options = { mimeType: "audio/webm;codecs=opus" };
+                const mediaRecorder = new MediaRecorder(stream, options);
+                mediaRecorderRef.current = mediaRecorder;
+
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0 && socket?.readyState === WebSocket.OPEN) {
+                        socket.send(event.data);
+                    }
+                };
+                mediaRecorder.start(400); // 0.4초 간격으로 데이터 전송
+            };
+
+            socket.onmessage = (event) => {
+                try {
+                    const result = JSON.parse(event.data);
+                    if (Array.isArray(result.data)) {
+                        setSttResults((prev) => [...prev, ...result.data]);
+                    }
+                } catch (e) {
+                    console.error("STT 메시지 파싱 오류:", e);
+                }
+            };
+
+            socket.onerror = () => setError("AI 기록 서버 연결에 실패했습니다.");
+            socket.onclose = () => stopRecordingAndStreaming();
+        } catch (err) {
+            setError("마이크 접근에 실패했습니다. 권한을 확인해주세요.");
+            setIsRecording(false);
+        }
+    };
+
+    const handleRecordButtonClick = () => {
+        isRecording ? stopRecordingAndStreaming() : startRecordingAndStreaming();
+    };
+
+    // --- Render ---
+    return (
+        <div className={`videoroom-layout ${isMinutesVisible ? "show-minutes" : ""}`}>
+            <header className="videoroom-top-bar">
+                <div className="title-section">
+                    <h1>{meetingInfo?.title}</h1>
+                    <span>{meetingInfo ? new Date(meetingInfo.scheduledAt).toLocaleString() : "..."}</span>
+                </div>
+                <div className="actions-section">
+                    {meetingInfo?.useAiMinutes && (
+                        <button onClick={handleRecordButtonClick} className={`btn btn-ai ${isRecording ? "recording" : ""}`}>
+                            {isRecording ? "AI 기록 중지" : "AI 기록 시작"}
+                        </button>
+                    )}
+                    {user?.userId === meetingInfo?.hostId && (
+                        <button onClick={handleEndMeeting} className="btn btn-danger">
+                            회의 종료
+                        </button>
+                    )}
+                    <button onClick={() => navigate(PATH.COMMANDER)} className="btn btn-secondary">
+                        나가기
+                    </button>
+                </div>
+            </header>
+
+            <main className="videoroom-main-content">
+                <div className="video-wrapper">
+                    {videoURL ? (
+                        <iframe src={videoURL} allow="camera; microphone; fullscreen; speaker; display-capture" title="Video Meeting" />
+                    ) : (
+                        <div className="placeholder">
+                            <h2>화상회의가 시작되지 않았습니다</h2>
+                            <button onClick={handleVideoAction} disabled={busy.video || !meetingInfo} className="btn btn-primary btn-xl">
+                                {busy.video ? "처리 중..." : meetingInfo?.roomId ? "화상회의 참여" : "화상회의 생성"}
+                            </button>
+                        </div>
+                    )}
+                </div>
+
+                <div className="minutes-wrapper">
+                    <div className="minutes-header">
+                        <h3>수동 회의록</h3>
+                        {isWritingMinute ? (
+                            <div className="editor-controls">
+                                <button onClick={() => setIsWritingMinute(false)} className="btn btn-secondary">
+                                    취소
+                                </button>
+                                <button onClick={handleSaveOrUpdateMinute} disabled={busy.minute} className="btn btn-primary">
+                                    저장
+                                </button>
+                            </div>
+                        ) : (
+                            <button onClick={() => setIsWritingMinute(true)} className="btn btn-secondary">
+                                {manualMinuteId ? "수정하기" : "작성하기"}
+                            </button>
+                        )}
+                    </div>
+                    <div className="minutes-body">
+                        {isWritingMinute ? (
+                            <textarea
+                                value={manualMinuteContent}
+                                onChange={(e) => setManualMinuteContent(e.target.value)}
+                                placeholder="회의 내용을 작성하세요..."
+                            />
+                        ) : (
+                            <pre className="saved-content">{manualMinuteContent.trim() || "작성된 회의록이 없습니다."}</pre>
+                        )}
+                    </div>
+                </div>
+            </main>
+
+            <footer className="videoroom-footer">
+                <button
+                    className={`toggle-minutes-btn ${isMinutesVisible ? "active" : ""}`}
+                    onClick={() => setIsMinutesVisible(!isMinutesVisible)}
+                    aria-label={isMinutesVisible ? "회의록 숨기기" : "회의록 작성/보기"}>
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round">
+                        <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+                        <path d="m15 5 4 4" />
+                    </svg>
+                    <span>{isMinutesVisible ? "숨기기" : "회의록"}</span>
+                </button>
+            </footer>
+            {error && <div className="error-toast">{error}</div>}
+        </div>
+    );
 };
 
 export default VideoRoomPage;

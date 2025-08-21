@@ -1,84 +1,115 @@
-import { FancySwitch } from '@omit/react-fancy-switch'
-import './JoinMeetingContent.css'
-import { useEffect, useState } from 'react'
-import styles from '../common/FancySwitch.module.css'
-import { getMeetings } from '../../apis/Meeting'
-import type { Meeting } from '../../apis/Types'
-import MeetingRoomList from './MeetingRoomList'
-import { useNavigate } from 'react-router-dom'
-import { PATH } from '../../types/paths'
-import { useModalStore } from '../../stores/modalStore'
+import { FancySwitch } from "@omit/react-fancy-switch";
+import "./JoinMeetingContent.css";
+import { useEffect, useMemo, useState } from "react";
+import styles from "../common/FancySwitch.module.css";
+import { getMeetings, getMeetingInfo } from "../../apis/Meeting"; // getMeetingInfo import 추가
+import type { Meeting } from "../../apis/Types";
+import MeetingRoomList from "./MeetingRoomList";
+import { useNavigate } from "react-router-dom";
+import { PATH } from "../../types/paths";
+import { useModalStore } from "../../stores/modalStore";
 
 const JoinMeetingContent = () => {
-    const navigate = useNavigate()
-    const closeModal = useModalStore((state) => state.closeModal)
+    const navigate = useNavigate();
+    const closeModal = useModalStore((state) => state.closeModal);
 
-    const [selectedOption, setSelectedOption] = useState('my')
+    const [selectedOption, setSelectedOption] = useState("my");
     const [meetingRooms, setMeetingRooms] = useState<Meeting[]>([]);
-    const [error, setError] = useState<string | null>(null)
+    const [searchQuery, setSearchQuery] = useState("");
+    const [joiningId, setJoiningId] = useState<number | null>(null); // 현재 입장 시도 중인 회의 ID 상태
+
+    const [error, setError] = useState<string | null>(null);
     const [busy, setBusy] = useState(false);
 
     const options = [
-        { value: 'my', label: '내 회의', disabled: false },
-        { value: 'company', label: '회사 회의', disabled: false },
-    ]
+        { value: "my", label: "내 회의", disabled: false },
+        { value: "company", label: "회사 회의", disabled: false },
+    ];
 
-    const handleChange = (value) => {
-        setSelectedOption(value)
-    }
+    const handleChange = (value: string) => {
+        setSelectedOption(value);
+    };
 
-    const navigateMeetingRoom = (meetingId : number) => {
-        const destination = PATH.VIDEO_ROOM.replace(':meetingId', meetingId.toString())
-        navigate(destination)
-        closeModal()
-    }
+    // 참가 버튼 클릭 시 권한 확인 로직 추가
+    const navigateMeetingRoom = async (meetingId: number) => {
+        setJoiningId(meetingId); // 입장 시도 상태로 변경
+        try {
+            // 1. 회의 참가 API를 호출하여 권한 확인
+            await getMeetingInfo(meetingId.toString());
 
-    // 컴포넌트가 처음 마운트될 때와 selectedOption이 바뀔 때 회의 목록을 불러옴
+            // 2. 권한이 있으면 회의실로 이동
+            const destination = PATH.VIDEO_ROOM.replace(":meetingId", meetingId.toString());
+            navigate(destination);
+            closeModal();
+        } catch (err: any) {
+            // 3. 권한이 없으면 (API 호출 실패 시) 에러 메시지 표시
+            alert("회의에 참가할 권한이 없습니다.");
+        } finally {
+            setJoiningId(null); // 입장 시도 상태 해제
+        }
+    };
+
+    const filteredMeetingRooms = useMemo(() => {
+        if (!searchQuery) {
+            return meetingRooms;
+        }
+        const lowercasedQuery = searchQuery.toLowerCase();
+        return meetingRooms.filter(
+            (room) => room.title.toLowerCase().includes(lowercasedQuery) || room.hostName.toLowerCase().includes(lowercasedQuery)
+        );
+    }, [searchQuery, meetingRooms]);
+
     useEffect(() => {
         const fetchMeetings = async () => {
-            setBusy(true)
-            setError(null)
+            setBusy(true);
+            setError(null);
             try {
-                const data = await getMeetings(selectedOption)
-                setMeetingRooms(data)
-                console.log("조회 데이터 확인:",data)
-            } catch (err : unknown) {
-                console.error("회의 조회 실패:", err);
-                let errorMessage = "회의 목록 조회 중 오류가 발생했습니다."
-                if(err instanceof Error)
-                    errorMessage = err.message
+                const data = await getMeetings(selectedOption);
+                setMeetingRooms(data);
+            } catch (err: unknown) {
+                let errorMessage = "회의 목록 조회 중 오류가 발생했습니다.";
+                if (err instanceof Error) errorMessage = err.message;
                 setError(errorMessage);
             } finally {
-                setBusy(false)
+                setBusy(false);
             }
-        }
+        };
 
-        fetchMeetings()
+        fetchMeetings();
     }, [selectedOption]);
 
     return (
-        <>
-            <FancySwitch
-            options={options}
-            value={selectedOption}
-            onChange={handleChange}
-            className={styles.switchContainer}
-            radioClassName={styles.radioButton}
-            highlighterClassName={styles.highlighter}
-            />
-            
-            {/* form 태그 대신에 meetingRooms state에 따라 다른 값이 출력되는 컴포넌트 구현 */}
-            
-            <MeetingRoomList
-            busy={busy}
-            error={error}
-            meetingRooms={meetingRooms}
-            handleClick={navigateMeetingRoom}
-            />
-            
-            {error && <p>{error}</p>}
-        </>
-    );
-}
+        <div className="join-meeting-container">
+            <div className="switch-wrapper">
+                <FancySwitch
+                    options={options}
+                    value={selectedOption}
+                    onChange={handleChange}
+                    className={styles.switchContainer}
+                    radioClassName={styles.radioButton}
+                    highlighterClassName={styles.highlighter}
+                />
+            </div>
 
-export default JoinMeetingContent
+            <div className="search-bar-container">
+                <input
+                    type="text"
+                    placeholder="회의 이름 또는 주최자로 검색"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="search-input"
+                />
+            </div>
+
+            <MeetingRoomList
+                busy={busy}
+                error={error}
+                meetingRooms={filteredMeetingRooms}
+                handleClick={navigateMeetingRoom}
+                joiningId={joiningId} // 입장 시도 중인 회의 ID를 props로 전달
+            />
+        </div>
+    );
+};
+
+export default JoinMeetingContent;
