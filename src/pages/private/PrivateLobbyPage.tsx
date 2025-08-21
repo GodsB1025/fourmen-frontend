@@ -59,44 +59,26 @@ const PrivateLobbyPage = () => {
         // isPageReady 상태에 따라 'ready' 클래스를 동적으로 추가합니다.
         <div className={`lobby-container ${isPageReady ? "ready" : ""}`}>
             <main className="main-content">
-                <h2 className="section-title">오늘의 일정</h2>
-                {loading ? (
-                    <div className="loading-placeholder">일정을 불러오는 중...</div>
-                ) : todayEvents.length > 0 ? (
-                    <ul className="todo-list">
-                        {todayEvents.map((event) => (
-                            <li key={event.eventId} className={`todo-item type-${event.eventType.toLowerCase()}`}>
-                                <span className="item-time">{formatTime(event.startTime)}</span>
-                                <span className="item-title">{event.title}</span>
-                                <span className="item-type-badge">{event.eventType === "MEETING" ? "회의" : "개인"}</span>
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <div className="empty-placeholder">
-                        <p>오늘 예정된 할 일이 없습니다.</p>
-                        <span>새로운 회의를 생성하거나 개인 일정을 추가해보세요.</span>
-                    </div>
-                )}
-            </main>
-            <aside className="side-panel">
-                <div className="action-grid">
-                    <button className="action-button" onClick={() => openModal("create")}>
-                        <CreateIcon />
-                        <span className="action-button__label">회의 생성</span>
-                    </button>
-                    <button className="action-button" onClick={() => openModal("join")}>
-                        <JoinIcon />
-                        <span className="action-button__label">회의 참여</span>
-                    </button>
-                    <button className="action-button" onClick={() => navigate(PATH.CONTRACT)}>
-                        <ContractIcon />
-                        <span className="action-button__label">전자 계약</span>
-                    </button>
-                    <button className="action-button" onClick={() => navigate(PATH.DASHBOARD)}>
-                        <DashboardIcon />
-                        <span className="action-button__label">대시보드</span>
-                    </button>
+                <div>
+                    <h2 className="section-title">오늘의 일정</h2>
+                    {loading ? (
+                        <div className="loading-placeholder">일정을 불러오는 중...</div>
+                    ) : todayEvents.length > 0 ? (
+                        <ul className="todo-list">
+                            {todayEvents.map((event) => (
+                                <li key={event.eventId} className={`todo-item type-${event.eventType.toLowerCase()}`}>
+                                    <span className="item-time">{formatTime(event.startTime)}</span>
+                                    <span className="item-title">{event.title}</span>
+                                    <span className="item-type-badge">{event.eventType === "MEETING" ? "회의" : "개인"}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <div className="empty-placeholder">
+                            <p>오늘 예정된 할 일이 없습니다.</p>
+                            <span>새로운 회의를 생성하거나 개인 일정을 추가해보세요.</span>
+                        </div>
+                    )}
                 </div>
                 <div className="ongoing-section">
                     <h3 className="section-title-small">현재 진행중인 미팅</h3>
@@ -114,6 +96,26 @@ const PrivateLobbyPage = () => {
                     ) : (
                         <p className="no-items-text">현재 진행 중인 미팅이 없습니다.</p>
                     )}
+                </div>
+            </main>
+            <aside className="side-panel">
+                <div className="action-grid">
+                    <button className="lobby-action-button" onClick={() => openModal("create")}>
+                        <CreateIcon />
+                        <span className="action-button__label">회의 생성</span>
+                    </button>
+                    <button className="lobby-action-button" onClick={() => openModal("join")}>
+                        <JoinIcon />
+                        <span className="action-button__label">회의 참여</span>
+                    </button>
+                    <button className="lobby-action-button" onClick={() => navigate(PATH.CONTRACT)}>
+                        <ContractIcon />
+                        <span className="action-button__label">전자 계약</span>
+                    </button>
+                    <button className="lobby-action-button" onClick={() => navigate(PATH.DASHBOARD)}>
+                        <DashboardIcon />
+                        <span className="action-button__label">대시보드</span>
+                    </button>
                 </div>
             </aside>
         </div>

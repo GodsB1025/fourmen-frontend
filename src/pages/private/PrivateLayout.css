@@ -1,6 +1,5 @@
 .layout-container {
     display: flex;
-    background-color: var(--bg-hover, #f8fafc);
     font-family: "Noto Sans KR", sans-serif;
 }
 
