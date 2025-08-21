@@ -74,7 +74,7 @@ const PrivateLobbyPage = () => {
                     </ul>
                 ) : (
                     <div className="empty-placeholder">
-                        <p>오늘 예정된 할 일이 없습니다.</p>
+                        <p>오늘 예정된 일정이 없습니다.</p>
                         <span>새로운 회의를 생성하거나 개인 일정을 추가해보세요.</span>
                     </div>
                 )}

@@ -1,38 +1,38 @@
 /* --- 기본 레이아웃 및 뷰 전환 --- */
 .create-meeting-container {
-    width: 450px; /* 모달의 고정 너비 */
-    height: 520px; /* 모달의 고정 높이, 내용에 따라 조절 가능 */
-    overflow: hidden; /* 패널이 컨테이너 밖으로 나갈 때 숨김 */
+    width: 100%;
+    flex-grow: 1;
+    overflow: hidden;
     position: relative;
-    font-family: inherit;
+    border-radius: 8px;
 }
 
 .panel-wrapper {
     display: flex;
-    width: 200%; /* 두 패널을 나란히 놓기 위해 너비를 2배로 설정 */
-    height: 100%;
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); /* 부드러운 전환 효과 */
+    width: 200%;
+    height: 100%; /* ✅ 높이가 부모를 따르도록 추가 */
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateX(0);
 }
 
-/* 초대 패널이 보일 때 wrapper를 왼쪽으로 이동 */
 .panel-wrapper.show-invite-panel {
     transform: translateX(-50%);
 }
 
 .panel {
-    width: 50%; /* wrapper의 절반 크기 */
-    height: 100%;
-    padding: 0 1px; /* 미세한 렌더링 깨짐 방지 */
+    width: 50%;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    padding: 2rem; /* ✅ 패딩 증가 (1.5rem -> 2rem) */
     display: flex;
     flex-direction: column;
-    flex-shrink: 0;
+    gap: 1.5rem;
 }
 
 /* --- 메인 폼 스타일 --- */
 .main-form-panel {
-    gap: 1.5rem;
+    /* 메인 패널 스타일 */
 }
-
 .form-group {
     display: flex;
     flex-direction: column;
@@ -40,7 +40,7 @@
 }
 .form-group label {
     font-weight: 500;
-    font-size: 0.9rem;
+    font-size: 0.875rem;
     color: #374151;
 }
 .form-input {
@@ -48,13 +48,13 @@
     padding: 0.75rem 1rem;
     border: 1px solid #d1d5db;
     border-radius: 8px;
-    font-size: 1rem;
+    font-size: 0.9rem;
     outline: none;
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 .form-input:focus {
     border-color: #4f46e5;
-    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
 }
 .participant-controls .invite-btn {
     width: 100%;
@@ -64,10 +64,12 @@
     border-radius: 8px;
     cursor: pointer;
     font-weight: 500;
+    color: #374151;
 }
 .participant-controls .invite-btn:hover {
     background-color: #e5e7eb;
 }
+
 .participant-list {
     display: flex;
     flex-wrap: wrap;
@@ -81,7 +83,8 @@
     background-color: #e5e7eb;
     border-radius: 999px;
     padding: 0.25rem 0.75rem;
-    font-size: 0.85rem;
+    font-size: 0.875rem;
+    color: #4b5563;
 }
 .participant-tag.self {
     background-color: #dbeafe;
@@ -94,14 +97,19 @@
     margin-left: 0.25rem;
     cursor: pointer;
     font-size: 1rem;
-    color: #6b7280;
+    color: #9ca3af;
 }
+.participant-tag button:hover {
+    color: #374151;
+}
+
 .form-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: auto; /* 푸터를 항상 아래에 고정 */
+    margin-top: auto;
     padding-top: 1rem;
+    border-top: 1px solid #f3f4f6;
 }
 .ai-toggle {
     display: flex;
@@ -109,12 +117,12 @@
     gap: 0.75rem;
 }
 .create-btn {
-    padding: 0.75rem 1.5rem;
+    padding: 0.7rem 1.5rem;
     background-color: #4f46e5;
     color: white;
     border: none;
     border-radius: 8px;
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
     transition: background-color 0.2s;
@@ -128,19 +136,19 @@
 }
 .form-error-msg {
     color: #ef4444;
-    font-size: 0.9rem;
+    font-size: 0.875rem;
     text-align: center;
-    margin-top: 1rem;
+    margin-top: 0.5rem;
 }
 
 /* --- 초대 패널 스타일 --- */
 .invite-panel {
-    background-color: #ffffff;
+    /* 초대 패널 스타일 */
 }
 .invite-header {
     padding-bottom: 1rem;
     border-bottom: 1px solid #e5e7eb;
-    margin-bottom: 1rem;
+    margin-bottom: 0;
     flex-shrink: 0;
 }
 .invite-header h3 {
@@ -148,48 +156,73 @@
     font-size: 1.1rem;
     font-weight: 600;
 }
-.invite-add-email {
+.invite-add-email,
+.invite-search {
+    position: relative;
     display: flex;
-    gap: 0.5rem;
+    align-items: center;
     flex-shrink: 0;
 }
-.invite-add-email input {
-    flex-grow: 1;
-    padding: 0.75rem 1rem;
-    border: 1px solid #d1d5db;
+.invite-add-email input,
+.invite-search input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 2.5rem;
     border-radius: 8px;
+    font-size: 0.9rem;
+    background-color: #f3f4f6;
+    border: 1px solid #f3f4f6;
+    outline: none;
+    transition: all 0.2s;
 }
+.invite-add-email input:focus,
+.invite-search input:focus {
+    border-color: #a5b4fc;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+.invite-add-email::before,
+.invite-search::before {
+    content: "";
+    position: absolute;
+    left: 1rem;
+    width: 16px;
+    height: 16px;
+    opacity: 0.5;
+}
+.invite-add-email::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z'%3E%3C/path%3E%3Cpolyline points='22,6 12,13 2,6'%3E%3C/polyline%3E%3C/svg%3E");
+}
+.invite-search::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'%3E%3C/line%3E%3C/svg%3E");
+}
+
 .invite-add-email button {
+    margin-left: 0.5rem;
     padding: 0 1rem;
+    height: 42px;
     border: none;
     background-color: #4f46e5;
     color: white;
     border-radius: 8px;
     cursor: pointer;
+    flex-shrink: 0;
 }
 .invite-add-email button:disabled {
     background-color: #a5b4fc;
 }
+
 .company-member-section {
-    margin-top: 1rem;
     display: flex;
     flex-direction: column;
-    min-height: 0; /* flex-grow가 자식에게 적용되도록 */
     flex-grow: 1;
+    min-height: 200px;
+    overflow: hidden;
+    gap: 0.75rem;
 }
-.invite-search {
-    margin-bottom: 0.5rem;
-    flex-shrink: 0;
-}
-.invite-search input {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-}
+
 .member-list {
     list-style: none;
-    padding: 0.5rem 0;
+    padding: 0;
     margin: 0;
     overflow-y: auto;
     flex-grow: 1;
@@ -198,16 +231,14 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.75rem 0.5rem;
+    padding: 0.6rem 0.5rem;
     cursor: pointer;
     border-radius: 8px;
     transition: background-color 0.2s;
 }
-
 .member-item:hover {
     background-color: #eef2ff;
 }
-
 .member-info {
     display: flex;
     flex-direction: column;
@@ -219,7 +250,6 @@
     font-size: 0.8rem;
     color: #6b7280;
 }
-
 .add-indicator {
     font-size: 1.5rem;
     font-weight: 300;
@@ -227,7 +257,6 @@
     opacity: 0;
     transition: opacity 0.2s;
 }
-
 .member-item:hover .add-indicator {
     opacity: 1;
     color: #4f46e5;
@@ -235,7 +264,6 @@
 
 .pending-invites-section {
     flex-shrink: 0;
-    margin-top: 1rem;
     padding-top: 1rem;
     border-top: 1px solid #e5e7eb;
 }
@@ -248,19 +276,18 @@
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
-    max-height: 70px; /* 높이 제한 */
+    max-height: 70px;
     overflow-y: auto;
 }
 .invite-footer {
-    margin-top: auto;
     padding-top: 1rem;
     border-top: 1px solid #e5e7eb;
     display: flex;
     justify-content: flex-end;
     gap: 0.75rem;
     flex-shrink: 0;
+    margin-top: auto;
 }
-
 .invite-footer .btn-primary,
 .invite-footer .btn-secondary {
     padding: 0.6rem 1.2rem;
@@ -278,8 +305,11 @@
     border-color: #d1d5db;
     color: #374151;
 }
+.invite-footer .btn-secondary:hover {
+    background-color: #e5e7eb;
+}
 
-/* AI 토글 스위치 (기존과 동일) */
+/* --- AI 토글 스위치 --- */
 .switch {
     position: relative;
     display: inline-block;

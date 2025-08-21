@@ -1,10 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import DatePicker from "react-datepicker";
+import Calendar from "react-calendar";
 import { format } from "date-fns";
-import "react-datepicker/dist/react-datepicker.css";
-import "./DocumentsPage.css"; // 새로운 CSS 파일을 임포트합니다.
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
-import { fetchDocuments, type DocumentResponse, type MeetingDoc, type MinuteDoc, type StandaloneContract } from "../../../apis/Documents";
+import "react-datepicker/dist/react-datepicker.css";
+import "react-calendar/dist/Calendar.css";
+import "./DocumentsPage.css";
+
+import { fetchDocuments, type DocumentResponse, type MinuteDetail } from "../../../apis/Documents";
+import { getMinuteDetails } from "../../../apis/Meeting";
 
 // --- 아이콘 컴포넌트들 ---
 const FolderIcon = () => (
@@ -67,22 +73,112 @@ const daysAgo = (n: number) => {
     return d;
 };
 
+// --- 회의록 상세 보기 모달 컴포넌트 ---
+const MinuteDetailModal = ({ minute, onClose }: { minute: MinuteDetail; onClose: () => void }) => {
+    const minuteTypeLabel: Record<string, string> = {
+        AUTO: "AI 자동 회의록",
+        SELF: "수동 회의록",
+        SUMMARY: "AI 요약 회의록",
+    };
+
+    return (
+        <div className="modal-backdrop" onClick={onClose}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                <header className="modal-header">
+                    <h2>{minute.meetingTitle}</h2>
+                    <button onClick={onClose} className="modal-close-btn">
+                        &times;
+                    </button>
+                </header>
+                <div className="modal-subheader">
+                    <span className={`badge type-${minute.type.toLowerCase()}`}>{minuteTypeLabel[minute.type]}</span>
+                    <span className="meta">작성자: {minute.authorName}</span>
+                    <span className="meta">작성일: {format(new Date(minute.createdAt), "yyyy.MM.dd HH:mm")}</span>
+                </div>
+                <main className="modal-body markdown-body">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{minute.content}</ReactMarkdown>
+                </main>
+            </div>
+        </div>
+    );
+};
+
 export default function DocumentsPage() {
+    const baseURL = import.meta.env.VITE_API_BASE_URL as string;
     const [range, setRange] = useState<[Date | null, Date | null]>([daysAgo(30), startOfToday()]);
     const [docs, setDocs] = useState<DocumentResponse | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-
-    // 열려있는 회의/회의록 아코디언을 추적하기 위한 state
     const [openItems, setOpenItems] = useState<Record<string, boolean>>({});
+    const [viewingMinute, setViewingMinute] = useState<MinuteDetail | null>(null);
+    const [isMinuteLoading, setIsMinuteLoading] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
 
     const toggleItem = (id: string) => {
         setOpenItems((prev) => ({ ...prev, [id]: !prev[id] }));
     };
 
-    useEffect(() => {
-        if (!range[0] || !range[1]) return;
+    const handleViewMinute = async (meetingId: number, minuteId: number) => {
+        setIsMinuteLoading(true);
+        try {
+            const minuteDetails = await getMinuteDetails(String(meetingId), minuteId);
+            setViewingMinute(minuteDetails);
+        } catch (err) {
+            alert("회의록을 불러오는 데 실패했습니다.");
+        } finally {
+            setIsMinuteLoading(false);
+        }
+    };
 
+    const handleOpenContractPdf = (url: string) => {
+        if (!url) return;
+        window.open(`${baseURL}${url}.pdf`, "_blank", "noopener,noreferrer");
+    };
+
+    const meetingDates = useMemo(() => {
+        if (!docs?.meetingsWithDocs) return new Set<string>();
+        const dates = new Set<string>();
+        docs.meetingsWithDocs.forEach((dailyDocs) => {
+            if (dailyDocs.meetings.length > 0) {
+                dates.add(dailyDocs.date);
+            }
+        });
+        return dates;
+    }, [docs]);
+
+    const filteredDocs = useMemo(() => {
+        if (!docs) return null;
+        const lowercasedQuery = searchQuery.toLowerCase().trim();
+        if (!lowercasedQuery) return docs;
+
+        const filteredMeetingsWithDocs = docs.meetingsWithDocs
+            .map((dailyDocs) => {
+                const filteredMeetings = dailyDocs.meetings.filter((meeting) => {
+                    if (meeting.meetingTitle.toLowerCase().includes(lowercasedQuery)) return true;
+                    return meeting.minutes.some(
+                        (minute) =>
+                            minute.type.toLowerCase().includes(lowercasedQuery) ||
+                            minute.contracts.some((contract) => contract.title.toLowerCase().includes(lowercasedQuery))
+                    );
+                });
+                return { ...dailyDocs, meetings: filteredMeetings };
+            })
+            .filter((dailyDocs) => dailyDocs.meetings.length > 0);
+
+        const filteredStandaloneContracts = docs.standaloneContracts?.filter((contract) => contract.title.toLowerCase().includes(lowercasedQuery));
+
+        return {
+            meetingsWithDocs: filteredMeetingsWithDocs,
+            standaloneContracts: filteredStandaloneContracts,
+        };
+    }, [docs, searchQuery]);
+
+    useEffect(() => {
+        if (!range[0] || !range[1]) {
+            setLoading(false);
+            setDocs(null);
+            return;
+        }
         const startDate = format(range[0], "yyyy-MM-dd");
         const endDate = format(range[1], "yyyy-MM-dd");
 
@@ -96,23 +192,56 @@ export default function DocumentsPage() {
 
     return (
         <div className="docs-page-layout">
-            {/* 왼쪽 필터 영역 */}
             <aside className="docs-sidebar">
-                <h2 className="sidebar-title">문서 조회</h2>
-                <div className="datepicker-container">
+                <h2 className="sidebar-title">문서 필터</h2>
+
+                <div className="filter-group">
                     <label>조회 기간</label>
                     <DatePicker
                         selectsRange
                         startDate={range[0]}
                         endDate={range[1]}
-                        onChange={(update) => setRange(update as [Date, Date])}
+                        onChange={(update) => setRange(update as [Date | null, Date | null])}
                         dateFormat="yyyy.MM.dd"
                         className="datepicker-input"
+                        isClearable
+                        placeholderText="기간을 선택하세요"
                     />
                 </div>
-            </aside>
 
-            {/* 오른쪽 콘텐츠 영역 */}
+                <div className="filter-group">
+                    <label>날짜 선택</label>
+                    <div className="calendar-container">
+                        <Calendar
+                            locale="ko"
+                            onChange={(date) => {
+                                if (date instanceof Date) setRange([date, date]);
+                            }}
+                            formatDay={(locale, date) => format(date, "d")}
+                            tileContent={({ date, view }) => {
+                                const ymd = format(date, "yyyy-MM-dd");
+                                if (view === "month" && meetingDates.has(ymd)) {
+                                    return <div className="meeting-dot"></div>;
+                                }
+                                return null;
+                            }}
+                        />
+                    </div>
+                </div>
+
+                <div className="filter-group">
+                    <label>검색</label>
+                    <div className="search-container">
+                        <input
+                            type="text"
+                            placeholder="제목, 유형으로 검색..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="search-input"
+                        />
+                    </div>
+                </div>
+            </aside>
             <main className="docs-content">
                 {loading ? (
                     <div className="docs-loader">불러오는 중...</div>
@@ -120,11 +249,10 @@ export default function DocumentsPage() {
                     <div className="docs-empty-state">{error}</div>
                 ) : (
                     <>
-                        {/* 회의 기반 문서 섹션 */}
                         <section className="docs-section">
                             <h2 className="section-title">회의 기반 문서</h2>
-                            {docs?.meetingsWithDocs && docs.meetingsWithDocs.length > 0 ? (
-                                docs.meetingsWithDocs.map((dailyDocs) => (
+                            {filteredDocs?.meetingsWithDocs?.length > 0 ? (
+                                filteredDocs.meetingsWithDocs.map((dailyDocs) => (
                                     <div key={dailyDocs.date} className="daily-group">
                                         <h3 className="date-header">{format(new Date(dailyDocs.date), "yyyy년 M월 d일")}</h3>
                                         <div className="accordion">
@@ -141,23 +269,27 @@ export default function DocumentsPage() {
                                                                 <div key={minute.minuteId} className="accordion-sub-item">
                                                                     <button
                                                                         className="accordion-header sub-header"
-                                                                        onClick={() => toggleItem(`min-${minute.minuteId}`)}>
+                                                                        onClick={() => handleViewMinute(meeting.meetingId, minute.minuteId)}>
                                                                         <FileTextIcon />
-                                                                        <span>{minute.type === "AUTO" ? "AI 회의록" : "수동 회의록"}</span>
-                                                                        <span className="item-count">{minute.contracts.length}</span>
+                                                                        <span>
+                                                                            {minute.type === "AUTO"
+                                                                                ? "AI 회의록"
+                                                                                : minute.type === "SELF"
+                                                                                ? "수동 회의록"
+                                                                                : "AI 요약"}
+                                                                        </span>
                                                                     </button>
-                                                                    {openItems[`min-${minute.minuteId}`] && (
-                                                                        <div className="accordion-content">
-                                                                            {minute.contracts.length > 0 ? (
-                                                                                minute.contracts.map((contract) => (
-                                                                                    <div key={contract.contractId} className="document-leaf">
-                                                                                        <BriefcaseIcon />
-                                                                                        <span>{contract.title}</span>
-                                                                                    </div>
-                                                                                ))
-                                                                            ) : (
-                                                                                <div className="no-sub-item">연결된 계약서가 없습니다.</div>
-                                                                            )}
+                                                                    {minute.contracts.length > 0 && (
+                                                                        <div className="accordion-content contract-list">
+                                                                            {minute.contracts.map((contract) => (
+                                                                                <div
+                                                                                    key={contract.contractId}
+                                                                                    className="document-leaf clickable"
+                                                                                    onClick={() => handleOpenContractPdf(contract.completedPdfUrl)}>
+                                                                                    <BriefcaseIcon />
+                                                                                    <span>{contract.title}</span>
+                                                                                </div>
+                                                                            ))}
                                                                         </div>
                                                                     )}
                                                                 </div>
@@ -170,17 +302,19 @@ export default function DocumentsPage() {
                                     </div>
                                 ))
                             ) : (
-                                <div className="docs-empty-state">해당 기간에 회의 기반 문서가 없습니다.</div>
+                                <div className="docs-empty-state">표시할 문서가 없습니다.</div>
                             )}
                         </section>
 
-                        {/* 기타 계약서 섹션 */}
                         <section className="docs-section">
                             <h2 className="section-title">기타 계약서</h2>
-                            {docs?.standaloneContracts && docs.standaloneContracts.length > 0 ? (
+                            {filteredDocs?.standaloneContracts?.length > 0 ? (
                                 <div className="standalone-list">
-                                    {docs.standaloneContracts.map((contract) => (
-                                        <div key={contract.contractId} className="document-leaf standalone">
+                                    {filteredDocs.standaloneContracts.map((contract) => (
+                                        <div
+                                            key={contract.contractId}
+                                            className="document-leaf standalone clickable"
+                                            onClick={() => handleOpenContractPdf(contract.completedPdfUrl)}>
                                             <BriefcaseIcon />
                                             <div className="info">
                                                 <span className="title">{contract.title}</span>
@@ -190,12 +324,21 @@ export default function DocumentsPage() {
                                     ))}
                                 </div>
                             ) : (
-                                <div className="docs-empty-state">해당 기간에 독립된 계약서가 없습니다.</div>
+                                <div className="docs-empty-state">표시할 독립 계약서가 없습니다.</div>
                             )}
                         </section>
                     </>
                 )}
             </main>
+
+            {(isMinuteLoading || viewingMinute) &&
+                (isMinuteLoading ? (
+                    <div className="modal-backdrop">
+                        <div className="docs-loader">회의록을 불러오는 중...</div>
+                    </div>
+                ) : (
+                    viewingMinute && <MinuteDetailModal minute={viewingMinute} onClose={() => setViewingMinute(null)} />
+                ))}
         </div>
     );
 }
