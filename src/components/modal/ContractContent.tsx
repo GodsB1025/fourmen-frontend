@@ -4,9 +4,9 @@ import type { AllContractData } from '../../types/contractForm';
 import { contractFormComponents, initialContractData } from '../../utils/contractRegistry';
 import { createContractPayload, type RecipientInfo, type UserInfo } from '../../utils/contractUtils';
 import { sendContract } from '../../apis/Contract';
-import { useAuthStore } from '../../stores/authStore';
 import { getUser } from '../../apis/User';
 import TextInput from '../common/TextInput';
+import type { MeetingDoc } from '../../apis/Types';
 
 interface ContractContentProps {
     templateId: string;
@@ -14,9 +14,19 @@ interface ContractContentProps {
 }
 
 const ContractContent: React.FC<ContractContentProps> = ({ templateId, eformsignTemplateId }) => { // prop 받기
+
+    // 계약서 관련 상태
     const [step, setStep] = useState<number>(0)
     const [data, setData] = useState<AllContractData>(initialContractData[templateId]);
     const [recipientData, setRecipientData] = useState({ name: "", email: "", phoneNumber: "" })
+
+    // 회의록 관련 상태
+    const [meetingsWithDocs, setMeetingsWithDocs] = useState<MeetingDoc[]>([]);
+    const [selectedMeeting, setSelectedMeeting] = useState<MeetingDoc | null>(null);
+    const [selectedMinuteContent, setSelectedMinuteContent] = useState<string | null>(null);
+    const [minutesLoading, setMinutesLoading] = useState({ list: false, detail: false });
+    const [viewState, setViewState] = useState<'MEETING_LIST' | 'MINUTE_LIST' | 'MINUTE_DETAIL'>('MEETING_LIST');
+
     const [busy, setBusy] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -129,7 +139,11 @@ const ContractContent: React.FC<ContractContentProps> = ({ templateId, eformsign
             <div className="content-section">
                 <h2>회의록_제목1</h2>
                 <div className="content-body">
-                    {/* ... 회의록 내용 ... */}
+                    <button
+                        // onClick={handle}
+                    >
+                        회의록 불러오기
+                    </button>
                 </div>
             </div>
         </div>
