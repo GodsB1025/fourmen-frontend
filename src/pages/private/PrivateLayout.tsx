@@ -8,6 +8,7 @@ import "./PrivateLayout.css";
 import { useModalStore } from "../../stores/modalStore";
 import ContractContent from "../../components/modal/ContractContent";
 import { PATH } from "../../types/paths";
+import { AnimatePresence } from "framer-motion";
 
 const PrivateLayout = () => {
     const { activeModal, modalData, openModal, closeModal } = useModalStore();
@@ -59,9 +60,17 @@ const PrivateLayout = () => {
                 <Outlet />
             </main>
 
-            <Modal isOpen={activeModal !== null} onClose={closeModal} title={getModalTitle()}>
-                {renderModalContent()}
-            </Modal>
+            <AnimatePresence>
+                {activeModal !== null && (
+                    <Modal
+                        key={activeModal}
+                        onClose={closeModal} 
+                        title={getModalTitle()}
+                    >
+                        {renderModalContent()}
+                    </Modal>
+                )}
+            </AnimatePresence>
         </div>
     );
 };
