@@ -45,28 +45,24 @@ export default function SignupWizard() {
   };
 
   async function handleSendEmail() {
-    setErr(null);
-    goNext();
-    return;
+    // setErr(null);
+    // goNext();
+    // return;
 
     // 필요 시 실제 발송 로직
-    // if (!/^\S+@\S+\.\S+$/.test(f.email)) { setErr("이메일 형식이 올바르지 않습니다."); return; }
-    // setBusy(true);
-    // try { await sendVerificationEmail(f.email); goNext(); }
-    // catch (e:any) { setErr(e?.message || "인증 메일 전송에 실패했습니다."); }
-    // finally { setBusy(false); }
+    if (!/^\S+@\S+\.\S+$/.test(f.email)) { setErr("이메일 형식이 올바르지 않습니다."); return; }
+    setBusy(true);
+    try { await sendVerificationEmail(f.email); goNext(); }
+    catch (e:any) { setErr(e?.message || "인증 메일 전송에 실패했습니다."); }
+    finally { setBusy(false); }
   }
 
   async function handleVerifyCode() {
-    setErr(null);
-    goNext();
-    return;
-
-    // if (!/^\d{6}$/.test(f.code)) { setErr("인증코드는 6자리 숫자입니다."); return; }
-    // setBusy(true);
-    // try { await verifyEmailCode(f.email, f.code); goNext(); }
-    // catch (e:any) { setErr(e?.message || "인증코드가 올바르지 않습니다."); }
-    // finally { setBusy(false); }
+    if (!/^\d{6}$/.test(f.code)) { setErr("인증코드는 6자리 숫자입니다."); return; }
+    setBusy(true);
+    try { await verifyEmailCode(f.email, f.code); goNext(); }
+    catch (e:any) { setErr(e?.message || "인증코드가 올바르지 않습니다."); }
+    finally { setBusy(false); }
   }
 
   return (
