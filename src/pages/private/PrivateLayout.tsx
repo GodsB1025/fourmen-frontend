@@ -16,26 +16,22 @@ import { AnimatePresence } from "framer-motion";
 const PrivateLayout = () => {
     const { activeModal, modalData, openModal, closeModal } = useModalStore();
     const { user } = useAuthStore();
-    const { connect, disconnect, fetchChatRooms } = useChatStore();
+    const { connectAndFetch, disconnect } = useChatStore();
     const navigate = useNavigate();
     const location = useLocation();
     // 현재 경로가 화상회의실인지 확인
     const isVideoRoom = location.pathname.startsWith(PATH.VIDEO_ROOM.split("/:")[0]);
 
     useEffect(() => {
-        // 회사에 소속된 유저일 경우에만 채팅 기능 활성화
         if (user?.company) {
-            connect();
-            fetchChatRooms();
+            connectAndFetch(); // 통합된 함수 호출
         }
-
-        // 컴포넌트가 언마운트될 때 (로그아웃 등) 연결 해제
         return () => {
             if (user?.company) {
                 disconnect();
             }
         };
-    }, [user, connect, disconnect, fetchChatRooms]);
+    }, [user, connectAndFetch, disconnect]);
 
     const getModalTitle = () => {
         switch (activeModal) {
@@ -87,11 +83,7 @@ const PrivateLayout = () => {
 
             <AnimatePresence>
                 {activeModal !== null && (
-                    <Modal
-                        key={activeModal}
-                        onClose={closeModal} 
-                        title={getModalTitle()}
-                    >
+                    <Modal key={activeModal} onClose={closeModal} title={getModalTitle()}>
                         {renderModalContent()}
                     </Modal>
                 )}
