@@ -3,7 +3,6 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import koLocale from "@fullcalendar/core/locales/ko";
-import type { DayCellMountArg, DatesSetArg } from "@fullcalendar/core";
 import {
   fetchCalendar,
   mapToEventInput,
@@ -17,8 +16,6 @@ import "./ProfileCalendar.css";
 
 type Props = { onMonthChange?: (date: Date) => void };
 type ModalState = { open: false; dateStr: "" } | { open: true; dateStr: string };
-
-const OPEN_MODAL_ON_CELL_CLICK = false; // 셀 전체 클릭으로 모달 열지 여부
 
 const pad = (n: number) => String(n).padStart(2, "0");
 const addDaysYMD = (ymd: string, n: number) => {
@@ -56,7 +53,6 @@ export default function ProfileCalendar({ onMonthChange }: Props) {
   const [modal, setModal] = useState<ModalState>({ open: false, dateStr: "" });
   const calRef = useRef<FullCalendar | null>(null);
   const [modalEvents, setModalEvents] = useState<any[]>([]);
-  const rootRef = useRef<HTMLDivElement>(null);
 
   const ensureCsrf = async () => {
     try {
@@ -102,16 +98,8 @@ export default function ProfileCalendar({ onMonthChange }: Props) {
     } catch {}
   };
 
-  // 월/주 전환 완료 시 잠깐 + 숨기기 (깜빡임 방지)
-  function handleDatesSet(_info: DatesSetArg) {
-    const el = rootRef.current;
-    if (!el) return;
-    el.classList.add("suppress-add");
-    window.setTimeout(() => el.classList.remove("suppress-add"), 200);
-  }
-
   return (
-    <div className="profile-cal" ref={rootRef}>
+    <div className="profile-cal">
       <FullCalendar
         timeZone="local"
         ref={calRef as any}
@@ -133,7 +121,6 @@ export default function ProfileCalendar({ onMonthChange }: Props) {
         forceEventDuration={true}
         nextDayThreshold={"00:00"}
         datesSet={(arg) => {
-          handleDatesSet(arg); // 전환 깜빡임 억제
           onMonthChange?.(arg.view.currentStart);
         }}
 
@@ -162,7 +149,6 @@ export default function ProfileCalendar({ onMonthChange }: Props) {
         }}
 
         dateClick={(arg) => {
-          if (!OPEN_MODAL_ON_CELL_CLICK) return; // 셀 클릭 무시 (토글)
           void openModalFor(arg.dateStr);
         }}
 
@@ -176,33 +162,10 @@ export default function ProfileCalendar({ onMonthChange }: Props) {
           void openModalFor(dateStr);
         }}
 
-        dayCellDidMount={(arg: DayCellMountArg) => {
-          // 이벤트가 없으면 클래스 마킹(디자인용)
+        dayCellDidMount={(arg) => {
           if (arg.el.querySelectorAll(".fc-daygrid-event").length === 0) {
             arg.el.classList.add("fc-day-no-events");
           }
-
-          // ✅ 실제 + 버튼 주입: 프레임 안쪽 기준으로 좌상단 고정
-          const frame = arg.el.querySelector(".fc-daygrid-day-frame") as HTMLElement | null;
-          const host = frame ?? (arg.el as HTMLElement);
-          host.style.position = "relative";
-
-          // 중복 생성 방지
-          if (host.querySelector(".fc-add-btn")) return;
-
-          const btn = document.createElement("button");
-          btn.type = "button";
-          btn.className = "fc-add-btn";
-          btn.title = "일정 추가";
-          btn.textContent = "+";
-          btn.addEventListener("click", (e) => {
-            e.preventDefault();
-            e.stopPropagation(); // 셀 클릭 전파 차단
-            const ymd = toYMD(arg.date);
-            void openModalFor(ymd);
-          });
-
-          host.appendChild(btn);
         }}
 
         /* ⬇️ 드래그/리사이즈는 시도는 허용하고, drop/resize 이후에 차단/되돌림 */

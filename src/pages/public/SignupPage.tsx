@@ -36,12 +36,12 @@ export default function SignupWizard() {
   const goPrev = () => setStep((s) => (Math.max(s - 1, 0) as Step));
 
   async function handleSendEmail() {
-    /*
+    
     setErr(null);
     goNext();
     return;
-    */
-
+    
+    /*
     setErr(null);
     if (!/^\S+@\S+\.\S+$/.test(f.email)) {
       setErr("이메일 형식이 올바르지 않습니다.");
@@ -56,6 +56,7 @@ export default function SignupWizard() {
     } finally {
       setBusy(false);
     }
+      */
   }
 
   async function handleVerifyCode() {
