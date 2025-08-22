@@ -1,0 +1,79 @@
+.ai-assistant-container {
+    display: flex;
+    flex-direction: column;
+    width: 600px; /* 너비 조정 */
+    height: 450px; /* 높이 조정 */
+    padding: 1.5rem;
+    box-sizing: border-box;
+}
+
+.ai-assistant-body {
+    flex-grow: 1;
+    overflow-y: auto;
+    background-color: #f9fafb;
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border: 1px solid #e5e7eb;
+}
+
+/* 답변이 표시될 때의 스타일 */
+.answer-section {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #374151;
+    white-space: pre-wrap; /* 줄바꿈 및 공백 유지 */
+}
+
+/* 초기 화면 플레이스홀더 스타일 */
+.placeholder-section {
+    text-align: center;
+    color: #6b7280;
+}
+.placeholder-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+.placeholder-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem;
+    color: #111827;
+}
+.placeholder-desc {
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.ai-assistant-form {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.query-textarea {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-family: inherit;
+    resize: none;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.query-textarea:focus {
+    border-color: #4b52ff;
+    box-shadow: 0 0 0 3px rgba(75, 82, 255, 0.1);
+}
+
+.error-message {
+    text-align: center;
+    color: #ef4444;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+}

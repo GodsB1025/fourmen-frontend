@@ -1,0 +1,102 @@
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.new-chat-modal-content {
+    background: white;
+    border-radius: 16px;
+    width: 450px;
+    max-height: 70vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.new-chat-modal-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.new-chat-modal-header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+}
+
+.close-button {
+    background: none;
+    border: none;
+    font-size: 1.75rem;
+    cursor: pointer;
+    color: #9ca3af;
+}
+
+.new-chat-modal-body {
+    padding: 1rem;
+    overflow-y: auto;
+}
+
+.member-select-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.member-select-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.member-select-item:hover {
+    background-color: #f3f4f6;
+}
+
+.member-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.member-name {
+    font-weight: 600;
+}
+
+.member-email {
+    font-size: 0.8rem;
+    color: #6b7280;
+}
+
+.start-chat-btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background-color: white;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.member-select-item:hover .start-chat-btn {
+    background-color: #eef2ff;
+    border-color: #a5b4fc;
+    color: #4338ca;
+}
+
+.error-text {
+    color: #ef4444;
+    text-align: center;
+    padding: 1rem;
+}
