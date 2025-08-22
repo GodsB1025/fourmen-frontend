@@ -29,7 +29,12 @@ const SignUpEmail = ({
         />
         <div className="su-actions">
             <button onClick={goPrev}>이전</button>
-            <button className="primary" disabled={busy} onClick={handleClick}>
+            {/* 👇 이 부분의 disabled 속성이 변경되었습니다. */}
+            <button 
+                className="primary" 
+                disabled={busy || f.email.trim() === ''} 
+                onClick={handleClick}
+            >
                 {busy ? "발송중..." : "인증 메일 보내기"}
             </button>
         </div>
