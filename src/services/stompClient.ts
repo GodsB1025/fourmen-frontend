@@ -1,7 +1,6 @@
-import { Client, type IMessage, type StompHeaders } from "@stomp/stompjs"; // StompHeaders 타입을 직접 import
+import { Client, type IMessage } from "@stomp/stompjs"; // StompHeaders 타입을 직접 import
 import SockJS from "sockjs-client";
 import type { ChatMessage } from "../apis/Chat";
-import Cookies from "js-cookie";
 
 type MessageCallback = (message: ChatMessage) => void;
 
@@ -29,12 +28,6 @@ class StompClientService {
 
     public connect(onConnectedCallback?: () => void): void {
         if (!this.client.active) {
-            const accessToken = Cookies.get("accessToken");
-            if (accessToken) {
-                this.client.connectHeaders = {
-                    Authorization: `Bearer ${accessToken}`,
-                };
-            }
             this.client.activate();
             if (onConnectedCallback) {
                 this.client.onConnect = onConnectedCallback;
@@ -71,16 +64,8 @@ class StompClientService {
 
     public sendMessage(roomId: number, content: string): void {
         if (this.client.active) {
-            const headers: StompHeaders = {};
-            const accessToken = Cookies.get("accessToken");
-
-            if (accessToken) {
-                headers.Authorization = `Bearer ${accessToken}`;
-            }
-
             this.client.publish({
                 destination: `/app/chat/room/${roomId}`,
-                headers: headers,
                 body: JSON.stringify({ content }),
             });
         } else {
