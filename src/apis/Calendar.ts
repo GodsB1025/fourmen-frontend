@@ -78,11 +78,15 @@ export function mapToEventInput(ev: any) {
 
 /* ---------- API 호출 ---------- */
 export async function fetchCalendar(): Promise<any[]> {
-    const res = await api.get("/calendar").catch((e) => {
-        console.error("fetchCalendar error:", e?.response || e);
-        return { data: [] };
-    });
-    return normalizeList(res?.data);
+    try {
+        const res = await api.get("/calendar");
+        return normalizeList(res?.data);
+    } catch (error) {
+        // 에러를 콘솔에 기록하되, 여기서 처리하지 않고 다시 throw하여
+        // 이 함수를 호출한 컴포넌트가 에러 발생을 인지하도록 합니다.
+        console.error("fetchCalendar error:", error);
+        throw error;
+    }
 }
 
 export async function getTodayEvents(): Promise<TodayEvent[]> {

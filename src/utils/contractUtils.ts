@@ -1,15 +1,8 @@
-import {
-    type ContractRequest,
-    type Field,
-    type Recipient,
-    type NotificationRecipient,
-    type DocumentPayload
-} from '../apis/Types';
-import { type AllContractData } from '../types/contractForm'; // 2. 모든 폼 데이터 타입의 Union을 import 합니다.
+import { type ContractRequest, type Field, type Recipient, type NotificationRecipient, type DocumentPayload } from "../apis/Types";
+import { type AllContractData } from "../types/contractForm"; // 2. 모든 폼 데이터 타입의 Union을 import 합니다.
 
 // NOTE: 아래 두 타입은 별도의 파일(예: types.ts)에서 관리하거나,
 // API 응답으로 받는 유저/수신자 정보 타입을 활용하는 것이 좋습니다.
-
 
 // 계약을 전달받을 수신자의 정보
 export interface RecipientInfo {
@@ -52,9 +45,9 @@ export function createContractPayload(options: CreatePayloadOptions): ContractRe
 
     // 2. 수신자(Recipient) 정보를 구성합니다.
     const recipient: Recipient = {
-        step_type: "01", // 고정값
-        use_mail: true,  // 고정값
-        use_sms: false,   // 고정값
+        step_type: "05", // 고정값
+        use_mail: true, // 고정값
+        use_sms: false, // 고정값
         member: {
             name: recipientInfo.name,
             id: recipientInfo.email,

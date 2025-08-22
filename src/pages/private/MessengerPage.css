@@ -1,0 +1,22 @@
+.messenger-layout {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+}
+
+.messenger-sidebar {
+    width: 280px;
+    flex-shrink: 0;
+    border-right: 1px solid #e5e7eb;
+    background-color: #f9fafb;
+}
+
+.messenger-main {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}

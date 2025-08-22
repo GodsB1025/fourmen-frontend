@@ -1,0 +1,75 @@
+.chatroom-list-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.chatroom-list-header {
+    display: flex; /* Flexbox 레이아웃 추가 */
+    justify-content: space-between; /* 양쪽 끝으로 정렬 */
+    align-items: center; /* 수직 중앙 정렬 */
+    padding: 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+    flex-shrink: 0;
+}
+
+.chatroom-list-header h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.new-chat-button {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background-color: #eef2ff;
+    color: #4f46e5;
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 1;
+}
+
+.chatroom-list {
+    list-style: none;
+    padding: 0.75rem;
+    margin: 0;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+.chatroom-item {
+    display: flex; /* Flexbox 추가 */
+    justify-content: space-between; /* 양쪽 정렬 */
+    align-items: center; /* 수직 중앙 정렬 */
+    padding: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-weight: 500;
+}
+
+.chatroom-item:hover {
+    background-color: #f3f4f6;
+}
+
+.chatroom-item.active {
+    background-color: #eef2ff;
+    color: #4338ca;
+}
+
+.unread-badge {
+    background-color: #ef4444;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: bold;
+    padding: 2px 8px;
+    border-radius: 999px;
+    min-width: 20px;
+    text-align: center;
+}

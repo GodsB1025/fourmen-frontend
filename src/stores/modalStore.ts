@@ -1,7 +1,7 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
-// 모달 타입 정의
-type ModalType = 'create' | 'join' | 'contractForm';
+// 모달 타입 정의 (aiAssistant 추가)
+type ModalType = "create" | "join" | "contractForm" | "aiAssistant";
 
 // 모달에 전달할 데이터 타입을 확장 가능하게 정의
 interface ModalData {
@@ -19,7 +19,7 @@ interface ModalState {
 
 // 스토어 생성
 export const useModalStore = create<ModalState>((set) => ({
-     // 초기 데이터는 null
+    // 초기 데이터는 null
     activeModal: null,
     modalData: null,
 
