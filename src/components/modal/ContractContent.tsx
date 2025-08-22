@@ -6,7 +6,7 @@ import { createContractPayload, type RecipientInfo, type UserInfo } from '../../
 import { sendContract } from '../../apis/Contract';
 import { getUser } from '../../apis/User';
 import TextInput from '../common/TextInput';
-import type { MeetingDoc } from '../../apis/Types';
+import type { MeetingDoc, MinuteInfo } from '../../apis/Types';
 import { fetchDocsOfMeeting, fetchMeetingsWithDocs } from '../../apis/Documents';
 
 interface ContractContentProps {
@@ -23,10 +23,11 @@ const ContractContent: React.FC<ContractContentProps> = ({ templateId, eformsign
 
     // 회의록 관련 상태
     const [meetingsWithDocs, setMeetingsWithDocs] = useState<MeetingDoc[]>([]);
+    const [expandedMeetingId, setExpandedMeetingId] = useState<number | null>(null);
+    const [minutesOfExpandedMeeting, setMinutesOfExpandedMeeting] = useState<MinuteInfo[]>([]);
     const [selectedMeeting, setSelectedMeeting] = useState<MeetingDoc | null>(null);
     const [selectedMinuteContent, setSelectedMinuteContent] = useState<string | null>(null);
     const [minutesLoading, setMinutesLoading] = useState({ list: false, detail: false });
-    const [viewState, setViewState] = useState<'MEETING_LIST' | 'MINUTE_LIST' | 'MINUTE_DETAIL'>('MEETING_LIST');
 
     const [busy, setBusy] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
@@ -39,9 +40,19 @@ const ContractContent: React.FC<ContractContentProps> = ({ templateId, eformsign
     };
 
     const loadMeetings = async () => {
-        const data = await fetchMeetingsWithDocs()
-        console.log("fetchMeetingsWithMinutes 함수 데이터 확인 :", data)
-        setMeetingsWithDocs(data)
+        setMinutesLoading(prev => ({ ...prev, list: true }));
+        try {
+            const data = await fetchMeetingsWithDocs()
+            console.log("fetchMeetingsWithMinutes 함수 데이터 확인 :", data)    
+            setMeetingsWithDocs(data)
+        } catch (err: unknown) {
+            console.error(error)
+            let errorMessage = "회의 목록 조회 중 오류가 발생했습니다.";
+            if (err instanceof Error) errorMessage = err.message;
+            setError(errorMessage);
+        } finally {
+            setMinutesLoading(prev => ({ ...prev, list: false }));
+        }
     }
 
     const submitContract = async () => {
@@ -70,8 +81,25 @@ const ContractContent: React.FC<ContractContentProps> = ({ templateId, eformsign
         }
     }
 
+    // 회의를 클릭했을 때 회의록 목록을 보여주는 핸들러 함수
     const handleShowDocs = async (meetingId: number) => {
-        const data = await fetchDocsOfMeeting(meetingId)
+        // 이미 열려있는 회의를 다시 클릭하면 닫음
+        if (expandedMeetingId === meetingId) {
+            setExpandedMeetingId(null);
+            setMinutesOfExpandedMeeting([]);
+            return;
+        }
+
+        setMinutesLoading(prev => ({ ...prev, detail: true }));
+        try {
+            const minutes = await getMinutesForMeeting(String(meetingId));
+            setMinutesOfExpandedMeeting(minutes);
+            setExpandedMeetingId(meetingId); // 새로 클릭한 회의 ID를 저장
+        } catch (error) {
+            setError("회의록 목록을 불러오는 데 실패했습니다.");
+        } finally {
+            setMinutesLoading(prev => ({ ...prev, detail: false }));
+        }
     }
 
     const FormComponent = contractFormComponents[templateId];
