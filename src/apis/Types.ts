@@ -1,35 +1,3 @@
-// --- 기존 타입 정의 ... ---
-
-// 회의 목록 조회 시 각 회의의 정보를 담을 타입
-export interface Meeting {
-    meetingId: number;
-    title: string;
-    scheduledAt: string;
-    hostName: string;
-    hostId: number; // 주최자 ID
-    useAiMinutes: boolean;
-    participantsCount: number;
-    roomId?: number | null;
-}
-
-// --- 수동 회의록 관련 타입 추가 ---
-export interface ManualMinuteRequest {
-    content: string;
-}
-
-export interface ManualMinuteResponse {
-    minuteId: number;
-    authorName: string;
-    createdAt: string;
-    content: string;
-}
-
-// 회의에 속한 회의록 정보 (목록 조회용)
-export interface MinuteInfo {
-    minuteId: number;
-    type: "AUTO" | "SELF" | "SUMMARY";
-    createdAt: string;
-}
 // ------------------------------------
 
 // --- 나머지 기존 타입 정의 ... ---
@@ -115,6 +83,7 @@ export interface GetMeResponse {
     phone: string;
 }
 
+// 전자계약
 export interface Contract {
     templateId: number;
     templateName: string;
@@ -200,19 +169,103 @@ export interface CompletedContract {
     fileUrlBase: string;
 }
 
+// -----------------------------
+
 export type MemberRole = "ADMIN" | "USER" | "CONTRACT_ADMIN";
 export type MemberStatus = "ACTIVE" | "INVITED" | "SUSPENDED";
 
 export interface CompanyMember {
-  id: number;
-  name: string;
-  email: string;
-  role: MemberRole;
-  status?: MemberStatus;
-  joinedAt?: string;
+    id: number;
+    name: string;
+    email: string;
+    role: MemberRole;
+    status?: MemberStatus;
+    joinedAt?: string;
 }
 
 export interface InviteMemberRequest {
-  email: string;
-  role: MemberRole;
+    email: string;
+    role: MemberRole;
+}
+
+// --------------------------------
+
+// 회의록
+// 회의 목록 조회 시 각 회의의 정보를 담을 타입
+export interface Meeting {
+    meetingId: number;
+    title: string;
+    scheduledAt: string;
+    hostName: string;
+    hostId: number; // 주최자 ID
+    useAiMinutes: boolean;
+    participantsCount: number;
+    roomId?: number | null;
+}
+
+// --- 수동 회의록 관련 타입 추가 ---
+export interface ManualMinuteRequest {
+    content: string;
+}
+
+export interface ManualMinuteResponse {
+    minuteId: number;
+    authorName: string;
+    createdAt: string;
+    content: string;
+}
+
+export type ApiEnvelope<T> = {
+    result: "SUCCESS" | "FAIL";
+    message?: string;
+    data: T;
+};
+
+export interface ContractInfo {
+    contractId: number;
+    title: string;
+    completedPdfUrl: string; // PDF URL 포함
+}
+
+// 회의에 속한 회의록 정보 (목록 조회용)
+export interface MinuteInfo {
+    minuteId: number;
+    type: "AUTO" | "SELF" | "SUMMARY";
+    contracts?: ContractInfo[];
+}
+
+export interface MeetingDoc {
+    meetingId: number;
+    meetingTitle: string;
+    minutes?: MinuteInfo[];
+}
+
+export interface StandaloneContract {
+    contractId: number;
+    title: string;
+    createdAt?: string;
+    completedPdfUrl: string; // PDF URL 포함
+}
+
+export interface DocumentResponse {
+    meetingsWithDocs?: { date: string; meetings: MeetingDoc[] }[];
+    standaloneContracts?: StandaloneContract[];
+}
+
+// 회의록 상세 보기 응답 타입
+export interface MinuteDetail {
+    minuteId: number;
+    meetingTitle: string;
+    type: "AUTO" | "SELF" | "SUMMARY";
+    authorName: string;
+    createdAt: string;
+    content: string;
+}
+
+// 회의록을 가진 미팅 조회 응답 타입
+export interface MeetingsWithDocsResponse {
+    data: [{
+        meetingId: number;
+        title: string;
+    }]
 }
