@@ -231,13 +231,13 @@ export interface ContractInfo {
 export interface MinuteInfo {
     minuteId: number;
     type: "AUTO" | "SELF" | "SUMMARY";
-    contracts: ContractInfo[];
+    contracts?: ContractInfo[];
 }
 
 export interface MeetingDoc {
     meetingId: number;
     meetingTitle: string;
-    minutes: MinuteInfo[];
+    minutes?: MinuteInfo[];
 }
 
 export interface StandaloneContract {
@@ -260,4 +260,12 @@ export interface MinuteDetail {
     authorName: string;
     createdAt: string;
     content: string;
+}
+
+// 회의록을 가진 미팅 조회 응답 타입
+export interface MeetingsWithDocsResponse {
+    data: [{
+        meetingId: number;
+        title: string;
+    }]
 }

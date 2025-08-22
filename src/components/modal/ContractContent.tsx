@@ -7,6 +7,7 @@ import { sendContract } from '../../apis/Contract';
 import { getUser } from '../../apis/User';
 import TextInput from '../common/TextInput';
 import type { MeetingDoc } from '../../apis/Types';
+import { fetchDocsOfMeeting, fetchMeetingsWithDocs } from '../../apis/Documents';
 
 interface ContractContentProps {
     templateId: string;
@@ -30,16 +31,18 @@ const ContractContent: React.FC<ContractContentProps> = ({ templateId, eformsign
     const [busy, setBusy] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        setData(initialContractData[templateId]);
-    }, [templateId]);
-
     const handleDataChange = (updatedFields: Partial<AllContractData>) => {
         setData(prevData => ({
             ...prevData,
             ...updatedFields,
         }));
     };
+
+    const loadMeetings = async () => {
+        const data = await fetchMeetingsWithDocs()
+        console.log("fetchMeetingsWithMinutes 함수 데이터 확인 :", data)
+        setMeetingsWithDocs(data)
+    }
 
     const submitContract = async () => {
         setBusy(true)
@@ -67,7 +70,16 @@ const ContractContent: React.FC<ContractContentProps> = ({ templateId, eformsign
         }
     }
 
+    const handleShowDocs = async (meetingId: number) => {
+        const data = await fetchDocsOfMeeting(meetingId)
+    }
+
     const FormComponent = contractFormComponents[templateId];
+
+    useEffect(() => {
+        loadMeetings()
+        setData(initialContractData[templateId]);
+    }, [templateId]);
 
     return (
         <div className="contract-container">
@@ -139,11 +151,21 @@ const ContractContent: React.FC<ContractContentProps> = ({ templateId, eformsign
             <div className="content-section">
                 <h2>회의록_제목1</h2>
                 <div className="content-body">
-                    <button
-                        // onClick={handle}
-                    >
-                        회의록 불러오기
-                    </button>
+                    {meetingsWithDocs.length === 0 ? (
+                        <div>회의록 불러오는 중...</div>
+                    ) : (
+                        <ul>
+                            {meetingsWithDocs.map((meeting) => (
+                                <li key={meeting.meetingId}>
+                                    <div 
+                                        onClick={() => handleShowDocs(meeting.meetingId)}
+                                    >
+                                        {meeting.meetingTitle}
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
                 </div>
             </div>
         </div>
