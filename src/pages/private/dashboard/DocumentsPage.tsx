@@ -9,7 +9,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import "react-calendar/dist/Calendar.css";
 import "./DocumentsPage.css";
 
-import { fetchDocuments, type DocumentResponse, type MinuteDetail } from "../../../apis/Documents";
+import type { DocumentResponse, MinuteDetail } from "../../../apis/Types";
+import { fetchDocuments } from "../../../apis/Documents"
 import { getMinuteDetails } from "../../../apis/Meeting";
 
 // --- 아이콘 컴포넌트들 ---
@@ -121,7 +122,7 @@ export default function DocumentsPage() {
     const handleViewMinute = async (meetingId: number, minuteId: number) => {
         setIsMinuteLoading(true);
         try {
-            const minuteDetails = await getMinuteDetails(String(meetingId), minuteId);
+            const minuteDetails = await getMinuteDetails(meetingId, minuteId);
             setViewingMinute(minuteDetails);
         } catch (err) {
             alert("회의록을 불러오는 데 실패했습니다.");
