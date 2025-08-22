@@ -1,126 +1,146 @@
-:root{
-  --sb-width: 240px;
-  --line: #e5e7eb;
-  --muted: #6b7280;
-  --danger: #F93737;
-  --text: #111827;
-  --bg: #ffffff;
-  --bg-hover: #e2e3fa;
-  --shadow: 0 1px 2px rgba(0,0,0,.06);
+:root {
+    --sb-width: 240px;
+    --line: #e5e7eb;
+    --muted: #6b7280;
+    --danger: #f93737;
+    --text: #111827;
+    --bg: #ffffff;
+    --bg-hover: #e2e3fa;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
 }
 
 /* 전체 영역 */
-.sidebar{
-  position: sticky;      /* 스크롤해도 좌측에 고정 */
-  top: 0;
-  display: grid;
-  grid-template-rows: auto 1fr auto;     /* user / nav / logout */
-  width: var(--sb-width);
-  min-width: var(--sb-width);
-  height: 100%;
-  background: var(--bg);
-  border-right: 1px solid var(--line);
-  box-shadow: var(--shadow);
-  padding: 16px 10px;
+.sidebar {
+    position: sticky; /* 스크롤해도 좌측에 고정 */
+    top: 0;
+    display: grid;
+    grid-template-rows: auto 1fr auto; /* user / nav / logout */
+    width: var(--sb-width);
+    min-width: var(--sb-width);
+    height: 100%;
+    background: var(--bg);
+    border-right: 1px solid var(--line);
+    box-shadow: var(--shadow);
+    padding: 16px 10px;
+}
+
+.sidebar-unread-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background-color: #ef4444;
+    color: white;
+    font-size: 0.7rem;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 999px;
+    min-width: 18px;
+    text-align: center;
+    line-height: 1;
 }
 
 /* 사용자 정보 */
-.user{
-  padding: 8px 8px 18px; /* 상단 여백 줄이고 하단 여백 늘림 → 위로 이동 */
-  /* border-bottom: 1px solid var(--line);  구분선 제거 */
+.user {
+    padding: 8px 8px 18px; /* 상단 여백 줄이고 하단 여백 늘림 → 위로 이동 */
+    /* border-bottom: 1px solid var(--line);  구분선 제거 */
 }
-.user-name{
-  display: block;
-  font-weight: 700;
-  font-size: 1rem;
-  color: var(--text);
-  padding: 0 0 2px;           /* 이름-이메일 사이 아주 살짝 간격 */
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+.user-name {
+    display: block;
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text);
+    padding: 0 0 2px; /* 이름-이메일 사이 아주 살짝 간격 */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
-.user-email{
-  display: block;
-  font-size: 0.9rem;
-  color: var(--muted);
-  white-space: nowrap; text-overflow: ellipsis;
+.user-email {
+    display: block;
+    font-size: 0.9rem;
+    color: var(--muted);
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 /* ───── 메뉴 리스트 ───── */
-.nav{
-  padding: 28px 4px 8px; /* 상단 여백 늘림 → 아래로 이동 */
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
+.nav {
+    padding: 28px 4px 8px; /* 상단 여백 늘림 → 아래로 이동 */
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
 }
-.nav-item{
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  padding: 12px 14px;
-  border: 0;
-  background: transparent;
-  color: var(--text);
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background .15s ease;
-  box-shadow: none;
+.nav-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 12px 14px;
+    border: 0;
+    background: transparent;
+    color: var(--text);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    box-shadow: none;
 }
-.nav-item:hover{
-  background: var(--bg-hover);
+.nav-item:hover {
+    background: var(--bg-hover);
 }
-.nav-item.is-active-sidebar{
-  background: #4B52FF;
-  color: #fff;
+.nav-item.is-active-sidebar {
+    background: #4b52ff;
+    color: #fff;
 }
-.icon{
-  width: 20px;
-  display: inline-flex;
-  justify-content: center;
+.icon {
+    width: 20px;
+    display: inline-flex;
+    justify-content: center;
 }
-.nav-item>span {
-  font-size: 1rem;
+.nav-item > span {
+    font-size: 1rem;
 }
 
 /* ───── 로그아웃 ───── */
-.logout{
-  margin-top: auto;
-  padding: 12px 4px 0;
-  /* border-top: 1px solid var(--line);  구분선 제거 */
+.logout {
+    margin-top: auto;
+    padding: 12px 4px 0;
+    /* border-top: 1px solid var(--line);  구분선 제거 */
 }
-.logout-btn{
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  padding: 12px 14px;
-  border: 0;
-  background: transparent;
-  color: var(--text);
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background .15s ease;
-  box-shadow: none;
+.logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 12px 14px;
+    border: 0;
+    background: transparent;
+    color: var(--text);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    box-shadow: none;
 }
 .logout-btn span {
-  font-size: 1rem;
+    font-size: 1rem;
 }
-.logout-btn:hover{
-  background: var(--danger);
+.logout-btn:hover {
+    background: var(--danger);
 }
-.logout-btn:hover span{
-  color: #fff;
+.logout-btn:hover span {
+    color: #fff;
 }
-.logout-btn:hover svg{
-  color: #fff;
+.logout-btn:hover svg {
+    color: #fff;
 }
 
-.label.danger{ color: var(--danger); }
+.label.danger {
+    color: var(--danger);
+}
 
 /* ───── 접근성 ───── */
 .nav-item:focus-visible,
-.logout-btn:focus-visible{
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(37,99,235,.25);
-  border-radius: 8px;
+.logout-btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.25);
+    border-radius: 8px;
 }
