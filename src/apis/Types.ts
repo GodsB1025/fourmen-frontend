@@ -71,6 +71,13 @@ export interface Company {
 
 export type UserRole = "USER" | "ADMIN";
 
+export interface SignupRequest {
+    email: string;
+    password: string;
+    name: string;
+    phone: string;
+    adminCode: string;
+}
 export interface SignupResponse {
     userId: number;
     email: string;

@@ -90,6 +90,7 @@
     position: relative;
     min-height: 100px;
     transition: background-color 0.3s;
+    overflow: hidden; /* ⬅ 추가: 확대/전환시 버튼이 선 밖으로 안 나가게 */
 }
 .profile-cal .fc-daygrid-day-number {
     padding: 0.5rem;
@@ -100,41 +101,71 @@
     color: #9ca3af;
 }
 
-/* --- ★★★ KEY CHANGE: Hover Effect & '+' Icon Logic (SVG Image Version) ★★★ --- */
-
-/* 1. 일정이 없는 날짜 셀(.fc-day-no-events)에만 호버 효과를 적용합니다. */
+/* --- KEY CHANGE (기존 표시용 가상요소) --- */
+/* 가상요소 기반 + 아이콘은 실제 버튼과 중복되므로 비활성화 */
+.profile-cal .fc-day-no-events .fc-daygrid-day-frame::after { display: none !important; }
+/* (참고) 이전 규칙들은 남겨두되, 위 한 줄로 무력화됨 */
 .profile-cal .fc-daygrid-day.fc-day-no-events:hover .fc-daygrid-day-frame {
-    background-color: #f9fafb; /* 은은한 회색 배경 */
+    background-color: #f9fafb;
 }
-
-/* 2. '+' 아이콘 역할을 할 가상 요소를 만들고, SVG 아이콘을 배경 이미지로 설정합니다. */
+/* (무력화됨) */
 .profile-cal .fc-day-no-events .fc-daygrid-day-frame::after {
     content: "";
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%); /* 정확한 중앙 정렬 */
-    width: 32px;
-    height: 32px;
+    top: 6px;
+    left: 6px;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
     background-color: #ffffff;
     border: 1px solid #e5e7eb;
-
-    /* SVG 아이콘을 배경으로 설정 */
+    z-index: 3;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='12' y1='5' x2='12' y2='19'%3E%3C/line%3E%3Cline x1='5' y1='12' x2='19' y2='12'%3E%3C/line%3E%3C/svg%3E");
     background-position: center;
     background-repeat: no-repeat;
-    background-size: 16px 16px; /* 아이콘 크기 조절 */
-
-    opacity: 0; /* 기본적으로 숨김 */
+    background-size: 12px 12px;
+    opacity: 0;
     pointer-events: none;
     transition: opacity 0.2s ease, transform 0.2s ease;
 }
-
-/* 3. '.fc-day-no-events' 셀에 호버 시 '+' 아이콘을 보여줍니다. */
 .profile-cal .fc-day-no-events:hover .fc-daygrid-day-frame::after {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1.1); /* 살짝 커지는 효과 */
+    transform: scale(1.06);
+    transform-origin: top left;
+}
+
+/* --- 실제 클릭 가능한 + 버튼 --- */
+.profile-cal .fc .fc-add-btn {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    width: 20px;                 /* 요청: 조금 작은 크기 */
+    height: 20px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;          /* 동그라미 */
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    font-size: 12px;
+    line-height: 1;
+    font-weight: 700;
+    cursor: pointer;
+    opacity: 0;                  /* 기본 숨김 */
+    pointer-events: none;
+    transition: opacity .15s ease, transform .12s ease;
+    z-index: 5;
+}
+/* 셀 호버 시에만 보이도록 */
+.profile-cal .fc .fc-daygrid-day:hover .fc-add-btn {
+    opacity: 1;
+    pointer-events: auto;
+}
+/* 월 전환 억제용(깜빡임 방지) */
+.profile-cal.suppress-add .fc-add-btn,
+.profile-cal.suppress-add .fc-daygrid-day-frame::after {
+    display: none !important;
 }
 
 /* --- Improved Event Block Style --- */
@@ -160,6 +191,42 @@
     text-overflow: ellipsis;
 }
 
+/* --- Meeting vs Personal 색상 --- */
+.profile-cal .evt-meeting {
+  background: #fff !important;
+  border-color: rgba(17, 17, 17, 0.5) !important;
+  color: #111 !important;
+}
+.profile-cal .evt-meeting .fc-event-title,
+.profile-cal .evt-meeting .fc-event-time {
+  color: #111 !important;
+}
+.profile-cal .evt-personal {
+    background: #dbeafe !important;
+    border-color: #bfdbfe !important;
+    color: #1e40af !important;
+}
+.profile-cal .evt-personal .fc-event-title,
+.profile-cal .evt-personal .fc-event-time {
+    color: inherit !important;
+}
+.profile-cal .evt-meeting:hover {
+  background: #fff !important;
+  border-color: #000 !important;
+}
+.profile-cal .evt-meeting .fc-daygrid-event-dot,
+.profile-cal .evt-meeting .fc-event-dot,
+.profile-cal .evt-meeting .fc-list-event-dot {
+  background: #111 !important;
+  border-color: #111 !important;
+}
+.profile-cal .evt-personal .fc-daygrid-event-dot,
+.profile-cal .evt-personal .fc-event-dot,
+.profile-cal .evt-personal .fc-list-event-dot {
+  background: #4b52ff !important;
+  border-color: #4b52ff !important;
+}
+
 /* --- More... link --- */
 .profile-cal .fc-daygrid-more-link {
     font-size: 0.75rem;
@@ -173,140 +240,53 @@
 }
 
 /* --- Modal --- */
-.cal-modal {
-    position: fixed;
-    inset: 0;
-    z-index: 50;
-}
-.cal-backdrop {
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.35);
-    backdrop-filter: blur(4px);
-}
+.cal-modal { position: fixed; inset: 0; z-index: 50; }
+.cal-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.35); backdrop-filter: blur(4px); }
 .cal-dialog {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: 520px;
-    max-width: calc(100% - 32px);
-    background: #fff;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-    display: flex;
-    flex-direction: column;
+    position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
+    width: 520px; max-width: calc(100% - 32px); background: #fff; border-radius: 16px; overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25); display: flex; flex-direction: column;
 }
 .cal-dialog-head {
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid #e5e7eb;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb;
+    display: flex; justify-content: space-between; align-items: center;
 }
-.cal-dialog-title {
-    font-weight: 600;
-    font-size: 1.125rem;
-}
-.cal-x {
-    border: none;
-    background: transparent;
-    font-size: 24px;
-    line-height: 1;
-    cursor: pointer;
-    color: #6b7280;
-}
-.cal-dialog-body {
-    padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-}
+.cal-dialog-title { font-weight: 600; font-size: 1.125rem; }
+.cal-x { border: none; background: transparent; font-size: 24px; line-height: 1; cursor: pointer; color: #6b7280; }
+.cal-dialog-body { padding: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem; }
 .cal-dialog-foot {
-    padding: 1rem 1.5rem;
-    border-top: 1px solid #e5e7eb;
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-    background-color: #f9fafb;
+    padding: 1rem 1.5rem; border-top: 1px solid #e5e7eb;
+    display: flex; justify-content: flex-end; gap: 8px; background-color: #f9fafb;
 }
-.cal-create {
-    display: grid;
-    gap: 1rem;
-}
-.cal-create-row {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-.cal-create-row label {
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: #374151;
-}
+.cal-create { display: grid; gap: 1rem; }
+.cal-create-row { display: flex; flex-direction: column; gap: 0.5rem; }
+.cal-create-row label { font-size: 0.875rem; font-weight: 500; color: #374151; }
 .cal-create-row input[type="text"],
 .cal-create-row input[type="date"],
 .cal-create-row input[type="time"] {
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    padding: 8px 12px;
-    outline: none;
-    transition: all 0.2s ease;
+    border: 1px solid #d1d5db; border-radius: 8px; padding: 8px 12px; outline: none; transition: all 0.2s ease;
 }
-.cal-create-row input:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+.cal-create-row input:focus { border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.2); }
+.cal-empty { color: #6b7280; font-size: 14px; text-align: center; padding: 2rem; background-color: #f9fafb; border-radius: 8px; }
+.cal-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.75rem; }
+.cal-list-item { display: flex; justify-content: space-between; align-items: center; border: 1px solid #e5e7eb; border-radius: 10px; padding: 0.75rem 1rem; }
+.cal-title { font-weight: 500; }
+
+/* --- Buttons --- */
+.cal-btn { border: 1px solid #d1d5db; background: #fff; border-radius: 8px; padding: 0.5rem 1rem; cursor: pointer; font-weight: 500; }
+.cal-btn:hover { background: #f9fafb; }
+.cal-btn[disabled] { opacity: 0.6; cursor: not-allowed; }
+.cal-primary { border-color: #3b82f6; background-color: #3b82f6; color: #fff; }
+.cal-primary:hover { background-color: #2563eb; }
+.cal-danger { border-color: #ef4444; color: #ef4444; }
+.cal-danger:hover { background-color: #fef2f2; }
+
+/* --- 모달 리스트 ‘회의’ 뱃지 --- */
+.cal-badge-meeting {
+  display: inline-block; margin-left: 6px; padding: 0 6px; font-size: 11px; line-height: 18px;
+  border-radius: 6px; background: #fff; color: #111; border: 1px solid #111;
 }
-.cal-empty {
-    color: #6b7280;
-    font-size: 14px;
-    text-align: center;
-    padding: 2rem;
-    background-color: #f9fafb;
-    border-radius: 8px;
-}
-.cal-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    gap: 0.75rem;
-}
-.cal-list-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border: 1px solid #e5e7eb;
-    border-radius: 10px;
-    padding: 0.75rem 1rem;
-}
-.cal-title {
-    font-weight: 500;
-}
-.cal-btn {
-    border: 1px solid #d1d5db;
-    background: #fff;
-    border-radius: 8px;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    font-weight: 500;
-}
-.cal-btn:hover {
-    background: #f9fafb;
-}
-.cal-primary {
-    border-color: #3b82f6;
-    background-color: #3b82f6;
-    color: white;
-}
-.cal-primary:hover {
-    background-color: #2563eb;
-}
-.cal-danger {
-    border-color: #ef4444;
-    color: #ef4444;
-}
-.cal-danger:hover {
-    background-color: #fef2f2;
+.profile-cal .evt-personal:hover {
+  border-color: rgba(75, 82, 255, 0.5) !important;
+  background: #dbeafe !important;
 }
