@@ -2,10 +2,10 @@
   --sb-width: 240px;
   --line: #e5e7eb;
   --muted: #6b7280;
-  --danger: #ef4444;
+  --danger: #F93737;
   --text: #111827;
   --bg: #ffffff;
-  --bg-hover: #f8fafc;
+  --bg-hover: #e2e3fa;
   --shadow: 0 1px 2px rgba(0,0,0,.06);
 }
 
@@ -17,7 +17,7 @@
   grid-template-rows: auto 1fr auto;     /* user / nav / logout */
   width: var(--sb-width);
   min-width: var(--sb-width);
-  height: 100vh;
+  height: 100%;
   background: var(--bg);
   border-right: 1px solid var(--line);
   box-shadow: var(--shadow);
@@ -32,16 +32,16 @@
 .user-name{
   display: block;
   font-weight: 700;
-  font-size: 14px;
+  font-size: 1rem;
   color: var(--text);
-  margin: 0 0 2px;           /* 이름-이메일 사이 아주 살짝 간격 */
+  padding: 0 0 2px;           /* 이름-이메일 사이 아주 살짝 간격 */
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .user-email{
   display: block;
-  font-size: 12px;
+  font-size: 0.9rem;
   color: var(--muted);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  white-space: nowrap; text-overflow: ellipsis;
 }
 
 /* ───── 메뉴 리스트 ───── */
@@ -49,7 +49,7 @@
   padding: 28px 4px 8px; /* 상단 여백 늘림 → 아래로 이동 */
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 24px;
 }
 .nav-item{
   position: relative;
@@ -57,7 +57,7 @@
   align-items: center;
   gap: 10px;
   width: 100%;
-  padding: 8px 10px;
+  padding: 12px 14px;
   border: 0;
   background: transparent;
   color: var(--text);
@@ -69,23 +69,17 @@
 .nav-item:hover{
   background: var(--bg-hover);
 }
-.nav-item.is-active{
-  background: #f3f6ff;
-}
-.nav-item.is-active::before{
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 6px;
-  bottom: 6px;
-  width: 3px;
-  border-radius: 2px;
-  background: #2563eb;
+.nav-item.is-active-sidebar{
+  background: #4B52FF;
+  color: #fff;
 }
 .icon{
   width: 20px;
   display: inline-flex;
   justify-content: center;
+}
+.nav-item>span {
+  font-size: 1rem;
 }
 
 /* ───── 로그아웃 ───── */
@@ -99,7 +93,7 @@
   align-items: center;
   gap: 10px;
   width: 100%;
-  padding: 8px 10px;
+  padding: 12px 14px;
   border: 0;
   background: transparent;
   color: var(--text);
@@ -108,9 +102,19 @@
   transition: background .15s ease;
   box-shadow: none;
 }
-.logout-btn:hover{
-  background: #fff1f2;
+.logout-btn span {
+  font-size: 1rem;
 }
+.logout-btn:hover{
+  background: var(--danger);
+}
+.logout-btn:hover span{
+  color: #fff;
+}
+.logout-btn:hover svg{
+  color: #fff;
+}
+
 .label.danger{ color: var(--danger); }
 
 /* ───── 접근성 ───── */

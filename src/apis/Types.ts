@@ -199,3 +199,20 @@ export interface CompletedContract {
     completedAt: string;
     fileUrlBase: string;
 }
+
+export type MemberRole = "ADMIN" | "USER" | "CONTRACT_ADMIN";
+export type MemberStatus = "ACTIVE" | "INVITED" | "SUSPENDED";
+
+export interface CompanyMember {
+  id: number;
+  name: string;
+  email: string;
+  role: MemberRole;
+  status?: MemberStatus;
+  joinedAt?: string;
+}
+
+export interface InviteMemberRequest {
+  email: string;
+  role: MemberRole;
+}
