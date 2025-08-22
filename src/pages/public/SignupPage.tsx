@@ -14,6 +14,7 @@ export default function SignupWizard() {
   const [step, setStep] = useState<Step>(0);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+
   const [f, setF] = useState<Form>({
     type: null,
     email: "",
@@ -35,48 +36,37 @@ export default function SignupWizard() {
   const goNext = () => setStep((s) => (Math.min(s + 1, 5) as Step));
   const goPrev = () => setStep((s) => (Math.max(s - 1, 0) as Step));
 
+  // 회색 카드에 들어갈 도움말
+  const stepHelp: Record<number, string> = {
+    1: "인증을 위해 이메일을 입력해주세요.",
+    2: "메일로 받은 6자리 인증코드를 입력해주세요.",
+    3: "이름/비밀번호/연락처 등 기본 정보를 입력해주세요.",
+    4: "관리자 전용 인증 코드를 입력해주세요.",
+  };
+
   async function handleSendEmail() {
-    
     setErr(null);
     goNext();
     return;
-    
-    /*
-    setErr(null);
-    if (!/^\S+@\S+\.\S+$/.test(f.email)) {
-      setErr("이메일 형식이 올바르지 않습니다.");
-      return;
-    }
-    setBusy(true);
-    try {
-      await sendVerificationEmail(f.email);
-      goNext();
-    } catch (e: any) {
-      setErr(e?.message || "인증 메일 전송에 실패했습니다.");
-    } finally {
-      setBusy(false);
-    }
-      */
+
+    // 필요 시 실제 발송 로직
+    // if (!/^\S+@\S+\.\S+$/.test(f.email)) { setErr("이메일 형식이 올바르지 않습니다."); return; }
+    // setBusy(true);
+    // try { await sendVerificationEmail(f.email); goNext(); }
+    // catch (e:any) { setErr(e?.message || "인증 메일 전송에 실패했습니다."); }
+    // finally { setBusy(false); }
   }
 
   async function handleVerifyCode() {
-    
-    
-    if (!/^\d{6}$/.test(f.code)) {
-      setErr("인증코드는 6자리 숫자입니다.");
-      return;
-    }
     setErr(null);
-    setBusy(true);
-    try {
-      await verifyEmailCode(f.email, f.code);
-      goNext();
-    } catch (e: any) {
-      setErr(e?.message || "인증코드가 올바르지 않습니다.");
-    } finally {
-      setBusy(false);
-    }
-      
+    goNext();
+    return;
+
+    // if (!/^\d{6}$/.test(f.code)) { setErr("인증코드는 6자리 숫자입니다."); return; }
+    // setBusy(true);
+    // try { await verifyEmailCode(f.email, f.code); goNext(); }
+    // catch (e:any) { setErr(e?.message || "인증코드가 올바르지 않습니다."); }
+    // finally { setBusy(false); }
   }
 
   return (
@@ -84,14 +74,17 @@ export default function SignupWizard() {
       <main className="su-card">
         <h1 className="su-title">회원가입</h1>
 
-        {/* 진행률 (0 < step < 5) */}
+        {/* 회색 카드: 모든 진행 중 단계(1~4)에서 노출 */}
         {step > 0 && step < 5 && (
-          <div className="su-progress">
-            <SmoothProgressBar targetPercent={percent} />
-            <div className="meta">
-              <span>{labelFor(step, f.type)}</span>
-              <span>{percent}%</span>
+          <div className="hint-card" role="region" aria-label="진행 안내">
+            <div className="hint-progress">
+              <SmoothProgressBar targetPercent={percent} />
             </div>
+            <div className="meta">
+              <span className="hint-title">{labelFor(step, f.type)}</span>
+              <span className="hint-pct">{percent}%</span>
+            </div>
+            {!!stepHelp[step] && <p className="hint-desc">{stepHelp[step]}</p>}
           </div>
         )}
 
@@ -105,7 +98,7 @@ export default function SignupWizard() {
           />
         )}
 
-        {/* Step 1: 이메일 */}
+        {/* Step 1: 이메일 입력 */}
         {step === 1 && (
           <SignUpEmail
             f={f}
@@ -116,7 +109,7 @@ export default function SignupWizard() {
           />
         )}
 
-        {/* Step 2: 인증코드 */}
+        {/* Step 2: 인증코드 입력 */}
         {step === 2 && (
           <SignUpAuthCode
             f={f}
@@ -127,7 +120,7 @@ export default function SignupWizard() {
           />
         )}
 
-        {/* Step 3: 기본정보 */}
+        {/* Step 3: 기본정보 입력 */}
         {step === 3 && (
           <SignUpInfo
             f={f}

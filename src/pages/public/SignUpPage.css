@@ -20,7 +20,7 @@ body {
   color: var(--text);
 }
 
-/* 상단바 */
+/* 상단바 (레이아웃에 이미 있으면 생략 가능) */
 .su-topbar {
   display: flex;
   align-items: center;
@@ -56,7 +56,7 @@ body {
   text-align: center;
 }
 
-/* 진행률 바 */
+/* (기존) 진행률 바 — 유지해도 되고 미사용이면 제거 가능 */
 .su-progress .bar {
   height: 6px;
   background: #f3f4f6;
@@ -105,12 +105,10 @@ body {
   width: 400px; /* 원하시는 카드 너비 */
   height: auto;
 
-  /* 👇 여기부터 수정 */
   display: flex;
-  flex-direction: column; /* 아이템을 세로로 정렬 */
-  justify-content: space-evenly; /* 세로 공간을 균등하게 배분 */
-  align-items: center; /* 가로축 중앙 정렬 */
-  /* 👆 여기까지 수정 */
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
 
   text-align: center;
   padding: 28px 24px;
@@ -259,17 +257,50 @@ button.ghost {
   color: white;
 }
 
-/* ✅ .primary 클래스 버튼이 비활성화 상태일 때 스타일 (회색) */
+/* ✅ .primary 클래스 버튼이 비활성화 상태 스타일 */
 .primary:disabled {
-  background-color: #cccccc; /* 회색 */
+  background-color: #cccccc;
   cursor: not-allowed;
-  opacity: 0.7; /* 약간 투명하게 */
+  opacity: 0.7;
 }
-
 
 /* 반응형 */
 @media (max-width: 720px) {
   .su-typegrid { grid-template-columns: 1fr; gap: 20px; }
   .su-typecard { width: 220px; }
   .su-typecard-icon svg { width: 104px; height: 104px; }
+}
+
+/* =========================
+   NEW: 제목~입력창 사이 회색 카드
+   ========================= */
+.hint-card {
+  width: 100%;
+  background: #f1f5f9;          /* 밝은 회색 */
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 18px 20px;
+  margin: 8px 0 18px;           /* 제목과 입력 사이 간격 */
+}
+
+.hint-progress { margin-bottom: 10px; }
+
+/* 카드 안 메타(좌: 라벨, 우: %) */
+.hint-card .meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 4px 0 6px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.hint-title { font-weight: 800; color: #1f2937; }
+.hint-pct   { opacity: .9; }
+
+.hint-desc {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--muted);
 }
