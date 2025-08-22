@@ -3,13 +3,11 @@
   --muted: #6b7280;
   --text: #111827;
   --bg: #fff;
-  --primary: #2563eb;
+  --primary: #4B52FF;  /* 통일 색상 */
   --shadow: none;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
@@ -33,11 +31,7 @@ body {
   position: sticky;
   top: 0;
 }
-
-.brand {
-  font-weight: 800;
-}
-
+.brand { font-weight: 800; }
 .login {
   font-size: 14px;
   color: var(--muted);
@@ -51,13 +45,14 @@ body {
   padding: 28px;
   border-radius: 16px;
   background: #fff;
-  box-shadow: none;
+  box-shadow: none; /* ✅ 그림자 제거 */
 }
 
+/* 제목 */
 .su-title {
-  margin: 0 0 16px;
+  margin: 60px 0 20px;   /* ⬅️ 위로부터 60px 띄우고, 아래 카드랑도 20px 간격 */
   font-size: 22px;
-  font-weight: 800;     
+  font-weight: 800;
   text-align: center;
 }
 
@@ -68,12 +63,7 @@ body {
   border-radius: 999px;
   overflow: hidden;
 }
-
-.su-progress .fill {
-  height: 100%;
-  background: var(--primary);
-}
-
+.su-progress .fill { height: 100%; background: var(--primary); }
 .su-progress .meta {
   display: flex;
   justify-content: space-between;
@@ -83,74 +73,93 @@ body {
 }
 
 /* 단계 영역 */
-.su-step {
-  display: grid;
-  gap: 14px;
+.su-step { display: grid; gap: 14px; }
+
+/* 선택 섹션: 중앙(조금 아래) 배치 */
+.su-step.su-typepick {
+  min-height: calc(100vh - 120px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;  /* ✅ 기존 center → 위쪽 정렬 */
+  padding-top: 80px;            /* ✅ 상단에서 조금 띄움 */
+  gap: 32px;                    /* 제목 ↔ 카드 간격 */
 }
 
-/* 가입 유형 선택 카드 */
+/* 가입 유형 그리드 */
 .su-typegrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 24px;
+  justify-items: center;   /* ✅ 좌우 대칭 */
+  align-items: center;
+  gap: 32px;
 }
 
+/* 카드: 정사각형, 보더만, 그림자/부양 효과 제거 */
 .su-typecard {
   appearance: none;
-  border: none;
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 16px;
+  aspect-ratio: 1 / 1;
+  width: 400px; /* 원하시는 카드 너비 */
+  height: auto;
+
+  /* 👇 여기부터 수정 */
+  display: flex;
+  flex-direction: column; /* 아이템을 세로로 정렬 */
+  justify-content: space-evenly; /* 세로 공간을 균등하게 배분 */
+  align-items: center; /* 가로축 중앙 정렬 */
+  /* 👆 여기까지 수정 */
+
+  text-align: center;
+  padding: 28px 24px;
   cursor: pointer;
 
-  display: grid;
-  grid-template-rows: auto auto 1fr;
-  gap: 12px;
-
-  padding: 28px 24px;
-  border-radius: 16px;
-  background: #fff;
-  box-shadow: none;
-  text-align: center;
-
-  white-space: normal;
-  overflow-wrap: anywhere;
-  word-break: keep-all;
-
-  transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+  box-shadow: none !important;
+  transform: none !important;
+  transition: border-color .15s ease, background .15s ease;
 }
 
 .su-typecard:hover {
-  transform: translateY(-2px);
-  box-shadow: none;
-  background: #f9fafb;
+  border-color: var(--primary);  /* ✅ hover 보더 통일 */
+  background: #fff;              /* 회색 hover 배경 없음 */
+}
+
+.su-typecard:focus-visible {
+  outline: 3px solid var(--primary); /* ✅ 포커스 링 통일 */
+  outline-offset: 3px;
 }
 
 .su-typecard.active {
-  /* 보더 없이 링 느낌 */
-  box-shadow:
-    none;
-  background: #fff;
+  border-color: var(--primary);  /* ✅ 클릭/선택 보더 통일 */
 }
 
+/* 아이콘: 배경판 제거 + 크게 */
 .su-typecard-icon {
-  width: 100px;
-  height: 100px;
-  margin: 0 auto 4px;
+  margin: 0 auto 8px;
   display: grid;
   place-items: center;
-  border-radius: 20px;
-  background: #f3f4f6;
-  border: 1px solid var(--line);
+  background: transparent;  /* ✅ 회색 카드 배경 제거 */
+  border: 0;
+  border-radius: 0;
 }
 .su-typecard-icon svg {
-  width: 58px;
-  height: 58px;
-  fill: #111827;
+  width: 120px; height: 120px;       /* ✅ 크게 */
+  fill: none;                         /* 선형 아이콘 */
+  stroke: currentColor;
+  stroke-width: 12;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  color: var(--text);
 }
 
+/* 타이포 */
 .su-typecard-title {
-  font-size: 17px;
+  font-size: 18px;      /* 살짝 크게 */
   font-weight: 800;
+  color: var(--text);
 }
-
 .su-typecard-desc {
   margin: 0 auto;
   max-width: 360px;
@@ -159,51 +168,9 @@ body {
   color: var(--muted);
 }
 
-/* 반응형 */
-@media (max-width: 720px) {
-  .su-typegrid { grid-template-columns: 1fr; gap: 14px; }
-  .su-typecard { padding: 22px 18px; }
-  .su-typecard-icon { width: 88px; height: 88px; }
-  .su-typecard-icon svg { width: 48px; height: 48px; }
-}
-
-/*지워도되용*/
-/* .su-type {
-  display: grid;
-  gap: 6px;
-  justify-items: center;
-  align-content: center;
-  padding: 22px;
-  border-radius: 14px;
-  background: #fff;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.su-type strong {
-  font-size: 14px;
-}
-
-.su-type span {
-  font-size: 12px;
-  color: var(--muted);
-}
-
-.su-type.active {
-  outline: 2px solid var(--primary);
-} */
-
 /* 폼 필드 */
-.su-field {
-  display: grid;
-  gap: 6px;
-}
-
-label {
-  font-size: 12px;
-  color: var(--muted);
-}
-
+.su-field { display: grid; gap: 6px; }
+label { font-size: 12px; color: var(--muted); }
 .su-hint {
   font-size: 12px;
   color: var(--muted);
@@ -218,13 +185,11 @@ label {
   display: grid;
   gap: 6px;
 }
-
 .su-adminbox .stripe {
   height: 6px;
   background: linear-gradient(90deg, #4f46e5, #a855f7, #22d3ee);
   border-radius: 999px;
 }
-
 .su-adminbox .desc {
   margin: 0;
   font-size: 12px;
@@ -252,58 +217,29 @@ button {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+
+  box-shadow: none;                 /* ✅ 버튼 그림자 제거 */
+}
+button:focus-visible {
+  outline: 3px solid var(--primary); /* ✅ 포커스 링 통일 */
+  outline-offset: 2px;
 }
 
+/* Primary 버튼 색상 통일 */
 button.primary {
   background: var(--primary);
   color: #fff;
   border-color: var(--primary);
 }
+button.primary:hover { filter: brightness(0.96); }
 
+/* 보조 버튼 */
 button.ghost {
   background: #eee;
   border-color: #ddd;
   padding: 8px 14px;
   height: auto;
   border-radius: 999px;
-}
-/* --- override global button for type cards --- */
-button.su-typecard {
-  /* 전역 button 초기화 / 덮어쓰기 */
-  height: auto;
-  padding: 28px 24px;
-  border: 0;
-  border-radius: 16px;
-
-  /* 카드 레이아웃 */
-  display: grid;
-  grid-template-rows: auto auto 1fr;
-  gap: 12px;
-  box-sizing: border-box;
-
-  /* 카드 비주얼 */
-  background: #fff;
-  box-shadow: 0 2px 10px rgba(0,0,0,.06);
-  text-align: center;
-
-  /* 텍스트 줄바꿈 */
-  white-space: normal;
-  overflow-wrap: anywhere;
-  word-break: keep-all;
-
-  /* 트랜지션 */
-  transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
-}
-button.su-typecard:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(0,0,0,.08);
-  background: #f9fafb;
-}
-button.su-typecard.active {
-  box-shadow:
-    0 10px 24px rgba(0,0,0,.10),
-    0 0 0 3px rgba(37,99,235,.25);
-  background: #fff;
 }
 
 /* 완료 화면 */
@@ -313,9 +249,27 @@ button.su-typecard.active {
   gap: 10px;
   padding: 32px 0;
 }
-
 .su-error {
   margin-top: 12px;
   color: #d00;
   font-size: 13px;
+}
+.primary {
+  background-color: #007bff;
+  color: white;
+}
+
+/* ✅ .primary 클래스 버튼이 비활성화 상태일 때 스타일 (회색) */
+.primary:disabled {
+  background-color: #cccccc; /* 회색 */
+  cursor: not-allowed;
+  opacity: 0.7; /* 약간 투명하게 */
+}
+
+
+/* 반응형 */
+@media (max-width: 720px) {
+  .su-typegrid { grid-template-columns: 1fr; gap: 20px; }
+  .su-typecard { width: 220px; }
+  .su-typecard-icon svg { width: 104px; height: 104px; }
 }
