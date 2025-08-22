@@ -1,0 +1,52 @@
+.switchContainer {
+    display: inline-flex;
+    background: none;
+    border: 1px solid rgba(143, 143, 143, 0.2);
+    box-shadow: inset 0 0 1rem rgba(185, 185, 185, 0.2);
+    border-radius: 999px;
+    padding: 4px;
+    position: relative;
+    overflow: hidden;
+}
+
+.switchOption {
+    /* flex: 1; */
+    white-space: nowrap;
+    padding: 8px 12px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #555;
+    position: relative; /* 자식인 highlighter의 기준점이 됩니다. */
+    z-index: 2; /* 텍스트가 하이라이터 위에 오도록 합니다. */
+    transition: color 0.2s ease-in-out;
+}
+
+.switchOption.active {
+    color: #fff;
+}
+
+.switchOption:disabled {
+    color: #aaa;
+    cursor: not-allowed;
+}
+
+.highlighter {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #4B52FF;
+    border-radius: 999px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1; /* 텍스트보다 아래에 위치합니다. */
+}
+
+.label {
+    position: relative;
+    z-index: 2;
+}
