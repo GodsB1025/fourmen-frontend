@@ -41,15 +41,9 @@
 .profile-cal .fc-button:not(:disabled):hover {
     background-color: #f9fafb !important;
 }
-.profile-cal .fc-button-primary:disabled {
-    opacity: 0.6;
-}
-.profile-cal .fc-button-group {
-    gap: -1px;
-}
-.profile-cal .fc-button-group > .fc-button {
-    border-radius: 0 !important;
-}
+.profile-cal .fc-button-primary:disabled { opacity: 0.6; }
+.profile-cal .fc-button-group { gap: -1px; }
+.profile-cal .fc-button-group > .fc-button { border-radius: 0 !important; }
 .profile-cal .fc-button-group > .fc-button:first-child {
     border-top-left-radius: 8px !important;
     border-bottom-left-radius: 8px !important;
@@ -58,9 +52,7 @@
     border-top-right-radius: 8px !important;
     border-bottom-right-radius: 8px !important;
 }
-.profile-cal .fc-today-button {
-    border-radius: 8px !important;
-}
+.profile-cal .fc-today-button { border-radius: 8px !important; }
 .profile-cal .fc-button-primary.fc-button-active {
     background-color: #eef2ff !important;
     border-color: #a5b4fc !important;
@@ -80,35 +72,26 @@
     padding: 0.75rem 0;
     border-bottom-width: 1px !important;
 }
-.profile-cal .fc-daygrid-day {
-    border-color: #f3f4f6;
-}
-.profile-cal .fc-day-today {
-    background-color: #f0f9ff !important;
-}
+.profile-cal .fc-daygrid-day { border-color: #f3f4f6; }
+.profile-cal .fc-day-today { background-color: #f0f9ff !important; }
 .profile-cal .fc-daygrid-day-frame {
     position: relative;
     min-height: 100px;
     transition: background-color 0.3s;
-    overflow: hidden; /* ⬅ 추가: 확대/전환시 버튼이 선 밖으로 안 나가게 */
+    /* FIX: 이벤트 잘림 원인 제거 */
+    overflow: visible; /* ← was hidden */
 }
 .profile-cal .fc-daygrid-day-number {
     padding: 0.5rem;
     font-size: 0.875rem;
     color: #374151;
 }
-.profile-cal .fc-day-other .fc-daygrid-day-number {
-    color: #9ca3af;
-}
+.profile-cal .fc-day-other .fc-daygrid-day-number { color: #9ca3af; }
 
-/* --- KEY CHANGE (기존 표시용 가상요소) --- */
-/* 가상요소 기반 + 아이콘은 실제 버튼과 중복되므로 비활성화 */
-.profile-cal .fc-day-no-events .fc-daygrid-day-frame::after { display: none !important; }
-/* (참고) 이전 규칙들은 남겨두되, 위 한 줄로 무력화됨 */
+/* --- 가상요소 기반 +아이콘 (표시만) --- */
 .profile-cal .fc-daygrid-day.fc-day-no-events:hover .fc-daygrid-day-frame {
     background-color: #f9fafb;
 }
-/* (무력화됨) */
 .profile-cal .fc-day-no-events .fc-daygrid-day-frame::after {
     content: "";
     position: absolute;
@@ -134,45 +117,14 @@
     transform-origin: top left;
 }
 
-/* --- 실제 클릭 가능한 + 버튼 --- */
-.profile-cal .fc .fc-add-btn {
-    position: absolute;
-    top: 6px;
-    left: 6px;
-    width: 20px;                 /* 요청: 조금 작은 크기 */
-    height: 20px;
-    padding: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 4px;          /* 동그라미 */
-    border: 1px solid #e5e7eb;
-    background: #fff;
-    font-size: 12px;
-    line-height: 1;
-    font-weight: 700;
-    cursor: pointer;
-    opacity: 0;                  /* 기본 숨김 */
-    pointer-events: none;
-    transition: opacity .15s ease, transform .12s ease;
-    z-index: 5;
-}
-/* 셀 호버 시에만 보이도록 */
-.profile-cal .fc .fc-daygrid-day:hover .fc-add-btn {
-    opacity: 1;
-    pointer-events: auto;
-}
 /* 월 전환 억제용(깜빡임 방지) */
-.profile-cal.suppress-add .fc-add-btn,
-.profile-cal.suppress-add .fc-daygrid-day-frame::after {
-    display: none !important;
-}
+.profile-cal.suppress-add .fc-daygrid-day-frame::after { display: none !important; }
 
-/* --- Improved Event Block Style --- */
+/* --- Event Block Style (기본) --- */
 .profile-cal .fc-daygrid-event {
     background-color: #dbeafe;
     border: 1px solid #bfdbfe;
-    color: #1e40af;
+    color: #4b52ff;
     border-radius: 6px;
     padding: 3px 6px;
     font-size: 0.8rem;
@@ -181,6 +133,9 @@
     cursor: pointer;
     transition: background-color 0.2s, border-color 0.2s;
 }
+/* harness/내부가 잘리지 않도록 보조 */
+.profile-cal .fc-daygrid-event-harness { overflow: visible !important; }
+
 .profile-cal .fc-daygrid-event:hover {
     background-color: #bfdbfe;
     border-color: #93c5fd;
@@ -191,25 +146,48 @@
     text-overflow: ellipsis;
 }
 
-/* --- Meeting vs Personal 색상 --- */
+/* --- 내부 텍스트 컬러가 항상 상속되도록 보정 --- */
+.profile-cal .fc-daygrid-event .fc-event-main,
+.profile-cal .fc-daygrid-block-event .fc-event-main,
+.profile-cal .fc-h-event .fc-event-main,
+.profile-cal .fc-daygrid-event .fc-event-title,
+.profile-cal .fc-daygrid-event .fc-event-time {
+    color: inherit !important;
+    line-height: 1.2;
+}
+
+/* --- Meeting vs Personal 색상(변수와 함께 강제) --- */
 .profile-cal .evt-meeting {
-  background: #fff !important;
-  border-color: rgba(17, 17, 17, 0.5) !important;
-  color: #111 !important;
+  --fc-event-bg-color: #fff;
+  --fc-event-border-color: rgba(17, 17, 17, 0.5);
+  --fc-event-text-color: #111;
+
+  background: var(--fc-event-bg-color) !important;
+  border-color: var(--fc-event-border-color) !important;
+  color: var(--fc-event-text-color) !important;
 }
 .profile-cal .evt-meeting .fc-event-title,
-.profile-cal .evt-meeting .fc-event-time {
-  color: #111 !important;
+.profile-cal .evt-meeting .fc-event-time,
+.profile-cal .evt-meeting .fc-event-main {
+  color: var(--fc-event-text-color) !important;
 }
+
 .profile-cal .evt-personal {
-    background: #dbeafe !important;
-    border-color: #bfdbfe !important;
-    color: #1e40af !important;
+  --fc-event-bg-color: #dbeafe;
+  --fc-event-border-color: #bfdbfe;
+  --fc-event-text-color: #4b52ff;
+
+  background: var(--fc-event-bg-color) !important;
+  border-color: var(--fc-event-border-color) !important;
+  color: var(--fc-event-text-color) !important;
 }
 .profile-cal .evt-personal .fc-event-title,
-.profile-cal .evt-personal .fc-event-time {
-    color: inherit !important;
+.profile-cal .evt-personal .fc-event-time,
+.profile-cal .evt-personal .fc-event-main,
+.profile-cal .evt-personal .fc-event-main {
+  color: var(--fc-event-text-color) !important;
 }
+
 .profile-cal .evt-meeting:hover {
   background: #fff !important;
   border-color: #000 !important;
@@ -235,9 +213,7 @@
     padding: 2px 4px;
     cursor: pointer;
 }
-.profile-cal .fc-daygrid-more-link:hover {
-    text-decoration: underline;
-}
+.profile-cal .fc-daygrid-more-link:hover { text-decoration: underline; }
 
 /* --- Modal --- */
 .cal-modal { position: fixed; inset: 0; z-index: 50; }
@@ -286,7 +262,27 @@
   display: inline-block; margin-left: 6px; padding: 0 6px; font-size: 11px; line-height: 18px;
   border-radius: 6px; background: #fff; color: #111; border: 1px solid #111;
 }
+
+/* hover 보정 */
 .profile-cal .evt-personal:hover {
   border-color: rgba(75, 82, 255, 0.5) !important;
   background: #dbeafe !important;
+}
+.profile-cal .fc-daygrid-block-event .fc-event-title::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  /* 점 색은 currentColor 를 사용해서 meeting/personal 컬러와 자동 동기화 */
+  background: currentColor;
+  margin-right: 6px;
+  transform: translateY(-0.5px); /* 살짝 수직 보정 (선택) */
+}
+
+.profile-cal .fc-daygrid-event-dot {
+  width: 6px;
+  height: 6px;
+  margin: 0 6px 0 0; /* 제목과 간격 */
+  border: none;      /* 기본 테마의 테두리 제거 */
 }
