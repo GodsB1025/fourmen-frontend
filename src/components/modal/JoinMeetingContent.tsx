@@ -1,13 +1,12 @@
-import { FancySwitch } from "@omit/react-fancy-switch";
 import "./JoinMeetingContent.css";
 import { useEffect, useMemo, useState } from "react";
-import styles from "../common/FancySwitch.module.css";
 import { getMeetings, getMeetingInfo } from "../../apis/Meeting"; // getMeetingInfo import 추가
 import type { Meeting } from "../../apis/Types";
 import MeetingRoomList from "./MeetingRoomList";
 import { useNavigate } from "react-router-dom";
 import { PATH } from "../../types/paths";
 import { useModalStore } from "../../stores/modalStore";
+import CustomSwitch from "../common/CustomSwitch";
 
 const JoinMeetingContent = () => {
     const navigate = useNavigate();
@@ -81,13 +80,10 @@ const JoinMeetingContent = () => {
     return (
         <div className="join-meeting-container">
             <div className="switch-wrapper">
-                <FancySwitch
+                <CustomSwitch
                     options={options}
                     value={selectedOption}
                     onChange={handleChange}
-                    className={styles.switchContainer}
-                    radioClassName={styles.radioButton}
-                    highlighterClassName={styles.highlighter}
                 />
             </div>
 

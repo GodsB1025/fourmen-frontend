@@ -2,6 +2,19 @@ import React from "react";
 import "./MeetingRoomList.css";
 import type { Meeting } from "../../apis/Types";
 
+const iconUser = () => {
+    return(
+        <svg 
+            xmlns="http://www.w3.org/2000/svg" width="1.1rem" height="1.1rem" viewBox="0 0 24 24" 
+            fill="none" stroke="#111827" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+            className="lucide lucide-user-round-icon lucide-user-round"
+        >
+                <circle cx="12" cy="8" r="5"/>
+                <path d="M20 21a8 8 0 0 0-16 0"/>
+        </svg>
+    )
+}
+
 interface MeetingRoomListProps {
     busy: boolean;
     error: string | null;
@@ -41,6 +54,12 @@ const MeetingRoomList = ({ busy, error, meetingRooms, handleClick, joiningId }: 
                         <li key={room.meetingId} className="meeting-card">
                             <div className="card-header">
                                 <h3 className="card-title">{room.title}</h3>
+
+                                <div style={{ display: "flex", alignItems: "center", gap: "0.2rem" }}>
+                                    <span className="info-label">{iconUser()}</span>
+                                    <span className="info-value">{room.participantsCount}</span>
+                                </div>
+
                                 <span className={`ai-badge ${room.useAiMinutes ? "active" : ""}`}>
                                     {room.useAiMinutes ? "AI 요약 ON" : "AI 요약 OFF"}
                                 </span>
@@ -55,11 +74,6 @@ const MeetingRoomList = ({ busy, error, meetingRooms, handleClick, joiningId }: 
                                     <span className="info-value">{formatKST(room.scheduledAt)}</span>
                                 </div>
                                 <div className="info-row">
-                                    <span className="info-label">참여자</span>
-                                    <span className="info-value">{room.participantsCount}명</span>
-                                </div>
-                            </div>
-                            <div className="card-footer">
                                 <button
                                     className="join-btn"
                                     onClick={() => handleClick(room.meetingId)}
@@ -67,6 +81,7 @@ const MeetingRoomList = ({ busy, error, meetingRooms, handleClick, joiningId }: 
                                 >
                                     {isJoining ? "입장 중..." : "회의 참가"}
                                 </button>
+                                </div>
                             </div>
                         </li>
                     );
