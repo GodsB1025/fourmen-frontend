@@ -21,11 +21,3 @@ export const fetchMeetingsWithDocs = async () : Promise<MeetingDoc[]> => {
 
     return transformedData
 }
-
-// -- 특정 회의(Meeting)의 회의록 목록을 조회하는 함수
-export const fetchDocsOfMeeting = async (meetingId: number) : Promise<MinuteInfo[]> => {
-    const data = await api.get(`/meetings/${meetingId}/minutes-for-contract`, {
-        params: { meetingId }
-    })
-    return data.data.data
-}

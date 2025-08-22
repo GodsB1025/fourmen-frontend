@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import TextInput from '../../common/TextInput'
+import { ContractTextInput } from '../../common/TextInput'
 import type { ContractData_202, ContractFormProps } from '../../../types/contractForm';
 
 const Contract_202: React.FC<ContractFormProps<ContractData_202>> = ({ data, onChange }) => {
@@ -7,7 +7,7 @@ const Contract_202: React.FC<ContractFormProps<ContractData_202>> = ({ data, onC
         <form>
             <div className="form-group">
                 <label>물품</label>
-                <TextInput
+                <ContractTextInput
                 type='text'
                 value={data.item}
                 onChange={(e)=>onChange({ item: e.target.value })} // 변경된 부분만 포함하는 객체를 전달
@@ -15,7 +15,7 @@ const Contract_202: React.FC<ContractFormProps<ContractData_202>> = ({ data, onC
             </div>
             <div className="form-group">
                 <label>양</label>
-                <TextInput
+                <ContractTextInput
                 type='text'
                 value={data.quantity}
                 onChange={(e)=>onChange({ quantity: e.target.value })} // 변경된 부분만 포함하는 객체를 전달

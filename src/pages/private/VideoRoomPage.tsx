@@ -216,6 +216,7 @@ const VideoRoomPage = () => {
                     <span>{meetingInfo ? new Date(meetingInfo.scheduledAt).toLocaleString() : "..."}</span>
                 </div>
                 <div className="actions-section">
+                    <button>회의 공유 URL 생성(기능 추가해야 함)</button>
                     {meetingInfo?.useAiMinutes && (
                         <button onClick={handleRecordButtonClick} className={`btn btn-ai ${isRecording ? "recording" : ""}`}>
                             {isRecording ? "AI 기록 중지" : "AI 기록 시작"}
