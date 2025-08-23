@@ -3,10 +3,12 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-    background-color: #f9fafb;
 }
 
 .contract-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     padding: 0 1.5rem 1.5rem;
     background-color: #ffffff;
     border-bottom: 1px solid #e5e7eb;
@@ -53,7 +55,7 @@
 /* ★★★ KEY CHANGE: Increased the minimum card width from 280px to 320px ★★★ */
 .card-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); /* 카드의 최소 너비를 320px로 크게 늘림 */
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); /* 카드의 최소 너비를 320px로 크게 늘림 */
     gap: 1.5rem;
 }
 

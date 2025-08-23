@@ -3,7 +3,7 @@
     padding-right: 8px;
     flex-grow: 1;
     min-height: 0;
-    max-height: 300px;
+    height: 300px;
 }
 
 .meeting-grid {

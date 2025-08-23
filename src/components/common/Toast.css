@@ -1,0 +1,48 @@
+/* Toast 컨테이너의 공통 스타일 */
+.toast-container {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  font-size: 14px;
+  animation: fadeInOut 3s forwards;
+}
+
+/* Toast 타입별 배경색 지정 */
+.toast-error {
+  background-color: #ef4444; /* 에러: 붉은색 */
+}
+
+.toast-success {
+  background-color: #52c41a; /* 성공: 초록색 */
+}
+
+.toast-info {
+  background-color: #1890ff; /* 정보: 파란색 */
+}
+
+
+/* 나타났다가 사라지는 애니메이션 (이전과 동일) */
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 10px);
+  }
+  15% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  85% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, 10px);
+  }
+}

@@ -10,19 +10,30 @@ import ContractCard from "../../components/contract/ContractCard";
 // 페이지 CSS와 함께, 카드 컴포넌트의 새로운 CSS를 명시적으로 import 합니다.
 import "./ContractPage.css";
 import "../../components/contract/ContractCard.css";
+import CustomSwitch from "../../components/common/CustomSwitch";
+import Toast from "../../components/common/Toast";
 
 const ContractPage = () => {
     const openModal = useModalStore((state) => state.openModal);
     const user = useAuthStore((state) => state.user);
     const baseURL = import.meta.env.VITE_API_BASE_URL as string;
 
-    const [activeTab, setActiveTab] = useState<"templates" | "completed">("templates");
+    const [activeTab, setActiveTab] = useState<string>("templates");
     const [templates, setTemplates] = useState<Contract[]>([]);
     const [completedContracts, setCompletedContracts] = useState<CompletedContract[]>([]);
     const [busy, setBusy] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     const hasPermission = user?.role === "ADMIN" || user?.role === "CONTRACT_ADMIN";
+
+    const options = [
+        { value: "templates", label: "템플릿", disabled: false },
+        { value: "completed", label: "완료된 계약", disabled: false },
+    ];
+
+    const handleChange = (value: string) => {
+        setActiveTab(value)
+    }
 
     useEffect(() => {
         if (!hasPermission) return;
@@ -38,8 +49,10 @@ const ContractPage = () => {
         try {
             const data = await getContractTemplate();
             setTemplates(data);
-        } catch (err) {
-            setError("템플릿을 불러오는 데 실패했습니다.");
+        } catch (err: unknown) {
+            let errorMessage = "템플릿을 불러오는 데 실패했습니다."
+            if(err instanceof Error) errorMessage = err.message
+            setError(errorMessage);
             setTemplates([]);
         }
     };
@@ -48,8 +61,10 @@ const ContractPage = () => {
         try {
             const data = await getCompletedContracts();
             setCompletedContracts(data);
-        } catch (err) {
-            setError("완료된 계약서를 불러오는 데 실패했습니다.");
+        } catch (err: unknown) {
+            let errorMessage = "완료된 계약서를 불러오는 데 실패했습니다."
+            if(err instanceof Error) errorMessage = err.message
+            setError(errorMessage);
             setCompletedContracts([]);
         }
     };
@@ -74,19 +89,21 @@ const ContractPage = () => {
         <div className="contract-page">
             <header className="contract-header">
                 <h1>전자 계약</h1>
-                <nav className="contract-tabs">
-                    <button className={`tab-btn ${activeTab === "templates" ? "active" : ""}`} onClick={() => setActiveTab("templates")}>
-                        템플릿
-                    </button>
-                    <button className={`tab-btn ${activeTab === "completed" ? "active" : ""}`} onClick={() => setActiveTab("completed")}>
-                        완료된 계약
-                    </button>
-                </nav>
+                <CustomSwitch
+                    options={options}
+                    value={activeTab}
+                    onChange={handleChange}
+                />
             </header>
 
             <main className="contract-content">
-                {error && <p className="error-message">{error}</p>}
-
+                {error && (
+                    <Toast
+                        message={error} 
+                        onClose={() => setError(null)}
+                        type="error"
+                    />
+                )}
                 <div className="card-grid">
                     {busy
                         ? Array.from({ length: 4 }).map((_, index) => <SkeletonCard key={index} />)

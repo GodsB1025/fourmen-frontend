@@ -1,11 +1,8 @@
-/* ALL/frontend/components/contract/ContractCard.css */
-
 .card-item {
     display: flex; /* Use flexbox for layout */
     flex-direction: column;
-    border: 1px solid #e5e7eb;
+    align-items: center;
     border-radius: 12px;
-    background-color: #ffffff;
     overflow: hidden; /* Important for child border-radius */
     text-decoration: none; /* Reset for <a> tags */
     color: inherit;
@@ -19,17 +16,10 @@
     font-size: inherit;
 }
 
-.card-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-}
-
 /* This is the key change: a dedicated wrapper for the image */
 .card-item__figure {
     position: relative;
     width: 100%;
-    aspect-ratio: 16 / 11; /* Enforce aspect ratio on the container */
-    background-color: #f8f9fa; /* Letterboxing을 위한 부드러운 배경색 */
     padding: 1rem; /* 이미지 주변에 여백 추가 */
 
     /* Flexbox를 이용해 이미지를 완벽하게 중앙 정렬 */
@@ -50,15 +40,24 @@
     /* 'contain'으로 이미지 전체가 왜곡 없이 보이도록 보장 */
     object-fit: contain;
 
-    /* 이미지 자체에 미세한 그림자 효과 추가 */
-    border-radius: 4px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgb(223, 223, 238);
+    border-radius: 0.5rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card-item:hover .card-item__image {
+    border: 2px solid rgb(75, 82, 255);
+    box-shadow: 0 0 20px rgba(75, 82, 255, 0.1);
 }
 
 .card-item__body {
-    padding: 1rem;
+    padding: 0.5rem 1rem;
     text-align: center;
-    border-top: 1px solid #e5e7eb;
+    border: 1px solid #cbcdd1;
+    border-radius: 2rem;
+    transition: background-color 0.2s ease;
+}
+.card-item:hover .card-item__body {
+    background-color: rgb(75, 82, 255);
 }
 
 .card-item__title {
@@ -68,10 +67,8 @@
     overflow: hidden;
     text-overflow: ellipsis;
     color: #111827;
+    transition: color 0.2s ease;
 }
-
-.card-item__date {
-    font-size: 0.8rem;
-    color: #6b7280;
-    display: block;
+.card-item:hover .card-item__title {
+    color: #fff;
 }

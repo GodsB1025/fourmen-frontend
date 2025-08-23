@@ -1,6 +1,6 @@
 import { type ReactNode } from "react";
 import "./Modal.css";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 
 type ModalProps = {
     onClose: () => void;
@@ -16,14 +16,15 @@ export default function Modal({
     return (
             <motion.div 
                 className="modal-overlay" 
-                onClick={onClose}
+                onMouseDown={onClose}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
             >
                 {/* 실제 모달 컨텐츠, 이벤트 버블링 방지 */}
                 <motion.div 
-                    className="modal-content" 
+                    className="modal-content"
+                    onMouseDown={e => e.stopPropagation()} 
                     onClick={(e) => e.stopPropagation()}
                     transition={{ 
                         type: "spring", 
@@ -35,7 +36,7 @@ export default function Modal({
                     initial={{ scale: 0.9, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     exit={{ scale: 0.9, opacity: 0 }}
-                    layout
+                    // layout
                 >
                     <header className="modal-header">
                         <h2 className="modal-title">{title}</h2>

@@ -1,68 +1,19 @@
 import React from 'react';
-
-// 스켈레톤 UI에 적용할 애니메이션 스타일
-const skeletonAnimation = `
-    @keyframes shimmer {
-        100% {
-        transform: translateX(100%);
-        }
-    }
-`;
+import './ContractCard.css'; // 실제 카드 스타일을 가져옵니다.
+import './SkeletonCard.css'; // 스켈레톤 전용 스타일을 분리합니다.
 
 const SkeletonCard = () => {
     return (
-        <>
-        <style>{skeletonAnimation}</style>
-        <div style={{
-            border: '1px solid #e0e0e0',
-            padding: '10px',
-            borderRadius: '8px',
-            width: '222px', // 실제 카드 크기와 맞추기 (200px + padding 10*2 + border 1*2)
-        }}>
-            {/* 이미지 스켈레톤 */}
-            <div style={{
-            width: '200px',
-            height: '112.5px', // 이미지 비율에 맞게 조정 (예: 16:9)
-            backgroundColor: '#e0e0e0',
-            borderRadius: '4px',
-            marginBottom: '8px',
-            position: 'relative',
-            overflow: 'hidden',
-            }}>
-            <div style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                transform: 'translateX(-100%)',
-                background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent)',
-                animation: 'shimmer 1.5s infinite',
-            }}/>
+        <div className="card-item skeleton">
+            <div className="card-item__figure">
+                {/* 이미지 스켈레톤 */}
+                <div className="skeleton-image shimmer" />
             </div>
-            {/* 텍스트 스켈레톤 */}
-            <div style={{
-            width: '75%',
-            height: '20px',
-            backgroundColor: '#e0e0e0',
-            borderRadius: '4px',
-            margin: '0 auto',
-            position: 'relative',
-            overflow: 'hidden',
-            }}>
-            <div style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                transform: 'translateX(-100%)',
-                background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent)',
-                animation: 'shimmer 1.5s infinite',
-            }}/>
+            <div className="card-item__body shimmer">
+                {/* 텍스트 스켈레톤 */}
+                <div className="skeleton-text" />
             </div>
         </div>
-        </>
     );
 };
 
