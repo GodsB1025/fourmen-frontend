@@ -13,14 +13,14 @@ const ContractCard = ({ contract, handleClick }: ContractCardProps) => {
     const imageUrl = `${baseURL}${contract.previewImageUrl}.png`;
 
     return (
-        <button className="card-item" onClick={handleClick}>
-            <div className="card-item__figure">
+        <div className="card-item">
+            <div className="card-item__figure" onClick={handleClick}>
                 <img src={imageUrl} alt={contract.templateName} className="card-item__image" />
             </div>
             <div className="card-item__body">
                 <p className="card-item__title">{contract.templateName}</p>
             </div>
-        </button>
+        </div>
     );
 };
 

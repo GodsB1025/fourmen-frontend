@@ -83,20 +83,20 @@ const MinuteDetailModal = ({ minute, onClose }: { minute: MinuteDetail; onClose:
     };
 
     return (
-        <div className="modal-backdrop" onClick={onClose}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                <header className="modal-header">
+        <div className="document-modal-backdrop" onClick={onClose}>
+            <div className="document-modal-content" onClick={(e) => e.stopPropagation()}>
+                <header className="document-modal-header">
                     <h2>{minute.meetingTitle}</h2>
-                    <button onClick={onClose} className="modal-close-btn">
+                    <button onClick={onClose} className="document-modal-close-btn">
                         &times;
                     </button>
                 </header>
-                <div className="modal-subheader">
+                <div className="document-modal-subheader">
                     <span className={`badge type-${minute.type.toLowerCase()}`}>{minuteTypeLabel[minute.type]}</span>
                     <span className="meta">작성자: {minute.authorName}</span>
                     <span className="meta">작성일: {format(new Date(minute.createdAt), "yyyy.MM.dd HH:mm")}</span>
                 </div>
-                <main className="modal-body markdown-body">
+                <main className="document-modal-body markdown-body">
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>{minute.content}</ReactMarkdown>
                 </main>
             </div>

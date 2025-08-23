@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import type { MemberRole } from "../../apis/Company";
+import type { MemberRole } from "../../apis/Types";
 import "./InviteMemberModal.css";
 
 type PendingInvite = {
@@ -50,16 +50,16 @@ export default function InviteMemberModal({ onClose, onInvite }: Props) {
     };
 
     return (
-        <div className="modal-backdrop" onClick={onClose}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                <header className="modal-header">
+        <div className="invite-modal-backdrop" onClick={onClose}>
+            <div className="invite-modal-content" onClick={(e) => e.stopPropagation()}>
+                <header className="invite-modal-header">
                     <h2>멤버 초대하기</h2>
-                    <button className="close-button" onClick={onClose}>
+                    <button className="invite-close-button" onClick={onClose}>
                         &times;
                     </button>
                 </header>
 
-                <section className="modal-body">
+                <section className="invite-modal-body">
                     <div className="invite-form">
                         <input
                             type="email"
@@ -96,7 +96,7 @@ export default function InviteMemberModal({ onClose, onInvite }: Props) {
                     </div>
                 </section>
 
-                <footer className="modal-footer">
+                <footer className="invite-modal-footer">
                     <button className="cancel-btn" onClick={onClose}>
                         취소
                     </button>

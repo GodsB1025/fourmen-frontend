@@ -34,7 +34,7 @@ const formatKST = (isoString: string) => {
 };
 
 const MeetingRoomList = ({ busy, error, meetingRooms, handleClick, joiningId }: MeetingRoomListProps) => {
-    if (busy) {
+    if (busy && meetingRooms.length === 0) {
         return <div className="status-container">목록을 불러오는 중...</div>;
     }
     if (error) {
@@ -45,7 +45,13 @@ const MeetingRoomList = ({ busy, error, meetingRooms, handleClick, joiningId }: 
     }
 
     return (
-        <div className="list-container">
+        <div 
+            className="list-container"
+            style={{ 
+                opacity: busy ? 0.6 : 1, 
+                transition: 'opacity 200ms ease-in-out' 
+            }}
+        >
             <ul className="meeting-grid">
                 {meetingRooms.map((room) => {
                     // 현재 카드의 회의가 입장 시도 중인 회의인지 확인
