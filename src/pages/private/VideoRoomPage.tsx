@@ -11,7 +11,7 @@ import {
     updateManualMinute,
     createSharingMeetingURL,
 } from "../../apis/Meeting";
-import type { Meeting, ManualMinuteResponse, CreateMeetingURLRequest } from "../../apis/Types";
+import type { Meeting, CreateMeetingURLRequest } from "../../apis/Types";
 import { PATH } from "../../types/paths";
 import "./VideoRoomPage.css";
 import { useAuthStore } from "../../stores/authStore";
@@ -84,6 +84,63 @@ const VideoRoomPage = () => {
         };
     }, [meetingId]);
 
+    const footerRef = useRef<HTMLDivElement>(null); // footer 요소에 대한 ref
+    const [isDragging, setIsDragging] = useState(false);
+    const [position, setPosition] = useState({ x: 0, y: 0 }); // 초기 위치는 CSS에서 설정
+    const [hasBeenDragged, setHasBeenDragged] = useState(false); // 드래그된 적 있는지 확인
+    const dragOffset = useRef({ x: 0, y: 0 }); // 드래그 시작 시점의 오프셋
+    const wasDragged = useRef(false); // 클릭과 드래그를 구분하기 위한 ref
+
+    // --- Drag and Drop Effect ---
+    useEffect(() => {
+        const handleMouseMove = (e: MouseEvent) => {
+            if (!isDragging) return;
+            wasDragged.current = true; // 드래그가 발생했음을 표시
+            if (!hasBeenDragged) setHasBeenDragged(true); // 첫 드래그 시 상태 변경
+            
+            setPosition({
+                x: e.clientX - dragOffset.current.x,
+                y: e.clientY - dragOffset.current.y,
+            });
+        };
+
+        const handleMouseUp = () => {
+            setIsDragging(false);
+            // 드래그 직후 클릭이벤트가 실행되는 것을 막기위해 짧은 딜레이 후 false로 변경
+            setTimeout(() => {
+                wasDragged.current = false;
+            }, 0);
+        };
+
+        if (isDragging) {
+            window.addEventListener("mousemove", handleMouseMove);
+            window.addEventListener("mouseup", handleMouseUp);
+        }
+
+        return () => {
+            window.removeEventListener("mousemove", handleMouseMove);
+            window.removeEventListener("mouseup", handleMouseUp);
+        };
+    }, [isDragging, hasBeenDragged]);
+
+    // --- Drag and Drop Handlers ---
+    const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (footerRef.current) {
+            const rect = footerRef.current.getBoundingClientRect();
+            dragOffset.current = {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top,
+            };
+            setIsDragging(true);
+        }
+    };
+
+    // 버튼 클릭 핸들러 (드래그 시 실행 방지)
+    const handleToggleMinutesClick = () => {
+        if (wasDragged.current) return;
+        setIsMinutesVisible(!isMinutesVisible);
+    };
+
     // --- Main Action Handlers ---
     const handleVideoAction = async () => {
         if (!meetingId || !meetingInfo) return;
@@ -116,13 +173,17 @@ const VideoRoomPage = () => {
         if (!meetingId || !manualMinuteContent.trim()) return;
         setBusy((prev) => ({ ...prev, minute: true }));
         try {
-            const action = manualMinuteId ? updateManualMinute : submitManualMinute;
-            const updatedMinute = await action(meetingId, manualMinuteId!, manualMinuteContent);
-
-            if (!manualMinuteId) setManualMinuteId(updatedMinute.minuteId);
+            if(manualMinuteId) {
+                await updateManualMinute(meetingId, manualMinuteId, manualMinuteContent);
+            } else {
+                const newMinute = await submitManualMinute(meetingId, manualMinuteContent);
+                setManualMinuteId(newMinute.minuteId);
+            }
             setIsWritingMinute(false);
-        } catch (err: any) {
-            setError(err.message || "회의록 저장에 실패했습니다.");
+        } catch (err: unknown) {
+            let errorMessage = "회의록 저장에 실패했습니다."
+            if(err instanceof Error) errorMessage = err.message
+            setError(errorMessage);
         } finally {
             setBusy((prev) => ({ ...prev, minute: false }));
         }
@@ -134,8 +195,10 @@ const VideoRoomPage = () => {
             await disableMeetingRoom(meetingId);
             alert("회의가 종료되었습니다.");
             navigate(PATH.COMMANDER);
-        } catch (err: any) {
-            setError(err.message || "회의 종료에 실패했습니다.");
+        } catch (err: unknown) {
+            let errorMessage = "회의 종료에 실패했습니다."
+            if(err instanceof Error) errorMessage = err.message
+            setError(errorMessage);
         }
     };
 
@@ -319,10 +382,23 @@ const VideoRoomPage = () => {
                 </div>
             </main>
 
-            <footer className="videoroom-footer">
+            <div
+                ref={footerRef}
+                className={`videoroom-footer ${isDragging ? "is-dragging" : ""}`}
+                onMouseDown={handleMouseDown}
+                style={
+                    hasBeenDragged ?
+                        { 
+                            left: `${position.x}px`,
+                            top: `${position.y}px`,
+                            bottom: "auto",
+                            right: "auto",
+                        } : {}
+                }
+            >
                 <button
                     className={`toggle-minutes-btn ${isMinutesVisible ? "active" : ""}`}
-                    onClick={() => setIsMinutesVisible(!isMinutesVisible)}
+                    onClick={handleToggleMinutesClick}
                     aria-label={isMinutesVisible ? "회의록 숨기기" : "회의록 작성/보기"}>
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -339,7 +415,7 @@ const VideoRoomPage = () => {
                     </svg>
                     <span>{isMinutesVisible ? "숨기기" : "회의록"}</span>
                 </button>
-            </footer>
+            </div>
             {error && (
                 <Toast
                     message={error} 
