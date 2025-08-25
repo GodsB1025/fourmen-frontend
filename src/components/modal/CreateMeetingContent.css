@@ -8,9 +8,6 @@
 }
 
 /* --- 메인 폼 스타일 --- */
-.main-form-panel {
-    /* 메인 패널 스타일 */
-}
 .form-group {
     display: flex;
     flex-direction: column;
@@ -21,16 +18,6 @@
     font-size: 0.875rem;
     color: #374151;
 }
-/* .form-input {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    font-family: Arial, Helvetica, sans-serif;
-} */
 .form-input:focus {
     border-color: #4B52FF;
     box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
@@ -350,4 +337,18 @@ input:checked + .slider:before {
 /* 드롭다운 내부의 멤버 목록이 너무 길어질 경우를 대비 */
 .invite-dropdown-panel .member-list {
     height: 100px;
+}
+
+.custom-datepicker-input {
+    padding: 15px 15px;
+    border: 1px solid #ccc;
+    border-radius: 1rem;
+    width: 100%;
+    font-size: 1.1rem;
+    background: none;
+}
+
+/* react-datepicker의 일부 스타일을 전역적으로 덮어쓸 수 있습니다. */
+.react-datepicker-popper {
+    z-index: 10; /* 모달 위에 달력이 표시되도록 z-index를 조정합니다. */
 }

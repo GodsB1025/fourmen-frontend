@@ -3,7 +3,6 @@
     display: flex;
     gap: 30px; /* 양쪽 섹션 사이의 간격 */
     border-radius: 8px; /* 모달의 둥근 모서리 */
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     color: #333;
     width: 100%;
 }
@@ -140,7 +139,6 @@
 .minute-content-display pre {
     white-space: pre-wrap;   /* 공백/줄바꿈 유지, 자동 줄바꿈 허용 */
     word-wrap: break-word;     /* 긴 단어 강제 줄바꿈 */
-    font-family: inherit;      /* 주변 폰트 스타일 상속 */
     margin: 0;                 /* 기본 마진 제거 */
     flex-grow: 1;
 }

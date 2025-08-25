@@ -1,7 +1,6 @@
 .layout-container {
     display: flex;
     height: 100vh; /* 전체 뷰포트 높이를 차지하도록 설정 */
-    font-family: "Noto Sans KR", sans-serif;
 }
 
 .layout-content {

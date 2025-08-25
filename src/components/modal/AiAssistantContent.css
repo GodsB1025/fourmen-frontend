@@ -60,7 +60,6 @@
     border: 1px solid #d1d5db;
     border-radius: 12px;
     font-size: 1rem;
-    font-family: inherit;
     resize: none;
     outline: none;
     transition: border-color 0.2s, box-shadow 0.2s;
