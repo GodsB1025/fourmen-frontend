@@ -7,13 +7,6 @@
   --shadow: none;
 }
 
-* { box-sizing: border-box; }
-
-body {
-  margin: 0;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto;
-}
-
 .su-wrap {
   min-height: 100vh;
   background: #fff;

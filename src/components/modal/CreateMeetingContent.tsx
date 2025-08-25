@@ -6,14 +6,12 @@ import type { CreateMeetingRequest, CompanyMember } from "../../apis/Types";
 import { useModalStore } from "../../stores/modalStore";
 import { fetchCompanyMembers } from "../../apis/Company";
 import TextInput from "../common/TextInput";
-import InvitePanelDropdown from "./InvitePanelDropDown";
+import InvitePanelDropdown from "./InvitePanelDropdown";
+import DatePicker from "react-datepicker";
+import { ko } from "date-fns/locale";
+import './custom-datepicker.css'
+// import "react-datepicker/dist/react-datepicker.css"
 
-// --- Helper Functions ---
-const getInitialDateTimeLocal = () => {
-    const now = new Date();
-    const timeZoneOffset = now.getTimezoneOffset() * 60000;
-    return new Date(now.getTime() - timeZoneOffset).toISOString().slice(0, 16);
-};
 
 // --- Main Component ---
 const CreateMeetingContent = () => {
@@ -22,7 +20,7 @@ const CreateMeetingContent = () => {
     
     const [isInvitePanelOpen, setInvitePanelOpen] = useState(false);
     const [meetingName, setMeetingName] = useState("");
-    const [scheduledAt, setScheduledAt] = useState(getInitialDateTimeLocal());
+    const [scheduledAt, setScheduledAt] = useState(new Date());
     const [isAiSummaryOn, setAiSummaryOn] = useState(true);
     const [participantEmails, setParticipantEmails] = useState<string[]>([]);
     const [companyMembers, setCompanyMembers] = useState<CompanyMember[]>([]);
@@ -80,7 +78,7 @@ const CreateMeetingContent = () => {
         setBusy(true);
         setError(null);
         try {
-            const scheduledAtISO = new Date(scheduledAt).toISOString();
+            const scheduledAtISO = scheduledAt.toISOString();
             const payload: CreateMeetingRequest = {
                 title: meetingName.trim(),
                 scheduledAt: scheduledAtISO,
@@ -114,11 +112,15 @@ const CreateMeetingContent = () => {
 
                 <div className="form-group">
                     <label htmlFor="meeting-time">회의 시간</label>
-                    <TextInput
-                        id="meeting-time"
-                        type="datetime-local"
-                        value={scheduledAt}
-                        onChange={(e) => setScheduledAt(e.target.value)}
+                    <DatePicker
+                        locale={ko} // 로케일을 한국어로 설정
+                        selected={scheduledAt} // 현재 선택된 날짜
+                        onChange={(date: Date | null) => {if(date) setScheduledAt(date)}} // 날짜 변경 핸들러
+                        showTimeSelect // 시간 선택 기능 활성화
+                        timeFormat="HH:mm" // 시간 포맷
+                        timeIntervals={15} // 15분 간격으로 시간 선택
+                        dateFormat="yyyy년 MM월 dd일 HH:mm" // input에 표시될 날짜 포맷
+                        className="custom-datepicker-input" // CSS 클래스 적용
                     />
                 </div>
 
