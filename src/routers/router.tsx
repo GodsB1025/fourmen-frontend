@@ -18,7 +18,6 @@ const SignupPage = lazy(() => import("../pages/public/SignupPage"));
 const DashboardPage = lazy(() => import("../pages/private/dashboard/DashboardPage"));
 const ContractPage = lazy(() => import("../pages/private/ContractPage"));
 const PrivateLobbyPage = lazy(() => import("../pages/private/PrivateLobbyPage"));
-const MeetingRoomPage = lazy(() => import("../pages/private/MeetingRoomPage"));
 const VideoRoomPage = lazy(() => import("../pages/private/VideoRoomPage"));
 const MessengerPage = lazy(() => import("../pages/private/MessengerPage"));
 
@@ -46,7 +45,6 @@ const routes: RouteObject[] = [
                             },
                             { path: PATH.CONTRACT, element: <ContractPage /> },
                             { path: PATH.COMMANDER, element: <PrivateLobbyPage /> },
-                            { path: PATH.MEETING_ROOM, element: <MeetingRoomPage /> },
                             { path: PATH.VIDEO_ROOM, element: <VideoRoomPage /> },
                             { path: PATH.MESSENGER, element: <MessengerPage /> },
                         ],
