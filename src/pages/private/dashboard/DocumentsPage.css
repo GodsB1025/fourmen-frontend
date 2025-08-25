@@ -458,17 +458,133 @@
 }
 .calendar-container .react-calendar__month-view__days__day--weekend,
 .calendar-container .react-calendar__month-view__weekdays__weekday--weekend {
-  color: inherit; /* 기본 빨강 해제 */
+    color: inherit; /* 기본 빨강 해제 */
 }
 
 /* ✅ 토요일(6번째 열): 파란색 #4B52FF */
-.calendar-container .react-calendar__month-view__weekdays__weekday:nth-child(7n+6),
-.calendar-container .react-calendar__month-view__days__day:nth-child(7n+6) {
-  color: #4B52FF;
+.calendar-container .react-calendar__month-view__weekdays__weekday:nth-child(7n + 6),
+.calendar-container .react-calendar__month-view__days__day:nth-child(7n + 6) {
+    color: #4b52ff;
 }
 
 /* ✅ 일요일(7번째 열): 빨간색 유지 */
 .calendar-container .react-calendar__month-view__weekdays__weekday:nth-child(7n),
 .calendar-container .react-calendar__month-view__days__day:nth-child(7n) {
-  color: #f43f5e; /* 필요하면 #f43f5e 로 바꿔도 OK */
+    color: #f43f5e; /* 필요하면 #f43f5e 로 바꿔도 OK */
+}
+
+.shared-minutes-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.shared-minute-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+.shared-minute-item:hover {
+    border-color: #c7d2fe;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.shared-minute-item svg {
+    color: #a5b4fc;
+    flex-shrink: 0;
+}
+
+/* --- 공유 모달 --- */
+.share-modal-content {
+    background: white;
+    border-radius: 16px;
+    width: 450px;
+    max-width: 90%;
+    max-height: 70vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.share-modal-body {
+    padding: 1rem;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+.share-modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+.member-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.member-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.member-item:hover {
+    background-color: #f3f4f6;
+}
+
+.member-item.selected {
+    background-color: #eef2ff;
+}
+
+.member-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.member-name {
+    font-weight: 600;
+}
+
+.member-email {
+    font-size: 0.8rem;
+    color: #6b7280;
+}
+
+.document-modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.share-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background-color: white;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.share-button:hover {
+    background-color: #eef2ff;
+    border-color: #a5b4fc;
+    color: #4338ca;
 }
