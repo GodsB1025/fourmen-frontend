@@ -82,3 +82,8 @@ export const updateManualMinute = async (meetingId: string, minuteId: number, co
 export const shareMinute = async (meetingId: number, minuteId: number, userIds: number[]): Promise<void> => {
     await api.post(`/meetings/${meetingId}/minutes/${minuteId}/share`, { userIds });
 };
+// 외부 인력 초대용 URL 생성
+export const createSharingMeetingURL = async (meetingId: string): Promise<string> => {
+    const { data } = await api.post(`/meetings/${meetingId}/invite?meetingId=${meetingId}`);
+    return data.data.videoMeetingUrl;
+};

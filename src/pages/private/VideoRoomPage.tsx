@@ -9,11 +9,15 @@ import {
     getMinuteDetails,
     submitManualMinute,
     updateManualMinute,
+    createSharingMeetingURL,
 } from "../../apis/Meeting";
 import type { Meeting, ManualMinuteResponse, CreateMeetingURLRequest } from "../../apis/Types";
 import { PATH } from "../../types/paths";
 import "./VideoRoomPage.css";
 import { useAuthStore } from "../../stores/authStore";
+import { useModalStore } from "../../stores/modalStore";
+import Toast from "../../components/common/Toast";
+import { IconShare } from "../../assets/icons";
 
 // STT 데이터 타입 정의
 interface SttData {
@@ -27,10 +31,12 @@ const VideoRoomPage = () => {
     const navigate = useNavigate();
     const { meetingId } = useParams<{ meetingId: string }>();
     const user = useAuthStore((state) => state.user);
+    const openModal = useModalStore((state) => state.openModal)
 
     // --- State Management ---
     const [meetingInfo, setMeetingInfo] = useState<Meeting | null>(null);
     const [videoURL, setVideoURL] = useState<string>("");
+    const [sharingVideoURL, setSharingVideoURL] = useState<string>("")
     const [isMinutesVisible, setIsMinutesVisible] = useState(false);
 
     // 수동 회의록
@@ -80,7 +86,6 @@ const VideoRoomPage = () => {
 
     // --- Main Action Handlers ---
     const handleVideoAction = async () => {
-        // ... (이전과 동일)
         if (!meetingId || !meetingInfo) return;
         setBusy((prev) => ({ ...prev, video: true }));
         try {
@@ -108,7 +113,6 @@ const VideoRoomPage = () => {
     };
 
     const handleSaveOrUpdateMinute = async () => {
-        // ... (이전과 동일)
         if (!meetingId || !manualMinuteContent.trim()) return;
         setBusy((prev) => ({ ...prev, minute: true }));
         try {
@@ -125,7 +129,6 @@ const VideoRoomPage = () => {
     };
 
     const handleEndMeeting = async () => {
-        // ... (이전과 동일)
         if (!meetingId || !window.confirm("정말로 회의를 종료하시겠습니까?")) return;
         try {
             await disableMeetingRoom(meetingId);
@@ -207,7 +210,31 @@ const VideoRoomPage = () => {
         isRecording ? stopRecordingAndStreaming() : startRecordingAndStreaming();
     };
 
-    // --- Render ---
+    const openModalShareURL = async () => {
+        if(sharingVideoURL!=="") {
+            openModal("sharingURL", { sharingURL: sharingVideoURL })
+            return
+        }
+        if(meetingId) {
+            try {
+                setError(null)
+                const url = await createSharingMeetingURL(meetingId)
+                setSharingVideoURL(url)
+
+                openModal("sharingURL", { sharingURL: sharingVideoURL })
+            } catch (err: unknown) {
+                let errorMessage = "공유 URL 생성에 실패했습니다."
+                if(err instanceof Error) errorMessage = err.message
+                setError(errorMessage)
+            } finally {
+                // setBusy()
+            }
+        } else {
+            setError("meetingId가 없습니다.")
+        }
+    }
+
+    // --------------------------------- JSX ------------------------------------
     return (
         <div className={`videoroom-layout ${isMinutesVisible ? "show-minutes" : ""}`}>
             <header className="videoroom-top-bar">
@@ -217,9 +244,10 @@ const VideoRoomPage = () => {
                 </div>
                 <div className="actions-section">
                     <button
-                        // onClick={openShareURL}
+                        className="btn btn-sharing"
+                        onClick={openModalShareURL}
                     >
-                        회의 공유 URL 생성(기능 추가해야 함)
+                        Share<IconShare/>
                     </button>
                     {meetingInfo?.useAiMinutes && (
                         <button 
@@ -313,7 +341,13 @@ const VideoRoomPage = () => {
                     <span>{isMinutesVisible ? "숨기기" : "회의록"}</span>
                 </button>
             </footer>
-            {error && <div className="error-toast">{error}</div>}
+            {error && (
+                <Toast
+                    message={error} 
+                    onClose={() => setError(null)}
+                    type="error"
+                />
+            )}
         </div>
     );
 };

@@ -12,6 +12,7 @@ import { useAuthStore } from "../../stores/authStore";
 import ContractContent from "../../components/modal/ContractContent";
 import { PATH } from "../../types/paths";
 import { AnimatePresence } from "framer-motion";
+import CreateSharingURLContent from "../../components/modal/CreateSharingURLContent";
 
 const PrivateLayout = () => {
     const { activeModal, modalData, openModal, closeModal } = useModalStore();
@@ -43,6 +44,8 @@ const PrivateLayout = () => {
                 return "전자 계약서 작성";
             case "aiAssistant":
                 return "AI 비서";
+            case "sharingURL":
+                return "공유 URL 생성"
             default:
                 return "";
         }
@@ -59,10 +62,14 @@ const PrivateLayout = () => {
                     <ContractContent templateId={modalData.templateId} eformsignTemplateId={modalData.eformsignTemplateId} />
                 ) : null;
             case "aiAssistant": // AI 비서 모달 컨텐츠 렌더링 추가
-                return <AiAssistantContent />;
+                return <AiAssistantContent/>;
+            case "sharingURL":
+                return modalData?.sharingURL && (
+                    <CreateSharingURLContent sharingURL={modalData?.sharingURL}/>
+                )
             default:
                 return null;
-        }
+        } 
     };
 
     return (
