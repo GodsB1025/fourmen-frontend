@@ -317,7 +317,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: rgba(0, 0, 0, 0.2);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -325,6 +325,8 @@
 }
 
 .document-modal-content {
+    background-color: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(15px);
     border-radius: 16px;
     width: 700px;
     max-width: 90%;

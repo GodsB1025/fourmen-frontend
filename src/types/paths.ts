@@ -8,7 +8,6 @@ export const PATH = {
     DOCUMENTS: "document",
     CONTRACT: "/contract",
     COMMANDER: "/commander",
-    MEETING_ROOM: "/meetingroom",
     VIDEO_ROOM: "/videoroom/:meetingId",
     MESSENGER: "/messenger",
 } as const;

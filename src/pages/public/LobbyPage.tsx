@@ -88,7 +88,7 @@ function LobbyPage(): JSX.Element | null {
 
         {/* Pain points */}
         <section className="pain container">
-          <h2 className="section-title">혹시 이런 불편함, 겪고 계신가요?</h2>
+          <h2 className="lobby-section-title">혹시 이런 불편함, 겪고 계신가요?</h2>
           <ul className="pain-list">
             <li>
               <h3>분산된 협업</h3>
@@ -107,7 +107,7 @@ function LobbyPage(): JSX.Element | null {
 
         {/* Services */}
         <section className="services container">
-          <h2 className="section-title">서비스 소개</h2>
+          <h2 className="lobby-section-title">서비스 소개</h2>
           <ul className="service-list">
             <li>
               <div aria-hidden="true">
