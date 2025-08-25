@@ -216,17 +216,31 @@ const VideoRoomPage = () => {
                     <span>{meetingInfo ? new Date(meetingInfo.scheduledAt).toLocaleString() : "..."}</span>
                 </div>
                 <div className="actions-section">
+                    <button
+                        // onClick={openShareURL}
+                    >
+                        회의 공유 URL 생성(기능 추가해야 함)
+                    </button>
                     {meetingInfo?.useAiMinutes && (
-                        <button onClick={handleRecordButtonClick} className={`btn btn-ai ${isRecording ? "recording" : ""}`}>
+                        <button 
+                            onClick={handleRecordButtonClick} 
+                            className={`btn btn-ai ${isRecording ? "recording" : ""}`}
+                        >
                             {isRecording ? "AI 기록 중지" : "AI 기록 시작"}
                         </button>
                     )}
                     {user?.userId === meetingInfo?.hostId && (
-                        <button onClick={handleEndMeeting} className="btn btn-danger">
+                        <button
+                            onClick={handleEndMeeting} 
+                            className="btn btn-danger"
+                        >
                             회의 종료
                         </button>
                     )}
-                    <button onClick={() => navigate(PATH.COMMANDER)} className="btn btn-secondary">
+                    <button 
+                        onClick={() => navigate(PATH.COMMANDER)} 
+                        className="btn btn-secondary"
+                    >
                         나가기
                     </button>
                 </div>

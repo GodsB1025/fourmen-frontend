@@ -50,13 +50,17 @@ export const disableMeetingRoom = async (meetingId: string) => {
 
 // 1. 회의록 목록 조회 (ID와 타입만 반환)
 export const getMinutesForMeeting = async (meetingId: string): Promise<MinuteInfo[]> => {
-    const { data } = await api.get(`/meetings/${meetingId}/minutes-for-contract`);
+    const { data } = await api.get(`/meetings/${meetingId}/minutes-for-contract`, {
+        params: { meetingId }
+    })
     return data.data;
 };
 
 // 2. 특정 회의록 상세 정보 조회 (내용 포함)
 export const getMinuteDetails = async (meetingId: string, minuteId: number): Promise<ManualMinuteResponse> => {
-    const { data } = await api.get(`/meetings/${meetingId}/minutes/${minuteId}`);
+    const { data } = await api.get(`/meetings/${meetingId}/minutes/${minuteId}`, {
+        params: { meetingId, minuteId }
+    })
     return data.data;
 };
 

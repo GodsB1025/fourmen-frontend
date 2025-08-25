@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import styles from "./CustomSwitch.module.css";
+import { useId } from "react";
 
 type Option = {
     value: string;
@@ -14,6 +15,8 @@ type CustomSwitchProps = {
 };
 
 export default function CustomSwitch({ options, value, onChange }: CustomSwitchProps) {
+    const id = useId()
+
     return (
         <div className={styles.switchContainer} role="radiogroup">
             {options.map((option) => (
@@ -29,9 +32,7 @@ export default function CustomSwitch({ options, value, onChange }: CustomSwitchP
                     {value === option.value && (
                         <motion.div
                             className={styles.highlighter}
-                            // layoutId는 컴포넌트가 다른 위치에서 다시 렌더링될 때
-                            // 부드럽게 이동하는 애니메이션을 만들어줍니다.
-                            layoutId="highlighter"
+                            layoutId={id}
                             transition={{ type: "spring", stiffness: 500, damping: 30 }}
                         />
                     )}

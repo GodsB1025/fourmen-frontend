@@ -311,20 +311,22 @@
 }
 
 /* --- 회의록 상세 보기 모달 --- */
-.modal-backdrop {
+.document-modal-backdrop {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: rgba(0, 0, 0, 0.2);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
 }
 
-.modal-content {
+.document-modal-content {
+    background-color: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(15px);
     border-radius: 16px;
     width: 700px;
     max-width: 90%;
@@ -334,18 +336,18 @@
     flex-direction: column;
 }
 
-.modal-header {
+.document-modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 1rem 1.5rem;
     border-bottom: 1px solid #e5e7eb;
 }
-.modal-header h2 {
+.document-modal-header h2 {
     margin: 0;
     font-size: 1.25rem;
 }
-.modal-close-btn {
+.document-modal-close-btn {
     background: none;
     border: none;
     font-size: 1.75rem;
@@ -353,7 +355,7 @@
     color: #9ca3af;
 }
 
-.modal-subheader {
+.document-modal-subheader {
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -383,7 +385,7 @@
     color: #6b7280;
 }
 
-.modal-body {
+.document-modal-body {
     padding: 1.5rem 2rem;
     overflow-y: auto;
     flex-grow: 1;

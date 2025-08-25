@@ -5,14 +5,19 @@
     border-radius: 8px; /* 모달의 둥근 모서리 */
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     color: #333;
+    width: 100%;
 }
 
 /* 왼쪽/오른쪽 섹션 공통 스타일 */
 .form-section,
 .content-section {
-    flex: 1; /* 양쪽 섹션이 동일한 너비를 가지도록 설정 */
     display: flex;
     flex-direction: column;
+    min-width: 0; /* flex item이 줄어들 수 있도록 설정 */
+}
+.form-section{ flex: 0.4 }
+.content-section { 
+    flex: 1;
 }
 
 /* 제목 스타일 (계약서 내용, 회의록_제목1) */
@@ -22,7 +27,6 @@
     font-weight: 600;
     margin-top: 0;
     margin-bottom: 20px;
-    /* border-bottom: 1px solid #e0e0e0; */
     padding-bottom: 10px;
 }
 
@@ -38,12 +42,28 @@
     margin-bottom: 5px;
 }
 
+/* 다음, 이전, 전송 버튼 */
+.contract-button {
+    background-color: #000;
+    border: none;
+    color: #fff;
+}
+.contract-next,
+.contract-prev
+{
+    width: 3rem;
+    height: 1.8rem;
+    border-radius: 2rem;
+    /* overflow: hidden; */
+}
+
+
 /* 오른쪽 회의록 본문 스타일 */
 .content-body {
-    border: 1px solid #e0e0e0;
+    border-left: 1px solid #e0e0e0;
     padding: 15px;
     background-color: #fff;
-    border-radius: 4px;
+    /* border-radius: 4px; */
     flex-grow: 1; /* 남은 공간을 모두 채우도록 설정 */
     overflow-y: auto; /* 내용이 길어지면 스크롤바 생성 */
     font-size: 14px;
@@ -57,4 +77,137 @@
 
 .content-body p:last-child {
     margin-bottom: 0;
+}
+
+
+/* 회의 및 회의록 목록 스타일 */
+.meeting-list,
+.minute-list-container ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-height: 400px;
+}
+
+.meeting-item,
+.minute-item {
+    position: relative;
+    padding: 0.75rem 1rem;
+    border: 1px solid #e9e9e9;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.meeting-item:hover,
+.minute-item:hover {
+    background-color: #f5f5f5;
+    border-color: #ddd;
+}
+
+.minute-item svg {
+    display: inline-block;
+}
+.minute-item>div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.minute-item p {
+    line-height: 1;
+}
+
+.meeting-title {
+    font-weight: 500;
+}
+
+.minute-list-container {
+    margin-top: 0.75rem;
+    padding-left: 1.5rem; /* 들여쓰기 효과 */
+}
+
+/* 회의록 내용 표시 영역 스타일 */
+.minute-content-display {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* pre 태그 자동 줄바꿈 문제 해결 */
+.minute-content-display pre {
+    white-space: pre-wrap;   /* 공백/줄바꿈 유지, 자동 줄바꿈 허용 */
+    word-wrap: break-word;     /* 긴 단어 강제 줄바꿈 */
+    font-family: inherit;      /* 주변 폰트 스타일 상속 */
+    margin: 0;                 /* 기본 마진 제거 */
+    flex-grow: 1;
+}
+
+/* 오류 메시지 스타일 */
+.error-text {
+    color: #ef4444;
+    margin-top: 1rem;
+    text-align: center;
+}
+
+/* --- 애니메이션을 위한 추가 스타일 --- */
+
+/* 스텝들을 감싸는 뷰포트 컨테이너 */
+/* 이 컨테이너를 벗어나는 내용은 숨겨서 한 번에 한 스텝만 보이게 합니다. */
+.form-steps-viewport {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  margin-bottom: 20px; /* 폼과 하단 버튼 사이의 간격 */
+}
+
+/* 실제 스텝들이 들어있는 트랙 컨테이너 */
+/* 이 컨테이너가 좌우로 움직이며 스텝 전환 효과를 만듭니다. */
+.form-steps-track {
+  display: flex;
+  width: 200%; /* 2개의 스텝을 담아야 하므로 200% */
+  /* transform 속성 변경 시 0.4초 동안 부드러운 전환 효과 적용 */
+  transition: transform 0.4s ease-in-out; 
+}
+
+/* 각 스텝 아이템 */
+.form-step {
+  width: 50%; /* 트랙 너비의 절반을 차지 (100% / 2개 스텝) */
+  flex-shrink: 0; /* 스텝의 너비가 줄어들지 않도록 고정 */
+}
+
+/* step 상태에 따라 트랙의 위치를 이동시킵니다. */
+.form-steps-track.step-0 {
+  transform: translateX(0%); /* 첫 번째 스텝 보이기 */
+}
+
+.form-steps-track.step-1 {
+  transform: translateX(-50%); /* 왼쪽으로 50% 이동하여 두 번째 스텝 보이기 */
+}
+
+/* 하단 네비게이션 버튼들을 담는 컨테이너 */
+.form-navigation {
+  display: flex;
+  justify-content: space-between; /* 이전/다음 버튼과 전송 버튼을 양쪽으로 배치 */
+  align-items: center;
+}
+
+/* 이전/다음 버튼을 묶는 그룹 */
+.form-navigation .step-buttons {
+    display: flex;
+    gap: 10px; /* 이전, 다음 버튼 사이 간격 */
+}
+
+.form-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.submit-button-wrapper {
+  flex-grow: 1; /* 남은 공간을 모두 차지 */
+  margin-left: 10px; /* 이전/다음 버튼과의 최소 간격 */
+  max-width: 300px; /* 슬라이드 버튼의 최대 너비 (선택사항) */
 }

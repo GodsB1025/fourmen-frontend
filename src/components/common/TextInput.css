@@ -1,4 +1,6 @@
-.custom-input {
+.custom-input,
+.contract-custom-input
+{
   padding: 15px 15px;
   border: 1px solid #ccc;
   border-radius: 1rem;
@@ -9,11 +11,21 @@
   background: none;
 }
 
-.custom-input::placeholder {
+.contract-custom-input {
+  padding: 7px 10px;
+  border-radius: 0.5rem;  
+  font-size: 0.8rem;
+}
+
+.custom-input::placeholder,
+.contract-custom-input::placeholder
+{
   color: #b7b7b7;
 }
 
-.custom-input:focus {
+.custom-input:focus,
+.contract-custom-input:focus
+{
   border-color: #4b52ff; /* 파란색 테두리 */
   box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2); /* 부드러운 파란빛 그림자 */
 }

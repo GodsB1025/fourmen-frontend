@@ -1,6 +1,4 @@
-/* src/components/company/InviteMemberModal.css */
-
-.modal-backdrop {
+.invite-modal-backdrop {
     position: fixed;
     top: 0;
     left: 0;
@@ -13,7 +11,7 @@
     z-index: 1000;
 }
 
-.modal-content {
+.invite-modal-content {
     padding: 2rem;
     border-radius: 16px;
     width: 500px;
@@ -23,24 +21,24 @@
     flex-direction: column;
 }
 
-.modal-header {
+.invite-modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1.5rem;
 }
-.modal-header h2 {
+.invite-modal-header h2 {
     margin: 0;
     font-size: 1.25rem;
 }
-.close-button {
+.invite-close-button {
     background: none;
     border: none;
     font-size: 1.5rem;
     cursor: pointer;
 }
 
-.modal-body {
+.invite-modal-body {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
@@ -104,7 +102,7 @@
     padding-top: 2rem;
 }
 
-.modal-footer {
+.invite-modal-footer {
     margin-top: 2rem;
     display: flex;
     justify-content: flex-end;

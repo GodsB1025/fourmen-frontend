@@ -40,9 +40,11 @@ const JoinMeetingContent = () => {
             const destination = PATH.VIDEO_ROOM.replace(":meetingId", meetingId.toString());
             navigate(destination);
             closeModal();
-        } catch (err: any) {
+        } catch (err: unknown) {
             // 3. 권한이 없으면 (API 호출 실패 시) 에러 메시지 표시
-            alert("회의에 참가할 권한이 없습니다.");
+            let errorMessage = "회의에 참가할 권한이 없습니다."
+            if(err instanceof Error) errorMessage = err.message
+            alert(errorMessage);
         } finally {
             setJoiningId(null); // 입장 시도 상태 해제
         }

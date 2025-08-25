@@ -9,7 +9,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import "react-calendar/dist/Calendar.css";
 import "./DocumentsPage.css";
 
-import { fetchDocuments, type DocumentResponse, type MinuteDetail } from "../../../apis/Documents";
+import type { DocumentResponse, MinuteDetail } from "../../../apis/Types";
+import { fetchDocuments } from "../../../apis/Documents"
 import { getMinuteDetails } from "../../../apis/Meeting";
 
 // --- 아이콘 컴포넌트들 ---
@@ -82,20 +83,20 @@ const MinuteDetailModal = ({ minute, onClose }: { minute: MinuteDetail; onClose:
     };
 
     return (
-        <div className="modal-backdrop" onClick={onClose}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                <header className="modal-header">
+        <div className="document-modal-backdrop" onClick={onClose}>
+            <div className="document-modal-content" onClick={(e) => e.stopPropagation()}>
+                <header className="document-modal-header">
                     <h2>{minute.meetingTitle}</h2>
-                    <button onClick={onClose} className="modal-close-btn">
+                    <button onClick={onClose} className="document-modal-close-btn">
                         &times;
                     </button>
                 </header>
-                <div className="modal-subheader">
+                <div className="document-modal-subheader">
                     <span className={`badge type-${minute.type.toLowerCase()}`}>{minuteTypeLabel[minute.type]}</span>
                     <span className="meta">작성자: {minute.authorName}</span>
                     <span className="meta">작성일: {format(new Date(minute.createdAt), "yyyy.MM.dd HH:mm")}</span>
                 </div>
-                <main className="modal-body markdown-body">
+                <main className="document-modal-body markdown-body">
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>{minute.content}</ReactMarkdown>
                 </main>
             </div>
@@ -121,7 +122,7 @@ export default function DocumentsPage() {
     const handleViewMinute = async (meetingId: number, minuteId: number) => {
         setIsMinuteLoading(true);
         try {
-            const minuteDetails = await getMinuteDetails(String(meetingId), minuteId);
+            const minuteDetails = await getMinuteDetails(meetingId, minuteId);
             setViewingMinute(minuteDetails);
         } catch (err) {
             alert("회의록을 불러오는 데 실패했습니다.");

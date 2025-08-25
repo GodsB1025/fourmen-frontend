@@ -12,6 +12,7 @@
 }
 
 .modal-content {
+    padding: 24px 24px;
     background-color: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(15px);
     border-radius: 16px;
@@ -20,8 +21,14 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    width: 720px; /* ✅ 너비 증가 (640px -> 720px) */
+    min-width: 720px;
     max-width: 90vw;
+    resize: both;
+    overflow: auto;
+}
+
+.modal-content::-webkit-resizer {
+  display: none;
 }
 
 .modal-header {
@@ -55,9 +62,8 @@
 }
 
 .modal-body {
-    padding: 0;
+    padding: 24px 24px;
     overflow-y: auto;
     display: flex;
-    flex-direction: column;
     flex-grow: 1; /* ✅ 컨텐츠가 수직 공간을 채우도록 flex-grow 추가 */
 }
