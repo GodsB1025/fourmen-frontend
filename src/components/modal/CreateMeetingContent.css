@@ -179,18 +179,6 @@
     overflow-y: auto;
     flex-grow: 1;
 }
-.member-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.6rem 0.5rem;
-    cursor: pointer;
-    border-radius: 8px;
-    transition: background-color 0.2s;
-}
-.member-item:hover {
-    background-color: #eef2ff;
-}
 .member-info {
     display: flex;
     flex-direction: row;
@@ -208,12 +196,6 @@
     opacity: 0;
     transition: opacity 0.2s ease-in-out;
 }
-.member-item:hover .add-indicator {
-    visibility: visible;
-    opacity: 1;
-    color: #4f46e5;
-}
-
 .pending-invites-section {
     flex-shrink: 0;
     padding-top: 1rem;
