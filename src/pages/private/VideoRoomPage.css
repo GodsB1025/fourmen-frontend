@@ -1,7 +1,7 @@
 .videoroom-layout {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: 100%;
     background-color: #f9fafb;
     color: #111827;
 }
@@ -118,18 +118,31 @@
 
 /* --- 하단 푸터 --- */
 .videoroom-footer {
-    position: absolute; /* 메인 컨텐츠 위에 떠 있도록 변경 */
-    bottom: 1.5rem;
-    right: 2rem;
+    position: fixed; /* 메인 컨텐츠 위에 떠 있도록 변경 */
+    bottom: 1rem;
+    left: 8rem;
+    z-index: 1000;
+    cursor: grab;
+    user-select: none; /* 드래그 중 텍스트 선택 방지 */
+    transition: none; /* 드래그 중에는 transition을 제거 */
     padding: 0;
     background: none;
     border-top: none;
+}
+/* is-dragging 클래스가 추가되면 드래그 중인 스타일을 적용 */
+.videoroom-footer.is-dragging {
+    cursor: grabbing; /* 잡고 있는 표시 */
+}
+
+/* 버튼 자체는 드래그 커서가 아닌 기본 커서를 유지하도록 설정 */
+.videoroom-footer .toggle-minutes-btn {
+    cursor: pointer;
 }
 .toggle-minutes-btn {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    height: 56px; /* 버튼 크기 키움 */
+    height: 2.5rem; /* 버튼 크기 키움 */
     padding: 0 1.5rem;
     border-radius: 999px; /* 완전한 원형 */
     box-shadow: inset 0px 0px 5rem #4B52FF;

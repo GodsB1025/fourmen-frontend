@@ -116,6 +116,7 @@
     justify-content: center; /* 그리드 가운데 정렬 */
 }
 
+.disable-button,
 .lobby-action-button {
     display: flex;
     flex-direction: column;
@@ -165,11 +166,19 @@
     height: 28px;
     color: #6b7280;
     transition: color 0.2s;
-    flex-shrink: 0; /* ✨ 아이콘이 찌그러지지 않도록 크기 고정 */
+    flex-shrink: 0;
 }
 
-.lobby-action-button:hover svg {
-    color: #4338ca;
+.disable-button {
+    background-color: #c5c5c5;
+    color: #6b6b6b;
+    cursor: auto;
+}
+.disable-button svg {
+    width: 28px;
+    height: 28px;
+    color: #6b7280;
+    flex-shrink: 0;
 }
 
 .ongoing-section {
