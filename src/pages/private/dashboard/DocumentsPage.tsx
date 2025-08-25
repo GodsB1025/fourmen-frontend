@@ -9,58 +9,13 @@ import "react-datepicker/dist/react-datepicker.css";
 import "react-calendar/dist/Calendar.css";
 import "./DocumentsPage.css";
 
-import type { DocumentResponse, MinuteDetail } from "../../../apis/Types";
-import { fetchDocuments } from "../../../apis/Documents"
-import { getMinuteDetails } from "../../../apis/Meeting";
-
-// --- 아이콘 컴포넌트들 ---
-const FolderIcon = () => (
-    <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round">
-        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-    </svg>
-);
-const FileTextIcon = () => (
-    <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="18"
-        height="18"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round">
-        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-        <polyline points="14 2 14 8 20 8"></polyline>
-        <line x1="16" y1="13" x2="8" y2="13"></line>
-        <line x1="16" y1="17" x2="8" y2="17"></line>
-        <polyline points="10 9 9 9 8 9"></polyline>
-    </svg>
-);
-const BriefcaseIcon = () => (
-    <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="18"
-        height="18"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round">
-        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-    </svg>
-);
+import type { DocumentResponse, MinuteDetail, SharedMinuteResponse, CompanyMember } from "../../../apis/Types";
+import { fetchDocuments, fetchSharedMinutes } from "../../../apis/Documents";
+import { getMinuteDetails, shareMinute } from "../../../apis/Meeting";
+import { fetchCompanyMembers } from "../../../apis/Company";
+import CustomSwitch from "../../../components/common/CustomSwitch";
+import { useAuthStore } from "../../../stores/authStore";
+import { FolderIcon, FileTextIcon, BriefcaseIcon, ShareIcon } from "../../../assets/icons"; // 아이콘 import 추가
 
 // --- 날짜 헬퍼 함수 ---
 const startOfToday = () => {
@@ -74,8 +29,105 @@ const daysAgo = (n: number) => {
     return d;
 };
 
+// --- 회의록 공유 모달 ---
+const ShareMinuteModal = ({
+    minute,
+    onClose,
+    onShare,
+}: {
+    minute: MinuteDetail;
+    onClose: () => void;
+    onShare: (userIds: number[]) => Promise<void>;
+}) => {
+    const [members, setMembers] = useState<CompanyMember[]>([]);
+    const [selectedMembers, setSelectedMembers] = useState<Set<number>>(new Set());
+    const [loading, setLoading] = useState(true);
+    const { user } = useAuthStore();
+
+    useEffect(() => {
+        fetchCompanyMembers()
+            .then((data) => {
+                // 자기 자신은 공유 목록에서 제외
+                setMembers(data.filter((m) => m.id !== user?.userId));
+            })
+            .catch(() => alert("회사 멤버 목록을 불러오는데 실패했습니다."))
+            .finally(() => setLoading(false));
+    }, [user]);
+
+    const handleSelectMember = (memberId: number) => {
+        setSelectedMembers((prev) => {
+            const newSet = new Set(prev);
+            if (newSet.has(memberId)) {
+                newSet.delete(memberId);
+            } else {
+                newSet.add(memberId);
+            }
+            return newSet;
+        });
+    };
+
+    const handleShare = async () => {
+        if (selectedMembers.size === 0) {
+            alert("공유할 멤버를 선택해주세요.");
+            return;
+        }
+        await onShare(Array.from(selectedMembers));
+    };
+
+    return (
+        <div className="document-modal-backdrop" onClick={onClose}>
+            <div className="share-modal-content" onClick={(e) => e.stopPropagation()}>
+                <header className="document-modal-header">
+                    <h2>회의록 공유</h2>
+                    <button onClick={onClose} className="document-modal-close-btn">
+                        &times;
+                    </button>
+                </header>
+                <main className="share-modal-body">
+                    {loading ? (
+                        <p>멤버 목록 로딩 중...</p>
+                    ) : (
+                        <ul className="member-list">
+                            {members.map((member) => (
+                                <li
+                                    key={member.id}
+                                    className={`member-item ${selectedMembers.has(member.id) ? "selected" : ""}`}
+                                    onClick={() => handleSelectMember(member.id)}>
+                                    <input type="checkbox" checked={selectedMembers.has(member.id)} readOnly />
+                                    <div className="member-info">
+                                        <span className="member-name">{member.name}</span>
+                                        <span className="member-email">{member.email}</span>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </main>
+                <footer className="share-modal-footer">
+                    <button onClick={onClose} className="btn-secondary">
+                        취소
+                    </button>
+                    <button onClick={handleShare} className="btn-primary" disabled={selectedMembers.size === 0}>
+                        공유하기
+                    </button>
+                </footer>
+            </div>
+        </div>
+    );
+};
+
 // --- 회의록 상세 보기 모달 컴포넌트 ---
-const MinuteDetailModal = ({ minute, onClose }: { minute: MinuteDetail; onClose: () => void }) => {
+const MinuteDetailModal = ({
+    minute,
+    onClose,
+    showShareButton,
+    onOpenShare,
+}: {
+    minute: MinuteDetail;
+    onClose: () => void;
+    showShareButton: boolean;
+    onOpenShare: () => void;
+}) => {
     const minuteTypeLabel: Record<string, string> = {
         AUTO: "AI 자동 회의록",
         SELF: "수동 회의록",
@@ -99,6 +151,14 @@ const MinuteDetailModal = ({ minute, onClose }: { minute: MinuteDetail; onClose:
                 <main className="document-modal-body markdown-body">
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>{minute.content}</ReactMarkdown>
                 </main>
+                {/* showShareButton prop에 따라 공유 버튼을 조건부로 렌더링 */}
+                {showShareButton && (
+                    <footer className="document-modal-footer">
+                        <button onClick={onOpenShare} className="share-button">
+                            <ShareIcon /> 공유하기
+                        </button>
+                    </footer>
+                )}
             </div>
         </div>
     );
@@ -106,14 +166,22 @@ const MinuteDetailModal = ({ minute, onClose }: { minute: MinuteDetail; onClose:
 
 export default function DocumentsPage() {
     const baseURL = import.meta.env.VITE_API_BASE_URL as string;
+    const [activeTab, setActiveTab] = useState("my");
     const [range, setRange] = useState<[Date | null, Date | null]>([daysAgo(30), startOfToday()]);
     const [docs, setDocs] = useState<DocumentResponse | null>(null);
+    const [sharedMinutes, setSharedMinutes] = useState<SharedMinuteResponse[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [openItems, setOpenItems] = useState<Record<string, boolean>>({});
     const [viewingMinute, setViewingMinute] = useState<MinuteDetail | null>(null);
     const [isMinuteLoading, setIsMinuteLoading] = useState(false);
+    const [isShareModalOpen, setIsShareModalOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
+
+    const tabOptions = [
+        { value: "my", label: "내 문서" },
+        { value: "shared", label: "공유받은 문서" },
+    ];
 
     const toggleItem = (id: string) => {
         setOpenItems((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -122,12 +190,23 @@ export default function DocumentsPage() {
     const handleViewMinute = async (meetingId: number, minuteId: number) => {
         setIsMinuteLoading(true);
         try {
-            const minuteDetails = await getMinuteDetails(meetingId, minuteId);
+            const minuteDetails = await getMinuteDetails(String(meetingId), minuteId);
             setViewingMinute(minuteDetails);
         } catch (err) {
             alert("회의록을 불러오는 데 실패했습니다.");
         } finally {
             setIsMinuteLoading(false);
+        }
+    };
+
+    const handleShareMinute = async (userIds: number[]) => {
+        if (!viewingMinute) return;
+        try {
+            await shareMinute(viewingMinute.meetingId, viewingMinute.minuteId, userIds);
+            alert("성공적으로 공유되었습니다.");
+            setIsShareModalOpen(false);
+        } catch (error) {
+            alert("공유에 실패했습니다.");
         }
     };
 
@@ -137,7 +216,7 @@ export default function DocumentsPage() {
     };
 
     const meetingDates = useMemo(() => {
-        if (!docs?.meetingsWithDocs) return new Set<string>();
+        if (activeTab !== "my" || !docs?.meetingsWithDocs) return new Set<string>();
         const dates = new Set<string>();
         docs.meetingsWithDocs.forEach((dailyDocs) => {
             if (dailyDocs.meetings.length > 0) {
@@ -145,10 +224,10 @@ export default function DocumentsPage() {
             }
         });
         return dates;
-    }, [docs]);
+    }, [docs, activeTab]);
 
     const filteredDocs = useMemo(() => {
-        if (!docs) return null;
+        if (activeTab !== "my" || !docs) return null;
         const lowercasedQuery = searchQuery.toLowerCase().trim();
         if (!lowercasedQuery) return docs;
 
@@ -156,10 +235,10 @@ export default function DocumentsPage() {
             .map((dailyDocs) => {
                 const filteredMeetings = dailyDocs.meetings.filter((meeting) => {
                     if (meeting.meetingTitle.toLowerCase().includes(lowercasedQuery)) return true;
-                    return meeting.minutes.some(
+                    return meeting.minutes?.some(
                         (minute) =>
                             minute.type.toLowerCase().includes(lowercasedQuery) ||
-                            minute.contracts.some((contract) => contract.title.toLowerCase().includes(lowercasedQuery))
+                            minute.contracts?.some((contract) => contract.title.toLowerCase().includes(lowercasedQuery))
                     );
                 });
                 return { ...dailyDocs, meetings: filteredMeetings };
@@ -172,64 +251,83 @@ export default function DocumentsPage() {
             meetingsWithDocs: filteredMeetingsWithDocs,
             standaloneContracts: filteredStandaloneContracts,
         };
-    }, [docs, searchQuery]);
+    }, [docs, searchQuery, activeTab]);
+
+    const filteredSharedMinutes = useMemo(() => {
+        if (activeTab !== "shared") return [];
+        const lowercasedQuery = searchQuery.toLowerCase().trim();
+        if (!lowercasedQuery) return sharedMinutes;
+        return sharedMinutes.filter(
+            (minute) => minute.meetingTitle.toLowerCase().includes(lowercasedQuery) || minute.authorName.toLowerCase().includes(lowercasedQuery)
+        );
+    }, [sharedMinutes, searchQuery, activeTab]);
 
     useEffect(() => {
-        if (!range[0] || !range[1]) {
-            setLoading(false);
-            setDocs(null);
-            return;
-        }
-        const startDate = format(range[0], "yyyy-MM-dd");
-        const endDate = format(range[1], "yyyy-MM-dd");
-
         setLoading(true);
         setError(null);
-        fetchDocuments(startDate, endDate)
-            .then(setDocs)
-            .catch(() => setError("문서 목록을 불러오는 데 실패했습니다."))
-            .finally(() => setLoading(false));
-    }, [range]);
+
+        if (activeTab === "my") {
+            if (!range[0] || !range[1]) {
+                setLoading(false);
+                setDocs(null);
+                return;
+            }
+            const startDate = format(range[0], "yyyy-MM-dd");
+            const endDate = format(range[1], "yyyy-MM-dd");
+            fetchDocuments(startDate, endDate)
+                .then(setDocs)
+                .catch(() => setError("문서 목록을 불러오는 데 실패했습니다."))
+                .finally(() => setLoading(false));
+        } else {
+            fetchSharedMinutes()
+                .then(setSharedMinutes)
+                .catch(() => setError("공유받은 문서 목록을 불러오는 데 실패했습니다."))
+                .finally(() => setLoading(false));
+        }
+    }, [range, activeTab]);
 
     return (
         <div className="docs-page-layout">
             <aside className="docs-sidebar">
-                <h2 className="sidebar-title">문서 필터</h2>
+                <h2 className="sidebar-title">문서함</h2>
+                <CustomSwitch options={tabOptions} value={activeTab} onChange={setActiveTab} />
+                {activeTab === "my" && (
+                    <>
+                        <div className="filter-group">
+                            <label>조회 기간</label>
+                            <DatePicker
+                                selectsRange
+                                startDate={range[0]}
+                                endDate={range[1]}
+                                onChange={(update) => setRange(update as [Date | null, Date | null])}
+                                dateFormat="yyyy.MM.dd"
+                                className="datepicker-input"
+                                isClearable
+                                placeholderText="기간을 선택하세요"
+                            />
+                        </div>
 
-                <div className="filter-group">
-                    <label>조회 기간</label>
-                    <DatePicker
-                        selectsRange
-                        startDate={range[0]}
-                        endDate={range[1]}
-                        onChange={(update) => setRange(update as [Date | null, Date | null])}
-                        dateFormat="yyyy.MM.dd"
-                        className="datepicker-input"
-                        isClearable
-                        placeholderText="기간을 선택하세요"
-                    />
-                </div>
-
-                <div className="filter-group">
-                    <label>날짜 선택</label>
-                    <div className="calendar-container">
-                        <Calendar
-                            locale="ko"
-                            onChange={(date) => {
-                                if (date instanceof Date) setRange([date, date]);
-                            }}
-                            formatDay={(locale, date) => format(date, "d")}
-                            tileContent={({ date, view }) => {
-                                const ymd = format(date, "yyyy-MM-dd");
-                                if (view === "month" && meetingDates.has(ymd)) {
-                                    return <div className="meeting-dot"></div>;
-                                }
-                                return null;
-                            }}
-                        />
-                    </div>
-                </div>
-
+                        <div className="filter-group">
+                            <label>날짜 선택</label>
+                            <div className="calendar-container">
+                                <Calendar
+                                    locale="ko"
+                                    onChange={(date) => {
+                                        if (date instanceof Date) setRange([date, date]);
+                                    }}
+                                    formatDay={(locale, date) => format(date, "d")}
+                                    tileContent={({ date, view }) => {
+                                        const ymd = format(date, "yyyy-MM-dd");
+                                        if (view === "month" && meetingDates.has(ymd)) {
+                                            return <div className="meeting-dot"></div>;
+                                        }
+                                        return null;
+                                    }}
+                                />
+                            </div>
+                        </div>
+                    </>
+                )}
                 <div className="filter-group">
                     <label>검색</label>
                     <div className="search-container">
@@ -248,7 +346,7 @@ export default function DocumentsPage() {
                     <div className="docs-loader">불러오는 중...</div>
                 ) : error ? (
                     <div className="docs-empty-state">{error}</div>
-                ) : (
+                ) : activeTab === "my" ? (
                     <>
                         <section className="docs-section">
                             <h2 className="section-title">회의 기반 문서</h2>
@@ -262,11 +360,11 @@ export default function DocumentsPage() {
                                                     <button className="accordion-header" onClick={() => toggleItem(`m-${meeting.meetingId}`)}>
                                                         <FolderIcon />
                                                         <span>{meeting.meetingTitle}</span>
-                                                        <span className="item-count">{meeting.minutes.length}</span>
+                                                        <span className="item-count">{meeting.minutes?.length || 0}</span>
                                                     </button>
                                                     {openItems[`m-${meeting.meetingId}`] && (
                                                         <div className="accordion-content">
-                                                            {meeting.minutes.map((minute) => (
+                                                            {meeting.minutes?.map((minute) => (
                                                                 <div key={minute.minuteId} className="accordion-sub-item">
                                                                     <button
                                                                         className="accordion-header sub-header"
@@ -280,7 +378,7 @@ export default function DocumentsPage() {
                                                                                 : "AI 요약"}
                                                                         </span>
                                                                     </button>
-                                                                    {minute.contracts.length > 0 && (
+                                                                    {minute.contracts?.length > 0 && (
                                                                         <div className="accordion-content contract-list">
                                                                             {minute.contracts.map((contract) => (
                                                                                 <div
@@ -306,7 +404,6 @@ export default function DocumentsPage() {
                                 <div className="docs-empty-state">표시할 문서가 없습니다.</div>
                             )}
                         </section>
-
                         <section className="docs-section">
                             <h2 className="section-title">기타 계약서</h2>
                             {filteredDocs?.standaloneContracts?.length > 0 ? (
@@ -329,17 +426,48 @@ export default function DocumentsPage() {
                             )}
                         </section>
                     </>
+                ) : (
+                    <section className="docs-section">
+                        <h2 className="section-title">공유받은 회의록</h2>
+                        {filteredSharedMinutes.length > 0 ? (
+                            <div className="shared-minutes-list">
+                                {filteredSharedMinutes.map((minute) => (
+                                    <div
+                                        key={minute.minuteId}
+                                        className="shared-minute-item"
+                                        onClick={() => handleViewMinute(minute.meetingId, minute.minuteId)}>
+                                        <FileTextIcon />
+                                        <div className="info">
+                                            <span className="title">{minute.meetingTitle}</span>
+                                            <span className="meta">
+                                                공유자: {minute.authorName} | 공유일: {format(new Date(minute.sharedAt), "yyyy.MM.dd")}
+                                            </span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="docs-empty-state">공유받은 회의록이 없습니다.</div>
+                        )}
+                    </section>
                 )}
             </main>
-
-            {(isMinuteLoading || viewingMinute) &&
-                (isMinuteLoading ? (
-                    <div className="modal-backdrop">
-                        <div className="docs-loader">회의록을 불러오는 중...</div>
-                    </div>
-                ) : (
-                    viewingMinute && <MinuteDetailModal minute={viewingMinute} onClose={() => setViewingMinute(null)} />
-                ))}
+            {isMinuteLoading && (
+                <div className="modal-backdrop">
+                    <div className="docs-loader">회의록을 불러오는 중...</div>
+                </div>
+            )}
+            {viewingMinute && !isShareModalOpen && (
+                <MinuteDetailModal
+                    minute={viewingMinute}
+                    onClose={() => setViewingMinute(null)}
+                    showShareButton={activeTab === "my"}
+                    onOpenShare={() => setIsShareModalOpen(true)}
+                />
+            )}
+            {viewingMinute && isShareModalOpen && (
+                <ShareMinuteModal minute={viewingMinute} onClose={() => setIsShareModalOpen(false)} onShare={handleShareMinute} />
+            )}
         </div>
     );
 }

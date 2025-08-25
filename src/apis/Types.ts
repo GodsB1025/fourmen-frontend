@@ -83,6 +83,23 @@ export interface GetMeResponse {
     phone: string;
 }
 
+export interface MeetingsWithDocsResponse {
+    data: [
+        {
+            meetingId: number;
+            title: string;
+        }
+    ];
+}
+
+export interface SharedMinuteResponse {
+    minuteId: number;
+    meetingId: number;
+    meetingTitle: string;
+    authorName: string;
+    sharedAt: string;
+}
+
 // 전자계약
 export interface Contract {
     templateId: number;
@@ -255,6 +272,7 @@ export interface DocumentResponse {
 // 회의록 상세 보기 응답 타입
 export interface MinuteDetail {
     minuteId: number;
+    meetingId: number;
     meetingTitle: string;
     type: "AUTO" | "SELF" | "SUMMARY";
     authorName: string;
@@ -264,8 +282,10 @@ export interface MinuteDetail {
 
 // 회의록을 가진 미팅 조회 응답 타입
 export interface MeetingsWithDocsResponse {
-    data: [{
-        meetingId: number;
-        title: string;
-    }]
+    data: [
+        {
+            meetingId: number;
+            title: string;
+        }
+    ];
 }
