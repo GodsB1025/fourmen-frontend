@@ -220,17 +220,19 @@ const ContractContent: React.FC<ContractContentProps> = ({ templateId, eformsign
             <div className="content-section">
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <h2>회의록 가져오기</h2>
+                    {/* ✅ '뒤로가기' 버튼에 .back-button 클래스 추가 및 아이콘 삽입 */}
                     {selectedMinuteContent && (
                         <button
+                            className="back-button"
                             onClick={() => {
                                 setSelectedMinuteContent(null);
-                                // ✅ '뒤로가기' 시 선택된 회의록 ID도 초기화
                                 setSelectedMinuteId(null);
                             }}>
-                            뒤로가기
+                            <IconArrowLeft /> 목록으로
                         </button>
                     )}
                 </div>
+
                 <div className="content-body">
                     <CustomSwitch options={docTabOptions} value={docTab} onChange={setDocTab} />
                     <div style={{ marginTop: "1rem" }}>
