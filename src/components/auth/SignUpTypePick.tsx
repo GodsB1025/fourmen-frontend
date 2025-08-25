@@ -1,5 +1,6 @@
 import React from 'react'
 import type { Form } from '../../types/auth';
+import { IconLongArrowRight, IconUser, IconUserPro } from '../../assets/icons';
 
 interface PickUpProps {
   f: Form,
@@ -25,14 +26,7 @@ const SignUpTypePick = ({
           onClick={() => setF((p) => ({ ...p, type: "USER" }))}
         >
           <div className="su-typecard-icon" aria-hidden>
-            {/* 더 큰 유저+플러스 아이콘 */}
-            <svg viewBox="0 0 128 128" width="120" height="120"
-                 fill="none" stroke="currentColor" strokeWidth="12"
-                 strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="56" cy="40" r="20" />
-              <path d="M24 96c8-16 56-16 64 0" />
-              <path d="M96 32v16M88 40h16" />
-            </svg>
+            <IconUser/>
           </div>
           <strong className="su-typecard-title">일반 회원가입</strong>
           <p className="su-typecard-desc">
@@ -48,15 +42,7 @@ const SignUpTypePick = ({
           onClick={() => setF((p) => ({ ...p, type: "ADMIN" }))}
         >
           <div className="su-typecard-icon" aria-hidden>
-            {/* 더 큰 관리자 아이콘 */}
-            <svg viewBox="0 0 128 128" width="120" height="120"
-                 fill="none" stroke="currentColor" strokeWidth="12"
-                 strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="64" cy="36" r="18" />
-              <path d="M24 96c8-20 72-20 80 0" />
-              <path d="M44 80v28M84 80v28" />
-              <path d="M58 80l6 10l6-10" />
-            </svg>
+            <IconUserPro/>
           </div>
           <strong className="su-typecard-title">관리자 회원가입</strong>
           <p className="su-typecard-desc">
@@ -67,14 +53,14 @@ const SignUpTypePick = ({
 
       <div className="su-actions">
         <button
-          className="primary"
+          className="su-btn primary"
           onClick={() => {
             if (!f.type) return setErr("가입 유형을 선택하세요.");
             setErr(null);
             goNext();
           }}
         >
-          다음
+          <IconLongArrowRight/>
         </button>
       </div>
     </section>

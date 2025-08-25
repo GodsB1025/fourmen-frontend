@@ -19,7 +19,6 @@ const SignUpAuthCode = ({
 }: SignUpAuthCodeProps) => {
     return (
         <section className="su-step">
-            <p className="su-hint">메일로 받은 인증코드를 입력하세요. (예: 123456)</p>
             <TextInput
             value={f.code}
             onChange={(e) => setF({ ...f, code: e.target.value.replace(/\D/g, "") })}
@@ -28,8 +27,8 @@ const SignUpAuthCode = ({
             maxLength={6}
             />
             <div className="su-actions">
-                <button onClick={goPrev}>이전</button>
-                <button className="primary" disabled={busy} onClick={handleClick}>
+                <button className='su-btn' onClick={goPrev}>이전</button>
+                <button className="primary su-btn" disabled={busy} onClick={handleClick}>
                     {busy ? "확인중..." : "다음"}
                 </button>
             </div>
