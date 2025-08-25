@@ -104,7 +104,8 @@ const ShareMinuteModal = ({
                     )}
                 </main>
                 <footer className="share-modal-footer">
-                    <button onClick={onClose} className="btn-secondary">
+                    {/* ✅ '취소' 버튼에 .cancel-btn 클래스 적용 */}
+                    <button onClick={onClose} className="cancel-btn">
                         취소
                     </button>
                     <button onClick={handleShare} className="btn-primary" disabled={selectedMembers.size === 0}>
@@ -290,10 +291,12 @@ export default function DocumentsPage() {
         <div className="docs-page-layout">
             <aside className="docs-sidebar">
                 <h2 className="sidebar-title">문서함</h2>
-                <CustomSwitch options={tabOptions} value={activeTab} onChange={setActiveTab} />
+                <div className="filter-group tab-group">
+                    <CustomSwitch options={tabOptions} value={activeTab} onChange={setActiveTab} />
+                </div>
                 {activeTab === "my" && (
                     <>
-                        <div className="filter-group">
+                        <div className="filter-group datepicker-group">
                             <label>조회 기간</label>
                             <DatePicker
                                 selectsRange
@@ -427,22 +430,43 @@ export default function DocumentsPage() {
                         </section>
                     </>
                 ) : (
+                    // ✅ 공유받은 문서 탭 렌더링 로직 수정
                     <section className="docs-section">
                         <h2 className="section-title">공유받은 회의록</h2>
                         {filteredSharedMinutes.length > 0 ? (
-                            <div className="shared-minutes-list">
+                            <div className="accordion">
                                 {filteredSharedMinutes.map((minute) => (
-                                    <div
-                                        key={minute.minuteId}
-                                        className="shared-minute-item"
-                                        onClick={() => handleViewMinute(minute.meetingId, minute.minuteId)}>
-                                        <FileTextIcon />
-                                        <div className="info">
-                                            <span className="title">{minute.meetingTitle}</span>
-                                            <span className="meta">
-                                                공유자: {minute.authorName} | 공유일: {format(new Date(minute.sharedAt), "yyyy.MM.dd")}
-                                            </span>
-                                        </div>
+                                    <div key={minute.minuteId} className="accordion-item">
+                                        <button className="accordion-header" onClick={() => toggleItem(`s-${minute.minuteId}`)}>
+                                            <FolderIcon />
+                                            <span>{minute.meetingTitle}</span>
+                                            <span className="item-count">{minute.contracts?.length || 0}</span>
+                                        </button>
+                                        {openItems[`s-${minute.minuteId}`] && (
+                                            <div className="accordion-content">
+                                                <div className="accordion-sub-item">
+                                                    <button
+                                                        className="accordion-header sub-header"
+                                                        onClick={() => handleViewMinute(minute.meetingId, minute.minuteId)}>
+                                                        <FileTextIcon />
+                                                        <span>회의록 보기 (공유자: {minute.authorName})</span>
+                                                    </button>
+                                                </div>
+                                                {minute.contracts?.length > 0 && (
+                                                    <div className="accordion-content contract-list">
+                                                        {minute.contracts.map((contract) => (
+                                                            <div
+                                                                key={contract.contractId}
+                                                                className="document-leaf clickable"
+                                                                onClick={() => handleOpenContractPdf(contract.completedPdfUrl)}>
+                                                                <BriefcaseIcon />
+                                                                <span>{contract.title}</span>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
                                     </div>
                                 ))}
                             </div>
