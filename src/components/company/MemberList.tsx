@@ -1,5 +1,5 @@
 import React from "react";
-import type { CompanyMember, MemberRole } from "../../apis/Company";
+import type { CompanyMember, MemberRole } from "../../apis/Types";
 import "./MemberList.css";
 
 const roleLabel: Record<MemberRole, string> = {

@@ -36,7 +36,7 @@ const VideoRoomPage = () => {
     // --- State Management ---
     const [meetingInfo, setMeetingInfo] = useState<Meeting | null>(null);
     const [videoURL, setVideoURL] = useState<string>("");
-    const [sharingVideoURL, setSharingVideoURL] = useState<string>("")
+    const [sharingVideoURL, setSharingVideoURL] = useState<string | null>(null)
     const [isMinutesVisible, setIsMinutesVisible] = useState(false);
 
     // 수동 회의록
@@ -211,7 +211,7 @@ const VideoRoomPage = () => {
     };
 
     const openModalShareURL = async () => {
-        if(sharingVideoURL!=="") {
+        if(sharingVideoURL) {
             openModal("sharingURL", { sharingURL: sharingVideoURL })
             return
         }
@@ -220,8 +220,7 @@ const VideoRoomPage = () => {
                 setError(null)
                 const url = await createSharingMeetingURL(meetingId)
                 setSharingVideoURL(url)
-
-                openModal("sharingURL", { sharingURL: sharingVideoURL })
+                openModal("sharingURL", { sharingURL: url })
             } catch (err: unknown) {
                 let errorMessage = "공유 URL 생성에 실패했습니다."
                 if(err instanceof Error) errorMessage = err.message
