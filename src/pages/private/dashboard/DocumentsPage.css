@@ -59,7 +59,6 @@
 .react-calendar {
     width: 100%;
     border: none;
-    font-family: inherit;
 }
 .react-calendar__navigation button {
     min-width: 30px;

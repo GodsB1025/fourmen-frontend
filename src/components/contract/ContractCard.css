@@ -12,7 +12,6 @@
     /* Reset button/a styles */
     padding: 0;
     text-align: left;
-    font-family: inherit;
     font-size: inherit;
 }
 
@@ -62,12 +61,12 @@
 
 .card-item__title {
     font-weight: 600;
-    margin: 0 0 0.25rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     color: #111827;
     transition: color 0.2s ease;
+    line-height: 1;
 }
 .card-item:hover .card-item__title {
     color: #fff;

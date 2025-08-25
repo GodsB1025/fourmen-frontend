@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './SlideToSubmitButton.css';
-import { IconArrowRight } from '../../assets/icons';
+import { IconPaperAirplane } from '../../assets/icons';
 
 interface SlideToSubmitButtonProps {
   onSubmit: () => void;
@@ -118,7 +118,7 @@ const SlideToSubmitButton: React.FC<SlideToSubmitButtonProps> = ({ onSubmit, dis
             ref={handleRef}
             style={{ transform: `translateX(${sliderPosition}px)` }}
         >
-          <IconArrowRight />
+          <IconPaperAirplane />
         </div>
         <span className="slider-text">{text}</span>
     </div>

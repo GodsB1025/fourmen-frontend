@@ -3,6 +3,14 @@ import { ContractTextInput } from '../../common/TextInput'
 import type { ContractData_201, ContractFormProps } from '../../../types/contractForm';
 
 const Contract_201: React.FC<ContractFormProps<ContractData_201>> = ({ data, onChange }) => {
+
+    const styles = {
+        inputDate : {
+            display: "flex",
+            gap: "1.5rem",
+        }
+    }
+
     return (
         <form>
             <div className="form-group">
@@ -13,7 +21,7 @@ const Contract_201: React.FC<ContractFormProps<ContractData_201>> = ({ data, onC
                 onChange={(e)=>onChange({ 근로자: e.target.value })} // 변경된 부분만 포함하는 객체를 전달
                 />
             </div>
-            <div style={{ display: "flex" }}>
+            <div style={styles.inputDate}>
                 <div className="form-group">
                     <label>시작 년</label>
                     <ContractTextInput
@@ -39,7 +47,7 @@ const Contract_201: React.FC<ContractFormProps<ContractData_201>> = ({ data, onC
                     />
                 </div>
             </div>
-            <div style={{ display: "flex" }}>
+            <div style={styles.inputDate}>
                 <div className="form-group">
                     <label>끝 년</label>
                     <ContractTextInput
