@@ -22,21 +22,26 @@
     border-color: #4B52FF;
     box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
 }
-.participant-controls .invite-btn {
-    width: 100%;
-    padding: 0.75rem 1rem;
+.participant-list .invite-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-color: #f3f4f6;
     border: 1px solid #d1d5db;
-    border-radius: 8px;
+    border-radius: 2rem;
     cursor: pointer;
     font-weight: 500;
     color: #374151;
 }
-.participant-controls .invite-btn:hover {
+.participant-list .invite-btn:hover {
     background-color: #e5e7eb;
+}
+.participant-list .invite-btn svg {
+    width: 14px;
 }
 
 .participant-list {
+    max-width: 700px;
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
@@ -98,7 +103,7 @@
 }
 .create-btn:disabled {
     background-color: #a5b4fc;
-    cursor: not-allowed;
+    cursor: auto;
 }
 .form-error-msg {
     color: #ef4444;
@@ -120,56 +125,42 @@
 .invite-add-email,
 .invite-search {
     position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: 2.4rem;
+    padding: 0 1rem;
+    border-radius: 2rem;
+    background-color: #f3f4f6;
+    border: 1px solid #ccc;
     display: flex;
     align-items: center;
     flex-shrink: 0;
 }
 .invite-add-email input,
 .invite-search input {
-    width: 100%;
-    padding: 0.75rem 1rem 0.75rem 2.5rem;
-    border-radius: 8px;
+    width: 80%;
+    margin-left: 0.4rem;
     font-size: 0.9rem;
-    background-color: #f3f4f6;
-    border: 1px solid #f3f4f6;
-    outline: none;
+    background: none;
+    border: none;
     transition: all 0.2s;
-}
-.invite-add-email input:focus,
-.invite-search input:focus {
-    border-color: #a5b4fc;
-    background-color: #ffffff;
-    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-}
-.invite-add-email::before,
-.invite-search::before {
-    content: "";
-    position: absolute;
-    left: 1rem;
-    width: 16px;
-    height: 16px;
-    opacity: 0.5;
-}
-.invite-add-email::before {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z'%3E%3C/path%3E%3Cpolyline points='22,6 12,13 2,6'%3E%3C/polyline%3E%3C/svg%3E");
-}
-.invite-search::before {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'%3E%3C/line%3E%3C/svg%3E");
 }
 
 .invite-add-email button {
+    position: absolute;
+    transition: background-color 0.2 ease;
+    right: 0;
     margin-left: 0.5rem;
     padding: 0 1rem;
-    height: 42px;
+    height: 3rem;
     border: none;
     background-color: #4f46e5;
     color: white;
-    border-radius: 8px;
     cursor: pointer;
-    flex-shrink: 0;
 }
 .invite-add-email button:disabled {
     background-color: #a5b4fc;
+    cursor: auto
 }
 
 .company-member-section {
@@ -213,13 +204,12 @@
     color: #6b7280;
 }
 .add-indicator {
-    font-size: 1.5rem;
-    font-weight: 300;
-    color: #9ca3af;
+    visibility: hidden;
     opacity: 0;
-    transition: opacity 0.2s;
+    transition: opacity 0.2s ease-in-out;
 }
 .member-item:hover .add-indicator {
+    visibility: visible;
     opacity: 1;
     color: #4f46e5;
 }
@@ -275,7 +265,7 @@
 .switch {
     position: relative;
     display: inline-block;
-    width: 50px;
+    width: 60px;
     height: 28px;
 }
 .switch input {
@@ -293,27 +283,33 @@
     background-color: #ccc;
     transition: 0.4s;
 }
+.slider::after {
+    opacity: 0; /* 처음에는 투명하게 */
+    transition: opacity 0.4s ease-in-out; /* opacity 값에 transition 적용 */
+}
 .slider:before {
     position: absolute;
     content: "";
     height: 20px;
-    width: 20px;
+    width: 30px;
     left: 4px;
     bottom: 4px;
     background-color: white;
-    transition: 0.4s;
+    background-image: none;
+    border-radius: 2rem;
+    transition: transform 0.4s, background-image 0.4s;
 }
 input:checked + .slider {
-    background-color: #4f46e5;
+    background-image: linear-gradient(135deg, #3e41e6, #e78bfa);
 }
 input:checked + .slider:before {
     transform: translateX(22px);
 }
+input:checked + .slider::after {
+    opacity: 1; /* 체크되면 그레이디언트 배경을 서서히 보이게 함 */
+}
 .slider.round {
     border-radius: 28px;
-}
-.slider.round:before {
-    border-radius: 50%;
 }
 
 /* 드롭다운 패널 스타일 */
@@ -350,5 +346,11 @@ input:checked + .slider:before {
 
 /* react-datepicker의 일부 스타일을 전역적으로 덮어쓸 수 있습니다. */
 .react-datepicker-popper {
-    z-index: 10; /* 모달 위에 달력이 표시되도록 z-index를 조정합니다. */
+    z-index: 1100 !important;
+}
+
+.btn-invite-close {
+    background: none;
+    border: none;
+    height: 0.8rem;
 }

@@ -10,6 +10,8 @@ import InvitePanelDropdown from "./InvitePanelDropdown";
 import DatePicker from "react-datepicker";
 import { ko } from "date-fns/locale";
 import './custom-datepicker.css'
+import { IconHashTag, IconPlus } from "../../assets/icons";
+import { AnimatePresence } from "framer-motion";
 // import "react-datepicker/dist/react-datepicker.css"
 
 
@@ -61,12 +63,6 @@ const CreateMeetingContent = () => {
         }
 
         // setInvitePanelOpen(false); // 바로 드롭 다운 닫는 건 보류
-    };
-
-    const handleConfirmInvites = (emails: Set<string>) => {
-        const combinedEmails = new Set([...participantEmails, ...Array.from(emails)]); //중복 제거 로직
-        setParticipantEmails(Array.from(combinedEmails));
-        setInvitePanelOpen(false);
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -128,7 +124,8 @@ const CreateMeetingContent = () => {
                     <label>참여자</label>
                     <div className="participant-controls">
                         <div className="invite-add-email" style={{ flexGrow: 1 }}>
-                            <input 
+                            <IconHashTag strokeColor={emailInput.includes("@") ? "#4f46e5" : "#aaa"}/>
+                            <input
                                 type="email" 
                                 placeholder="이메일로 직접 초대" 
                                 value={emailInput} 
@@ -153,8 +150,8 @@ const CreateMeetingContent = () => {
                                 </button>
                             </span>
                         ))}
-                        <button type="button" className="invite-btn" onClick={() => setInvitePanelOpen(true)}>
-                            목록에서 선택
+                        <button type="button" className="invite-btn" onClick={() => setInvitePanelOpen(!isInvitePanelOpen)}>
+                            목록에서 선택&nbsp;<IconPlus/>
                         </button>
                     </div>
                 </div>
@@ -167,25 +164,27 @@ const CreateMeetingContent = () => {
                             <span className="slider round"></span>
                         </label>
                     </div>
-                    <button type="submit" className="create-btn" disabled={busy}>
+                    <button type="submit" className="create-btn" disabled={busy || meetingName===""}>
                         {busy ? "생성 중..." : "회의 생성하기"}
                     </button>
                 </div>
 
                 {error && <p className="form-error-msg">{error}</p>}
             </form>
-
-            <InvitePanelDropdown
-                isOpen={isInvitePanelOpen}
-                onClose={() => setInvitePanelOpen(false)}
-                onConfirm={handleConfirmInvites}
-                anchorRef={inviteSectionRef}
-                initialInvites={participantEmails}
-                companyMembers={companyMembers}
-                currentUserEmail={user?.email}
-                currentParticipants={participantEmails}
-                onSelectParticipant={handleSelectParticipant}
-            />
+            <AnimatePresence>
+                {isInvitePanelOpen && (
+                    <InvitePanelDropdown
+                        isOpen={isInvitePanelOpen}
+                        onClose={() => setInvitePanelOpen(false)}
+                        anchorRef={inviteSectionRef}
+                        initialInvites={participantEmails}
+                        companyMembers={companyMembers}
+                        currentUserEmail={user?.email}
+                        currentParticipants={participantEmails}
+                        onSelectParticipant={handleSelectParticipant}
+                    />
+                )}
+            </AnimatePresence>
         </>
     );
 };

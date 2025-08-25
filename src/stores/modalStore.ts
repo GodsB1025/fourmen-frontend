@@ -7,7 +7,7 @@ type ModalType = "create" | "join" | "contractForm" | "aiAssistant" | "sharingUR
 interface ModalData {
     templateId?: string;
     eformsignTemplateId?: string; // eformsignTemplateId 추가
-    sharingURL?: string;
+    sharingURL?: string | null;
 }
 
 // 스토어의 상태와 액션에 대한 타입 정의
