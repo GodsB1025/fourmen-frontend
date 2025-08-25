@@ -6,17 +6,14 @@ interface ProgressBarProps {
   targetPercent: number;
 }
 
-/**
- * 부드러운 애니메이션 효과가 적용된 진행률 게이지 컴포넌트입니다.
- * 실제 애니메이션은 CSS transition 속성을 통해 처리됩니다.
- */
-const SmoothProgressBar: React.FC<ProgressBarProps> = ({ targetPercent }) => {
+const SmoothProgressBar: React.FC<ProgressBarProps> = ({ targetPercent } : ProgressBarProps) => {
+  const complete : boolean = targetPercent===100
   return (
     // 게이지의 배경(회색 트랙)이 되는 컨테이너입니다.
-    <div className="progress-container">
+    <div className={`progress-container ${complete && `progress-bar-complete`}`}>
       {/* 실제 채워지는 파란색 막대입니다. width가 동적으로 변경됩니다. */}
       <div
-        className="progress-bar"
+        className={`progress-bar`}
         style={{ width: `${targetPercent}%` }}
       />
     </div>
