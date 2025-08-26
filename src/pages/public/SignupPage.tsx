@@ -128,7 +128,7 @@ export default function SignupWizard() {
   return (
     <div className="su-wrap">
       <main className="su-card">
-        <IconCheck fillColor="#4B52FF" strokeColor="#fff"/>
+        { step===5 && <IconCheck fillColor="#4B52FF" strokeColor="#fff"/> }
         <h1 className="su-title">{step !== 5 ? "회원가입" : "환영합니다!"}</h1>
 
         {/* 진행률 (0 < step < 5) */}

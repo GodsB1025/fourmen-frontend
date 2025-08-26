@@ -1,6 +1,7 @@
 .ai-assistant-container {
     display: flex;
     flex-direction: column;
+    align-self: center;
     width: 600px; /* 너비 조정 */
     height: 450px; /* 높이 조정 */
     padding: 1.5rem;
@@ -10,13 +11,10 @@
 .ai-assistant-body {
     flex-grow: 1;
     overflow-y: auto;
-    background-color: #f9fafb;
-    border-radius: 12px;
     padding: 1.5rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    border: 1px solid #e5e7eb;
 }
 
 /* 답변이 표시될 때의 스타일 */

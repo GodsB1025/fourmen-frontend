@@ -38,6 +38,7 @@ export default function Modal({
                     exit={{ scale: 0.9, opacity: 0 }}
                     // layout
                 >
+                    <div className="side-triangle"/>
                     <header className="modal-header">
                         <h2 className="modal-title">{title}</h2>
                         <button type="button" className="modal-close-btn" onClick={onClose} aria-label="닫기">

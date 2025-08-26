@@ -7,10 +7,9 @@ interface ProgressBarProps {
 }
 
 const SmoothProgressBar: React.FC<ProgressBarProps> = ({ targetPercent } : ProgressBarProps) => {
-  const complete : boolean = targetPercent===100
   return (
     // 게이지의 배경(회색 트랙)이 되는 컨테이너입니다.
-    <div className={`progress-container ${complete && `progress-bar-complete`}`}>
+    <div className={`progress-container`}>
       {/* 실제 채워지는 파란색 막대입니다. width가 동적으로 변경됩니다. */}
       <div
         className={`progress-bar`}

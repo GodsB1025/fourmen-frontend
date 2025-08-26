@@ -28,7 +28,7 @@
 }
 
 .modal-content::-webkit-resizer {
-  display: none;
+    display: none;
 }
 
 .modal-header {
@@ -65,5 +65,16 @@
     padding: 24px 24px;
     overflow-y: auto;
     display: flex;
+    justify-content: center;
     flex-grow: 1; /* ✅ 컨텐츠가 수직 공간을 채우도록 flex-grow 추가 */
+}
+
+.side-triangle {
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+    width: 0;
+    height: 0;
+    border-bottom: 20px solid #303030;
+    border-left: 20px solid transparent;
 }

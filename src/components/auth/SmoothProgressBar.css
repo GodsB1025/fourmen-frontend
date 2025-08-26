@@ -15,11 +15,6 @@
   transition: width 380ms ease; /* 단계 전환 시 부드럽게 */
 }
 
-.progress-bar-complete {
-  box-shadow:
-    0 0 5px #4f46e5;
-}
-
 /* 접근성: 모션 최소화 선호 시 애니메이션 제거 */
 @media (prefers-reduced-motion: reduce) {
   .progress-bar { transition: none; }
