@@ -31,12 +31,12 @@ const VideoRoomPage = () => {
     const navigate = useNavigate();
     const { meetingId } = useParams<{ meetingId: string }>();
     const user = useAuthStore((state) => state.user);
-    const openModal = useModalStore((state) => state.openModal)
+    const openModal = useModalStore((state) => state.openModal);
 
     // --- State Management ---
     const [meetingInfo, setMeetingInfo] = useState<Meeting | null>(null);
     const [videoURL, setVideoURL] = useState<string>("");
-    const [sharingVideoURL, setSharingVideoURL] = useState<string | null>(null)
+    const [sharingVideoURL, setSharingVideoURL] = useState<string | null>(null);
     const [isMinutesVisible, setIsMinutesVisible] = useState(false);
 
     // 수동 회의록
@@ -49,6 +49,7 @@ const VideoRoomPage = () => {
     const [sttResults, setSttResults] = useState<SttData[]>([]);
 
     const [error, setError] = useState<string | null>(null);
+    const [success, setSuccess] = useState<string | null>(null);
     const [busy, setBusy] = useState({ video: false, minute: false });
 
     // --- Refs for WebSocket and Media ---
@@ -97,7 +98,7 @@ const VideoRoomPage = () => {
             if (!isDragging) return;
             wasDragged.current = true; // 드래그가 발생했음을 표시
             if (!hasBeenDragged) setHasBeenDragged(true); // 첫 드래그 시 상태 변경
-            
+
             setPosition({
                 x: e.clientX - dragOffset.current.x,
                 y: e.clientY - dragOffset.current.y,
@@ -173,7 +174,7 @@ const VideoRoomPage = () => {
         if (!meetingId || !manualMinuteContent.trim()) return;
         setBusy((prev) => ({ ...prev, minute: true }));
         try {
-            if(manualMinuteId) {
+            if (manualMinuteId) {
                 await updateManualMinute(meetingId, manualMinuteId, manualMinuteContent);
             } else {
                 const newMinute = await submitManualMinute(meetingId, manualMinuteContent);
@@ -181,8 +182,8 @@ const VideoRoomPage = () => {
             }
             setIsWritingMinute(false);
         } catch (err: unknown) {
-            let errorMessage = "회의록 저장에 실패했습니다."
-            if(err instanceof Error) errorMessage = err.message
+            let errorMessage = "회의록 저장에 실패했습니다.";
+            if (err instanceof Error) errorMessage = err.message;
             setError(errorMessage);
         } finally {
             setBusy((prev) => ({ ...prev, minute: false }));
@@ -193,11 +194,11 @@ const VideoRoomPage = () => {
         if (!meetingId || !window.confirm("정말로 회의를 종료하시겠습니까?")) return;
         try {
             await disableMeetingRoom(meetingId);
-            alert("회의가 종료되었습니다.");
-            navigate(PATH.COMMANDER);
+            setSuccess("회의가 종료되었습니다.");
+            setTimeout(() => navigate(PATH.COMMANDER), 1500);
         } catch (err: unknown) {
-            let errorMessage = "회의 종료에 실패했습니다."
-            if(err instanceof Error) errorMessage = err.message
+            let errorMessage = "회의 종료에 실패했습니다.";
+            if (err instanceof Error) errorMessage = err.message;
             setError(errorMessage);
         }
     };
@@ -274,27 +275,25 @@ const VideoRoomPage = () => {
     };
 
     const openModalShareURL = async () => {
-        if(sharingVideoURL) {
-            openModal("sharingURL", { sharingURL: sharingVideoURL })
-            return
+        if (sharingVideoURL) {
+            openModal("sharingURL", { sharingURL: sharingVideoURL });
+            return;
         }
-        if(meetingId) {
+        if (meetingId) {
             try {
-                setError(null)
-                const url = await createSharingMeetingURL(meetingId)
-                setSharingVideoURL(url)
-                openModal("sharingURL", { sharingURL: url })
+                setError(null);
+                const url = await createSharingMeetingURL(meetingId);
+                setSharingVideoURL(url);
+                openModal("sharingURL", { sharingURL: url });
             } catch (err: unknown) {
-                let errorMessage = "공유 URL 생성에 실패했습니다."
-                if(err instanceof Error) errorMessage = err.message
-                setError(errorMessage)
-            } finally {
-                // setBusy()
+                let errorMessage = "공유 URL 생성에 실패했습니다.";
+                if (err instanceof Error) errorMessage = err.message;
+                setError(errorMessage);
             }
         } else {
-            setError("meetingId가 없습니다.")
+            setError("meetingId가 없습니다.");
         }
-    }
+    };
 
     // --------------------------------- JSX ------------------------------------
     return (
@@ -305,32 +304,21 @@ const VideoRoomPage = () => {
                     <span>{meetingInfo ? new Date(meetingInfo.scheduledAt).toLocaleString() : "..."}</span>
                 </div>
                 <div className="actions-section">
-                    <button
-                        className="btn btn-sharing"
-                        onClick={openModalShareURL}
-                    >
-                        Share<IconShare/>
+                    <button className="btn btn-sharing" onClick={openModalShareURL}>
+                        Share
+                        <IconShare />
                     </button>
                     {meetingInfo?.useAiMinutes && (
-                        <button 
-                            onClick={handleRecordButtonClick} 
-                            className={`btn btn-ai ${isRecording ? "recording" : ""}`}
-                        >
+                        <button onClick={handleRecordButtonClick} className={`btn btn-ai ${isRecording ? "recording" : ""}`}>
                             {isRecording ? "AI 기록 중지" : "AI 기록 시작"}
                         </button>
                     )}
                     {user?.userId === meetingInfo?.hostId && (
-                        <button
-                            onClick={handleEndMeeting} 
-                            className="btn btn-danger"
-                        >
+                        <button onClick={handleEndMeeting} className="btn btn-danger">
                             회의 종료
                         </button>
                     )}
-                    <button 
-                        onClick={() => navigate(PATH.COMMANDER)} 
-                        className="btn btn-secondary"
-                    >
+                    <button onClick={() => navigate(PATH.COMMANDER)} className="btn btn-secondary">
                         나가기
                     </button>
                 </div>
@@ -387,15 +375,15 @@ const VideoRoomPage = () => {
                 className={`videoroom-footer ${isDragging ? "is-dragging" : ""}`}
                 onMouseDown={handleMouseDown}
                 style={
-                    hasBeenDragged ?
-                        { 
-                            left: `${position.x}px`,
-                            top: `${position.y}px`,
-                            bottom: "auto",
-                            right: "auto",
-                        } : {}
-                }
-            >
+                    hasBeenDragged
+                        ? {
+                              left: `${position.x}px`,
+                              top: `${position.y}px`,
+                              bottom: "auto",
+                              right: "auto",
+                          }
+                        : {}
+                }>
                 <button
                     className={`toggle-minutes-btn ${isMinutesVisible ? "active" : ""}`}
                     onClick={handleToggleMinutesClick}
@@ -416,13 +404,8 @@ const VideoRoomPage = () => {
                     <span>{isMinutesVisible ? "숨기기" : "회의록"}</span>
                 </button>
             </div>
-            {error && (
-                <Toast
-                    message={error} 
-                    onClose={() => setError(null)}
-                    type="error"
-                />
-            )}
+            {success && <Toast message={success} onClose={() => setSuccess(null)} type="success" />}
+            {error && <Toast message={error} onClose={() => setError(null)} type="error" />}
         </div>
     );
 };

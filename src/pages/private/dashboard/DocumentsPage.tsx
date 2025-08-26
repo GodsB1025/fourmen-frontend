@@ -15,7 +15,8 @@ import { getMinuteDetails, shareMinute } from "../../../apis/Meeting";
 import { fetchCompanyMembers } from "../../../apis/Company";
 import CustomSwitch from "../../../components/common/CustomSwitch";
 import { useAuthStore } from "../../../stores/authStore";
-import { FolderIcon, FileTextIcon, BriefcaseIcon, ShareIcon } from "../../../assets/icons"; // 아이콘 import 추가
+import { FolderIcon, FileTextIcon, BriefcaseIcon, ShareIcon } from "../../../assets/icons";
+import Toast from "../../../components/common/Toast"; // Toast 컴포넌트 import
 
 // --- 날짜 헬퍼 함수 ---
 const startOfToday = () => {
@@ -34,10 +35,12 @@ const ShareMinuteModal = ({
     minute,
     onClose,
     onShare,
+    onError,
 }: {
     minute: MinuteDetail;
     onClose: () => void;
     onShare: (userIds: number[]) => Promise<void>;
+    onError: (message: string) => void;
 }) => {
     const [members, setMembers] = useState<CompanyMember[]>([]);
     const [selectedMembers, setSelectedMembers] = useState<Set<number>>(new Set());
@@ -50,9 +53,9 @@ const ShareMinuteModal = ({
                 // 자기 자신은 공유 목록에서 제외
                 setMembers(data.filter((m) => m.id !== user?.userId));
             })
-            .catch(() => alert("회사 멤버 목록을 불러오는데 실패했습니다."))
+            .catch(() => onError("회사 멤버 목록을 불러오는데 실패했습니다."))
             .finally(() => setLoading(false));
-    }, [user]);
+    }, [user, onError]);
 
     const handleSelectMember = (memberId: number) => {
         setSelectedMembers((prev) => {
@@ -68,7 +71,7 @@ const ShareMinuteModal = ({
 
     const handleShare = async () => {
         if (selectedMembers.size === 0) {
-            alert("공유할 멤버를 선택해주세요.");
+            onError("공유할 멤버를 선택해주세요.");
             return;
         }
         await onShare(Array.from(selectedMembers));
@@ -104,7 +107,6 @@ const ShareMinuteModal = ({
                     )}
                 </main>
                 <footer className="share-modal-footer">
-                    {/* ✅ '취소' 버튼에 .cancel-btn 클래스 적용 */}
                     <button onClick={onClose} className="cancel-btn">
                         취소
                     </button>
@@ -152,7 +154,6 @@ const MinuteDetailModal = ({
                 <main className="document-modal-body markdown-body">
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>{minute.content}</ReactMarkdown>
                 </main>
-                {/* showShareButton prop에 따라 공유 버튼을 조건부로 렌더링 */}
                 {showShareButton && (
                     <footer className="document-modal-footer">
                         <button onClick={onOpenShare} className="share-button">
@@ -173,6 +174,7 @@ export default function DocumentsPage() {
     const [sharedMinutes, setSharedMinutes] = useState<SharedMinuteResponse[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [success, setSuccess] = useState<string | null>(null);
     const [openItems, setOpenItems] = useState<Record<string, boolean>>({});
     const [viewingMinute, setViewingMinute] = useState<MinuteDetail | null>(null);
     const [isMinuteLoading, setIsMinuteLoading] = useState(false);
@@ -194,7 +196,7 @@ export default function DocumentsPage() {
             const minuteDetails = await getMinuteDetails(String(meetingId), minuteId);
             setViewingMinute(minuteDetails);
         } catch (err) {
-            alert("회의록을 불러오는 데 실패했습니다.");
+            setError("회의록을 불러오는 데 실패했습니다.");
         } finally {
             setIsMinuteLoading(false);
         }
@@ -204,10 +206,10 @@ export default function DocumentsPage() {
         if (!viewingMinute) return;
         try {
             await shareMinute(viewingMinute.meetingId, viewingMinute.minuteId, userIds);
-            alert("성공적으로 공유되었습니다.");
+            setSuccess("성공적으로 공유되었습니다.");
             setIsShareModalOpen(false);
         } catch (error) {
-            alert("공유에 실패했습니다.");
+            setError("공유에 실패했습니다.");
         }
     };
 
@@ -347,8 +349,6 @@ export default function DocumentsPage() {
             <main className="docs-content">
                 {loading ? (
                     <div className="docs-loader">불러오는 중...</div>
-                ) : error ? (
-                    <div className="docs-empty-state">{error}</div>
                 ) : activeTab === "my" ? (
                     <>
                         <section className="docs-section">
@@ -430,7 +430,6 @@ export default function DocumentsPage() {
                         </section>
                     </>
                 ) : (
-                    // ✅ 공유받은 문서 탭 렌더링 로직 수정
                     <section className="docs-section">
                         <h2 className="section-title">공유받은 회의록</h2>
                         {filteredSharedMinutes.length > 0 ? (
@@ -477,7 +476,7 @@ export default function DocumentsPage() {
                 )}
             </main>
             {isMinuteLoading && (
-                <div className="modal-backdrop">
+                <div className="document-modal-backdrop">
                     <div className="docs-loader">회의록을 불러오는 중...</div>
                 </div>
             )}
@@ -490,8 +489,10 @@ export default function DocumentsPage() {
                 />
             )}
             {viewingMinute && isShareModalOpen && (
-                <ShareMinuteModal minute={viewingMinute} onClose={() => setIsShareModalOpen(false)} onShare={handleShareMinute} />
+                <ShareMinuteModal minute={viewingMinute} onClose={() => setIsShareModalOpen(false)} onShare={handleShareMinute} onError={setError} />
             )}
+            {success && <Toast message={success} onClose={() => setSuccess(null)} type="success" />}
+            {error && <Toast message={error} onClose={() => setError(null)} type="error" />}
         </div>
     );
 }
