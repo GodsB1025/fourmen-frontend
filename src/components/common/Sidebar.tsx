@@ -5,6 +5,7 @@ import { useAuthStore } from "../../stores/authStore";
 import { useChatStore } from "../../stores/chatStore";
 import { logout as apiLogout } from "../../apis/Auth";
 import { useNavigate } from "react-router-dom";
+import { IconAISummary } from "../../assets/icons";
 
 function IconHome() {
     return (
@@ -42,20 +43,6 @@ function IconPower() {
         <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" color="#F93737">
             <path d="M12 2v10" stroke="currentColor" strokeWidth="1.6" />
             <path d="M5.3 6.8a8 8 0 1 0 13.4 0" fill="none" stroke="currentColor" strokeWidth="1.6" />
-        </svg>
-    );
-}
-
-// AI 비서 아이콘 추가
-function IconAiAssistant() {
-    return (
-        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-            <path
-                d="M12 2a2 2 0 0 0-2 2v2a2 2 0 0 0 4 0V4a2 2 0 0 0-2-2zM8 10a4 4 0 1 0 8 0 4 4 0 0 0-8 0zM4 10a8 8 0 1 1 16 0v2a8 8 0 0 1-16 0v-2z"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-            />
         </svg>
     );
 }
@@ -112,7 +99,7 @@ export default function Sidebar({
             { key: PATH.MESSENGER, label: "메신저", icon: <IconMessenger /> },
             { key: "create", label: "회의 생성", icon: <IconVideo />, onClick: onOpenCreateModal },
             { key: "join", label: "회의 참가", icon: <IconVideo />, onClick: onOpenJoinModal },
-            { key: "aiAssistant", label: "AI 비서", icon: <IconAiAssistant />, onClick: onOpenAiAssistantModal }, // AI 비서 메뉴 추가
+            { key: "aiAssistant", label: "AI 비서", icon: <IconAISummary strokeWidth="1.5" />, onClick: onOpenAiAssistantModal }, // AI 비서 메뉴 추가
         ],
         [onOpenCreateModal, onOpenJoinModal, onOpenAiAssistantModal] //
     );
