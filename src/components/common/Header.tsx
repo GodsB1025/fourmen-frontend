@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { PATH } from "../../types/paths";
 import { useAuthStore } from "../../stores/authStore";
 import type { User } from "../../apis/Types";
+import { IconLogo } from "../../assets/icons";
 
 const Header = () => {
 
@@ -14,7 +15,7 @@ const Header = () => {
     <header className="header" role="banner">
       <div className="inner">
         <Link to={PATH.ROOT} className="brand" aria-label="4MEN Home">
-          4MEN
+          <IconLogo/>
         </Link>
         <nav aria-label="Primary">
           {isAuthenticated && user? (
