@@ -41,17 +41,21 @@
   font-size: 14px;
   line-height: 1;
   text-decoration: none;
-  color: var(--muted-fg);
+  color: #fff;
   background: transparent;
-  border: none;
-  padding: 8px 10px;
+  background-color: #4B52FF;
+  border: 1px solid #4B52FF;
+  border-radius: 2rem;
+  padding: 10px 17px;
   cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, border 0.2s ease;
 }
 
 .loginLink:hover,
 .loginBtn:hover {
-  color: var(--header-fg);
-  text-decoration: none;
+  background-color: #fff;
+  color: #4B52FF;
+  border: 1px solid #4B52FF;
 }
 
 @media (prefers-color-scheme: dark) {

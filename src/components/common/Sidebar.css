@@ -18,10 +18,11 @@
     width: var(--sb-width);
     min-width: var(--sb-width);
     height: 100%;
-    background: var(--bg);
+    background: rgba(255, 255, 255, 0.5);
     border-right: 1px solid var(--line);
     /* box-shadow: var(--shadow); */
     padding: 16px 10px;
+    z-index: 20;
 }
 
 /* 사용자 정보 */
@@ -73,7 +74,7 @@
     background: var(--bg-hover);
 }
 .nav-item.is-active-sidebar {
-    background: #4b52ff;
+    background-color: #6d72ff;
     color: #fff;
 }
 .icon-sidebar {
@@ -89,6 +90,10 @@
     position: absolute;
     right: 8px;
     background-color: #ef4444;
+    box-shadow: 
+    inset -2px -2px 4px #ef4444,
+    inset 2px -2px 4px #ef4444,
+    inset 0px 2px 3px #e9a9a0;
     color: white;
     font-size: 0.8rem;
     font-weight: bold;
