@@ -99,15 +99,15 @@ export default function SignupWizard() {
   return (
     <div className="su-wrap">
       <main className="su-card">
-        <h1 className="su-title">회원가입</h1>
+        <h1 className="su-title">{step !== 5 ? "회원가입" : "환영합니다!"}</h1>
 
         {/* 진행률 (0 < step < 5) */}
         {step > 0 && step < 5 && (
           <div className="su-progress">
             <SmoothProgressBar targetPercent={percent} />
             <div className="meta">
-              <span>{sequeqnce[step-1].label}</span>
-              <p>{sequeqnce[step-1].hint}</p>
+              <span>{sequence[step-1].label}</span>
+              <p>{sequence[step-1].hint}</p>
             </div>
           </div>
         )}
@@ -172,8 +172,7 @@ export default function SignupWizard() {
         {/* Step 5: 완료 */}
         {step === 5 && (
           <section className="su-done">
-            <h2>회원가입 완료</h2>
-            <p>환영합니다!</p>
+            <p><span>{f.name}</span>님 반갑습니다.<br/>({f.email})로 회원가입이 완료 되었습니다.<br/>로그인을 해서 서비스를 이용하실 수 있습니다.</p>
 
             <button
               className="primary su-btn"
@@ -222,7 +221,7 @@ export default function SignupWizard() {
   );
 }
 
-const sequeqnce = [
+const sequence = [
   {
     label: "이메일을 입력해주세요",
     hint: "인증을 위해 이메일을 입력해주세요. 입력한 이메일로 인증번호가 발송됩니다."
