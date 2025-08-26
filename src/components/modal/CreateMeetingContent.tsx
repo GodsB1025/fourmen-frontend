@@ -12,6 +12,7 @@ import { ko } from "date-fns/locale";
 import './custom-datepicker.css'
 import { IconHashTag, IconPlus } from "../../assets/icons";
 import { AnimatePresence } from "framer-motion";
+import Toast from "../common/Toast";
 // import "react-datepicker/dist/react-datepicker.css"
 
 
@@ -85,8 +86,10 @@ const CreateMeetingContent = () => {
             await createMeetingRoom(payload);
             alert("회의가 성공적으로 생성되었습니다!");
             closeModal();
-        } catch (err: any) {
-            setError(err.message || "회의 생성 중 오류가 발생했습니다.");
+        } catch (err: unknown) {
+            let errorMessage = "회의 생성 중 오류가 발생했습니다.";
+            if(err instanceof Error) errorMessage = err.message
+            setError(errorMessage);
         } finally {
             setBusy(false);
         }
@@ -169,7 +172,13 @@ const CreateMeetingContent = () => {
                     </button>
                 </div>
 
-                {error && <p className="form-error-msg">{error}</p>}
+                {error &&
+                    <Toast 
+                        message={error}
+                        onClose={() => setError(null)}
+                        type="error"
+                    />
+                }
             </form>
             <AnimatePresence>
                 {isInvitePanelOpen && (

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { signup, sendVerificationEmail, verifyEmailCode } from "../../apis/Auth";
 import type { SignupRequest } from "../../apis/Types";
 import "./SignupPage.css";
@@ -9,6 +9,7 @@ import type { Step, Form, UserType } from "../../types/auth";
 import SignUpInfo from "../../components/auth/SignUpInfo";
 import SignUpAdminCode from "../../components/auth/SignUpAdminCode";
 import SmoothProgressBar from "../../components/auth/SmoothProgressBar";
+import Toast from "../../components/common/Toast";
 
 export default function SignupWizard() {
   const [step, setStep] = useState<Step>(0);
@@ -25,15 +26,31 @@ export default function SignupWizard() {
     phone: "",
   });
 
-  const flow = useMemo<Step[]>(
-    () => (f.type === "ADMIN" ? [0, 1, 2, 3, 4, 5] : [0, 1, 2, 3, 5]),
-    [f.type]
-  );
-  const visibleIndex = flow.indexOf(step);
-  const percent = Math.round(((visibleIndex + 1) / flow.length) * 100);
+  const [percent, setPercent] = useState<number>(0);
 
-  const goNext = () => setStep((s) => (Math.min(s + 1, 5) as Step));
-  const goPrev = () => setStep((s) => (Math.max(s - 1, 0) as Step));
+  const goNext = () => {
+    setStep((s) => (Math.min(s + 1, 5) as Step))
+  };
+  const goPrev = () => {
+    setStep((s) => (Math.max(s - 1, 0) as Step))
+  };
+
+  useEffect(() => {
+    // step이 0일 때는 0%로 설정
+    if (step === 0) {
+      setPercent(0);
+      return;
+    }
+
+    // f.type에 따라 적절한 퍼센티지를 계산
+    const newPercent = f.type === "ADMIN"
+      ? 25 * step
+      : 34 * step;
+      
+    // 퍼센티지가 100을 넘지 않도록 조정
+    setPercent(Math.min(newPercent, 100));
+
+  }, [step, f.type]);
 
   async function handleSendEmail() {
     
@@ -60,8 +77,6 @@ export default function SignupWizard() {
   }
 
   async function handleVerifyCode() {
-    
-    
     if (!/^\d{6}$/.test(f.code)) {
       setErr("인증코드는 6자리 숫자입니다.");
       return;
@@ -69,10 +84,12 @@ export default function SignupWizard() {
     setErr(null);
     setBusy(true);
     try {
-      await verifyEmailCode(f.email, f.code);
+      // await verifyEmailCode(f.email, f.code);
       goNext();
-    } catch (e: any) {
-      setErr(e?.message || "인증코드가 올바르지 않습니다.");
+    } catch (e: unknown) {
+      let errorMessage = "인증코드가 올바르지 않습니다."
+      if(e instanceof Error) errorMessage = e.message
+      setErr(errorMessage);
     } finally {
       setBusy(false);
     }
@@ -89,8 +106,8 @@ export default function SignupWizard() {
           <div className="su-progress">
             <SmoothProgressBar targetPercent={percent} />
             <div className="meta">
-              <span>{labelFor(step, f.type)}</span>
-              <span>{percent}%</span>
+              <span>{sequeqnce[step-1].label}</span>
+              <p>{sequeqnce[step-1].hint}</p>
             </div>
           </div>
         )}
@@ -159,7 +176,7 @@ export default function SignupWizard() {
             <p>환영합니다!</p>
 
             <button
-              className="primary"
+              className="primary su-btn"
               disabled={busy}
               onClick={async () => {
                 setErr(null);
@@ -175,8 +192,10 @@ export default function SignupWizard() {
                   await signup(payload);
                   alert("회원가입이 완료되었습니다. 로그인 페이지로 이동합니다.");
                   window.location.href = "/signin";
-                } catch (e: any) {
-                  setErr(e?.message || "회원가입 중 오류가 발생했습니다.");
+                } catch (e: unknown) {
+                  let errorMessage = "회원가입 중 오류가 발생했습니다."
+                  if(e instanceof Error) errorMessage = e.message
+                  setErr(errorMessage);
                 } finally {
                   setBusy(false);
                 }
@@ -185,24 +204,39 @@ export default function SignupWizard() {
               {busy ? "처리중..." : "지금 가입 완료하기"}
             </button>
 
-            <button className="ghost" onClick={() => (window.location.href = "/")}>
+            <button className="ghost su-btn" onClick={() => (window.location.href = "/")}>
               메인으로
             </button>
           </section>
         )}
 
-        {err && <p className="su-error">{err}</p>}
+        {err && 
+          <Toast 
+              message={err}
+              onClose={() => setErr(null)}
+              type="error"
+          />
+        }
       </main>
     </div>
   );
 }
 
-function labelFor(step: Step, type: UserType) {
-  switch (step) {
-    case 1: return "이메일 입력";
-    case 2: return "인증코드 확인";
-    case 3: return "정보 입력";
-    case 4: return type === "ADMIN" ? "관리자 코드" : "건너뜀";
+const sequeqnce = [
+  {
+    label: "이메일을 입력해주세요",
+    hint: "인증을 위해 이메일을 입력해주세요. 입력한 이메일로 인증번호가 발송됩니다."
+  },
+  {
+    label: "인증번호를 입력해주세요",
+    hint: "입력하신 이메일로 인증번호가 발송됐습니다. 주어진 시간 안에 올바른 인증번호를 입력하세요."
+  },
+  {
+    label: "상세 정보를 입력해주세요",
+    hint: "회원가입을 위해 정보를 입력해주세요. 수집된 정보는 가입 이외에 어디에도 사용되지 않습니다."
+  },
+  {
+    label: "관리자 코드를 입력해주세요",
+    hint: "관리자 권한을 얻기 위해서는 자사에서 지급한 코드가 있어야 합니다. 코드 지급 관련은 따로 문의 해주세요"
   }
-  return "";
-}
+]

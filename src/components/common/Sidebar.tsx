@@ -143,7 +143,7 @@ export default function Sidebar({
                                 onNavigate?.(item.key);
                             }
                         }}>
-                        <span className="icon">{item.icon}</span>
+                        <span className="icon-sidebar">{item.icon}</span>
                         <span className="label">{item.label}</span>
                         {item.key === PATH.MESSENGER && totalUnreadCount > 0 && <span className="sidebar-unread-badge">{totalUnreadCount}</span>}
                     </button>
@@ -153,7 +153,7 @@ export default function Sidebar({
             {/* 로그아웃 */}
             <div className="logout">
                 <button type="button" className="logout-btn" onClick={handleLogout}>
-                    <span className="icon">
+                    <span className="icon-sidebar">
                         <IconPower />
                     </span>
                     <span className="label danger">로그아웃</span>

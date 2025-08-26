@@ -315,7 +315,13 @@ const ContractContent: React.FC<ContractContentProps> = ({ templateId, eformsign
                     </div>
                 </div>
             </div>
-            {error && <Toast message={error} onClose={() => setError(null)} type="error" />}
+            {error &&
+                <Toast 
+                    message={error}
+                    onClose={() => setError(null)}
+                    type="error"
+                />
+            }
         </div>
     );
 };

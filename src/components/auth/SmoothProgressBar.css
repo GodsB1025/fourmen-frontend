@@ -1,8 +1,8 @@
 /* 트랙 */
 .progress-container {
   width: 100%;
-  height: 8px;                 /* 스샷 느낌: 살짝 두껍게 */
-  background: #f3f4f6;         /* var(--line) 톤 */
+  height: 8px;
+  background: #cccccc;
   border-radius: 999px;
   overflow: hidden;
 }
@@ -10,9 +10,14 @@
 /* 채우기 바 */
 .progress-bar {
   height: 100%;
-  background: var(--primary);  /* 통일된 블루 (#4B52FF) */
+  background-image: linear-gradient(90deg, #4f46e5, #a855f7, #22d3ee);
   border-radius: inherit;
   transition: width 380ms ease; /* 단계 전환 시 부드럽게 */
+}
+
+.progress-bar-complete {
+  box-shadow:
+    0 0 5px #4f46e5;
 }
 
 /* 접근성: 모션 최소화 선호 시 애니메이션 제거 */

@@ -62,9 +62,9 @@ const SignUpInfo = ({
               />
             </div>
             <div className="su-actions">
-              <button onClick={goPrev}>이전</button>
+              <button className='su-btn' onClick={goPrev}>이전</button>
               <button
-                className="primary"
+                className="primary su-btn"
                 onClick={() => {
                   if (!f.name.trim()) return setErr("이름을 입력하세요.");
                   if (!f.phone.trim()) return setErr("연락처를 입력하세요.");
