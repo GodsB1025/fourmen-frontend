@@ -132,12 +132,16 @@
 /* CTA band */
 .cta { background: var(--bg-soft); margin-top: 36px; }
 .cta-inner {
+  background-image: url('../../assets/imgs/lobby_footer.jpg');
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 12px;
   padding: 40px 0;
   font-weight: 700;
+}
+.cta-inner p {
+  color: #fff;
 }
 
 /* responsive */

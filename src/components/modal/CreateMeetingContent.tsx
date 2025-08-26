@@ -13,7 +13,6 @@ import './custom-datepicker.css'
 import { IconHashTag, IconPlus } from "../../assets/icons";
 import { AnimatePresence } from "framer-motion";
 import Toast from "../common/Toast";
-// import "react-datepicker/dist/react-datepicker.css"
 
 
 // --- Main Component ---
@@ -31,6 +30,7 @@ const CreateMeetingContent = () => {
     const [emailInput, setEmailInput] = useState("");
 
     const [error, setError] = useState<string | null>(null);
+    const [success, setSuccess] = useState<string | null>(null)
     const [busy, setBusy] = useState(false);
 
     // 드롭다운의 위치 기준이 될 요소에 대한 ref
@@ -84,15 +84,15 @@ const CreateMeetingContent = () => {
             };
 
             await createMeetingRoom(payload);
-            alert("회의가 성공적으로 생성되었습니다!");
-            closeModal();
+            setSuccess("회의가 성공적으로 생성되었습니다!");
         } catch (err: unknown) {
             let errorMessage = "회의 생성 중 오류가 발생했습니다.";
             if(err instanceof Error) errorMessage = err.message
             setError(errorMessage);
-        } finally {
-            setBusy(false);
         }
+        // } finally {
+        //     setBusy(false);
+        // }
     };
 
     return (
@@ -120,6 +120,7 @@ const CreateMeetingContent = () => {
                         timeIntervals={15} // 15분 간격으로 시간 선택
                         dateFormat="yyyy년 MM월 dd일 HH:mm" // input에 표시될 날짜 포맷
                         className="custom-datepicker-input" // CSS 클래스 적용
+                        disabled={busy}
                     />
                 </div>
 
@@ -153,7 +154,12 @@ const CreateMeetingContent = () => {
                                 </button>
                             </span>
                         ))}
-                        <button type="button" className="invite-btn" onClick={() => setInvitePanelOpen(!isInvitePanelOpen)}>
+                        <button 
+                            type="button" 
+                            className="invite-btn" 
+                            onClick={() => setInvitePanelOpen(!isInvitePanelOpen)}
+                            disabled={busy}
+                        >
                             목록에서 선택&nbsp;<IconPlus/>
                         </button>
                     </div>
@@ -177,6 +183,13 @@ const CreateMeetingContent = () => {
                         message={error}
                         onClose={() => setError(null)}
                         type="error"
+                    />
+                }
+                {success &&
+                    <Toast 
+                        message={success}
+                        onClose={() => {setSuccess(null); closeModal(); setBusy(false);}}
+                        type="success"
                     />
                 }
             </form>

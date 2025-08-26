@@ -145,7 +145,7 @@ export default function Sidebar({
                         }}>
                         <span className="icon-sidebar">{item.icon}</span>
                         <span className="label">{item.label}</span>
-                        {item.key === PATH.MESSENGER && totalUnreadCount > 0 && <span className="sidebar-unread-badge">{totalUnreadCount}</span>}
+                        {item.key === PATH.MESSENGER && totalUnreadCount > 0 && <span id="sidebar-unread-badge">{totalUnreadCount}</span>}
                     </button>
                 ))}
             </nav>

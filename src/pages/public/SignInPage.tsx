@@ -7,6 +7,7 @@ import { PATH } from "../../types/paths";
 import type { User } from "../../apis/Types";
 import { useAuthStore } from "../../stores/authStore";
 import AssetPreloader from "../../components/common/AssetPreloader"; // ✨ Preloader import
+import Toast from "../../components/common/Toast";
 
 const SignInPage = () => {
     const [email, setEmail] = useState("");
@@ -32,8 +33,10 @@ const SignInPage = () => {
             };
             loginUser(user);
             nav(PATH.COMMANDER, { replace: true });
-        } catch (e: any) {
-            setErr(e?.message || "로그인에 실패했습니다.");
+        } catch (e: unknown) {
+            let errorMessage = "로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요"
+            // if(e instanceof Error) errorMessage = e.message
+            setErr(errorMessage);
         } finally {
             setBusy(false);
         }
@@ -45,7 +48,13 @@ const SignInPage = () => {
         >
             <AssetPreloader /> {/* ✨ 여기에 Preloader 컴포넌트를 추가합니다 */}
             <Login email={email} password={password} setEmail={setEmail} setPassword={setPassword} handleSubmit={handleLogin} />
-            {err && <div style={{ color: "#b91c1c", marginTop: 12 }}>{err}</div>}
+            {err && 
+                <Toast 
+                    message={err}
+                    onClose={() => setErr(null)}
+                    type="error"
+                />
+            }
         </div>
     );
 };

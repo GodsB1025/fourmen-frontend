@@ -130,12 +130,13 @@
 }
 
 .su-typecard:focus-visible {
-  outline: 3px solid var(--primary); /* ✅ 포커스 링 통일 */
+  outline: 3px solid var(--primary);
   outline-offset: 3px;
 }
 
 .su-typecard.active {
-  border-color: var(--primary);  /* ✅ 클릭/선택 보더 통일 */
+  border-color: var(--primary); 
+  background-color: #f5f5ff;
 }
 
 /* 아이콘: 배경판 제거 + 크게 */
@@ -232,8 +233,11 @@ button.ghost {
   display: flex;
   flex-direction: column;
   text-align: center;
-  gap: 10px;
+  gap: 1.5rem;
   padding: 32px 0;
+}
+.su-done p {
+  line-height: 150%;
 }
 .su-done p span {
   color: var(--primary)
