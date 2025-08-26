@@ -24,21 +24,6 @@
     padding: 16px 10px;
 }
 
-.sidebar-unread-badge {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    background-color: #ef4444;
-    color: white;
-    font-size: 0.7rem;
-    font-weight: bold;
-    padding: 2px 6px;
-    border-radius: 999px;
-    min-width: 18px;
-    text-align: center;
-    line-height: 1;
-}
-
 /* 사용자 정보 */
 .user {
     padding: 8px 8px 18px; /* 상단 여백 줄이고 하단 여백 늘림 → 위로 이동 */
@@ -98,6 +83,20 @@
 }
 .nav-item > span {
     font-size: 1rem;
+}
+
+#sidebar-unread-badge {
+    position: absolute;
+    right: 8px;
+    background-color: #ef4444;
+    color: white;
+    font-size: 0.8rem;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 999px;
+    min-width: 18px;
+    text-align: center;
+    line-height: 1;
 }
 
 /* ───── 로그아웃 ───── */

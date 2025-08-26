@@ -10,6 +10,7 @@ interface  SignUpAdminCodeProps {
     setErr: React.Dispatch<React.SetStateAction<string | null>>,
     setStep: React.Dispatch<React.SetStateAction<Step>>,
     goPrev: () => void,
+    goSignUp: () => void,
 }
 
 
@@ -21,6 +22,7 @@ const SignUpAdminCode = ({
     setErr,
     setStep,
     goPrev,
+    goSignUp,
 }: SignUpAdminCodeProps) => {
     return (
         <section className="su-step">
@@ -39,7 +41,6 @@ const SignUpAdminCode = ({
                     try {
                         // 필요하면 실제 관리자 코드 검증 API 연동
                         if (!f.adminKey.trim()) throw new Error("관리자 코드를 입력하세요.");
-                        setStep(5);
                     } catch (e: any) {
                         setErr(e?.message || "관리자 코드가 올바르지 않습니다.");
                     } finally {

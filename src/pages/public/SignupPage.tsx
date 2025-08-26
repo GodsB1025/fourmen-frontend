@@ -10,8 +10,13 @@ import SignUpInfo from "../../components/auth/SignUpInfo";
 import SignUpAdminCode from "../../components/auth/SignUpAdminCode";
 import SmoothProgressBar from "../../components/auth/SmoothProgressBar";
 import Toast from "../../components/common/Toast";
+import { replace, useNavigate } from "react-router-dom";
+import { PATH } from "../../types/paths";
+import { IconCheck } from "../../assets/icons";
 
 export default function SignupWizard() {
+  const navigate = useNavigate()
+
   const [step, setStep] = useState<Step>(0);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
@@ -93,21 +98,46 @@ export default function SignupWizard() {
     } finally {
       setBusy(false);
     }
-      
+  }
+
+  const handleSignUp = async () => {
+    setErr(null);
+    setBusy(true);
+    console.log("회원가입 로직 실행")
+    setBusy(false)
+    setStep(5);
+    // try {
+    //   const payload: SignupRequest = {
+    //     email: f.email.trim(),
+    //     password: f.pw,
+    //     name: f.name.trim(),
+    //     phone: f.phone.trim(),
+    //     adminCode: f.type === "ADMIN" ? f.adminKey.trim() : "",
+    //   };
+    //   await signup(payload);
+    //   setStep(5);
+    // } catch (e: unknown) {
+    //   let errorMessage = "회원가입 중 오류가 발생했습니다."
+    //   if(e instanceof Error) errorMessage = e.message
+    //   setErr(errorMessage);
+    // } finally {
+    //   setBusy(false);
+    // }
   }
 
   return (
     <div className="su-wrap">
       <main className="su-card">
-        <h1 className="su-title">회원가입</h1>
+        <IconCheck fillColor="#4B52FF" strokeColor="#fff"/>
+        <h1 className="su-title">{step !== 5 ? "회원가입" : "환영합니다!"}</h1>
 
         {/* 진행률 (0 < step < 5) */}
         {step > 0 && step < 5 && (
           <div className="su-progress">
             <SmoothProgressBar targetPercent={percent} />
             <div className="meta">
-              <span>{sequeqnce[step-1].label}</span>
-              <p>{sequeqnce[step-1].hint}</p>
+              <span>{sequence[step-1].label}</span>
+              <p>{sequence[step-1].hint}</p>
             </div>
           </div>
         )}
@@ -150,9 +180,9 @@ export default function SignupWizard() {
             f={f}
             setF={setF}
             setErr={setErr}
-            setStep={setStep}
             goPrev={goPrev}
             goNext={goNext}
+            goSignUp={handleSignUp}
           />
         )}
 
@@ -166,46 +196,21 @@ export default function SignupWizard() {
             setErr={setErr}
             setStep={setStep}
             goPrev={goPrev}
+            goSignUp={handleSignUp}
           />
         )}
 
         {/* Step 5: 완료 */}
         {step === 5 && (
           <section className="su-done">
-            <h2>회원가입 완료</h2>
-            <p>환영합니다!</p>
+            <p><span>{f.name}</span>님 반갑습니다.<br/>({f.email})로 회원가입이 완료 되었습니다.<br/>로그인을 해서 서비스를 이용하실 수 있습니다.</p>
 
             <button
               className="primary su-btn"
-              disabled={busy}
-              onClick={async () => {
-                setErr(null);
-                setBusy(true);
-                try {
-                  const payload: SignupRequest = {
-                    email: f.email.trim(),
-                    password: f.pw,
-                    name: f.name.trim(),
-                    phone: f.phone.trim(),
-                    adminCode: f.type === "ADMIN" ? f.adminKey.trim() : "",
-                  };
-                  await signup(payload);
-                  alert("회원가입이 완료되었습니다. 로그인 페이지로 이동합니다.");
-                  window.location.href = "/signin";
-                } catch (e: unknown) {
-                  let errorMessage = "회원가입 중 오류가 발생했습니다."
-                  if(e instanceof Error) errorMessage = e.message
-                  setErr(errorMessage);
-                } finally {
-                  setBusy(false);
-                }
-              }}
+              style={{ width: "50%", margin: "0px auto" }}
+              onClick={() => navigate(PATH.SIGN_IN, { replace : true })}
             >
-              {busy ? "처리중..." : "지금 가입 완료하기"}
-            </button>
-
-            <button className="ghost su-btn" onClick={() => (window.location.href = "/")}>
-              메인으로
+              로그인 화면으로
             </button>
           </section>
         )}
@@ -222,7 +227,7 @@ export default function SignupWizard() {
   );
 }
 
-const sequeqnce = [
+const sequence = [
   {
     label: "이메일을 입력해주세요",
     hint: "인증을 위해 이메일을 입력해주세요. 입력한 이메일로 인증번호가 발송됩니다."

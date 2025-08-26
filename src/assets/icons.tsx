@@ -330,3 +330,18 @@ export const IconUserPro = () => {
         </svg>
     )
 }
+
+export const IconCheck = ({
+    fillColor="none",
+    strokeColor="currentColor",
+} : Props) => {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" viewBox="0 0 24 24" fill={fillColor}
+            stroke={strokeColor} stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+            className="lucide lucide-circle-check-icon lucide-circle-check"
+        >
+            <circle cx="12" cy="12" r="10"/>
+            <path d="m9 12 2 2 4-4"/>
+        </svg>
+    )
+}
