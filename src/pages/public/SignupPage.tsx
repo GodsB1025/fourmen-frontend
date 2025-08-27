@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
-import { sendVerificationEmail,} from "../../apis/Auth";
+import { signup, sendVerificationEmail } from "../../apis/Auth";
+import type { SignupRequest } from "../../apis/Types";
 import "./SignupPage.css";
 import SignUpTypePick from "../../components/auth/SignUpTypePick";
 import SignUpEmail from "../../components/auth/SignUpEmail";
 import SignUpAuthCode from "../../components/auth/SignUpAuthCode";
-import type { Step, Form, UserType } from "../../types/auth";
+import type { Step, Form } from "../../types/auth";
 import SignUpInfo from "../../components/auth/SignUpInfo";
 import SignUpAdminCode from "../../components/auth/SignUpAdminCode";
 import SmoothProgressBar from "../../components/auth/SmoothProgressBar";
 import Toast from "../../components/common/Toast";
-import { replace, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { PATH } from "../../types/paths";
 import { IconCheck } from "../../assets/icons";
 
@@ -100,26 +101,26 @@ export default function SignupWizard() {
   const handleSignUp = async () => {
     setErr(null);
     setBusy(true);
-    console.log("회원가입 로직 실행")
-    setBusy(false)
-    setStep(5);
-    // try {
-    //   const payload: SignupRequest = {
-    //     email: f.email.trim(),
-    //     password: f.pw,
-    //     name: f.name.trim(),
-    //     phone: f.phone.trim(),
-    //     adminCode: f.type === "ADMIN" ? f.adminKey.trim() : "",
-    //   };
-    //   await signup(payload);
-    //   setStep(5);
-    // } catch (e: unknown) {
-    //   let errorMessage = "회원가입 중 오류가 발생했습니다."
-    //   if(e instanceof Error) errorMessage = e.message
-    //   setErr(errorMessage);
-    // } finally {
-    //   setBusy(false);
-    // }
+    // console.log("회원가입 로직 실행")
+    // setBusy(false)
+    // setStep(5);
+    try {
+      const payload: SignupRequest = {
+        email: f.email.trim(),
+        password: f.pw,
+        name: f.name.trim(),
+        phone: f.phone.trim(),
+        adminCode: f.type === "ADMIN" ? f.adminKey.trim() : "",
+      };
+      await signup(payload);
+      setStep(5);
+    } catch (e: unknown) {
+      let errorMessage = "회원가입 중 오류가 발생했습니다."
+      if(e instanceof Error) errorMessage = e.message
+      setErr(errorMessage);
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (

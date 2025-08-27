@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import type { CSSProperties } from 'react';
 
 // 간단한 아이콘 SVG (컴포넌트 내부에 포함하여 별도 파일이 필요 없음)
 const NotFoundIcon = () => (
@@ -19,7 +20,6 @@ const NotFoundIcon = () => (
     <line x1="12" y1="16" x2="12.01" y2="16" />
   </svg>
 );
-
 
 export default function NotFoundPage() {
   const navigate = useNavigate();
@@ -53,8 +53,8 @@ export default function NotFoundPage() {
   );
 }
 
-// 스타일 객체
-const styles = {
+// 스타일 객체 (CSSProperties로 명시)
+const styles: Record<string, CSSProperties> = {
   container: {
     display: 'flex',
     flexDirection: 'column',
@@ -83,7 +83,7 @@ const styles = {
   button: {
     padding: '0.75rem 1.5rem',
     fontSize: '1rem',
-    fontWeight: '600',
+    fontWeight: 600,
     color: '#495057',
     backgroundColor: '#ffffff',
     border: '1px solid #dee2e6',

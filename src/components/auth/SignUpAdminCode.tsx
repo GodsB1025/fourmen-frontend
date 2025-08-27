@@ -20,9 +20,7 @@ const SignUpAdminCode = ({
     setF,
     setBusy,
     setErr,
-    setStep,
     goPrev,
-    goSignUp,
 }: SignUpAdminCodeProps) => {
     return (
         <section className="su-step">
