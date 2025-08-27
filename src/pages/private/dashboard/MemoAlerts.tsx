@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { fetchCalendarSimple } from "../../../apis/Calendar";
 import { CALENDAR_UPDATED_EVENT } from "../../../utils/calendarBus";
 import "./MemoAlerts.css";

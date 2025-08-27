@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react'
-import { Outlet, NavLink, Navigate, useLocation, useNavigate, replace } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import "./Dashboard.css"
 import { PATH } from '../../../types/paths'
 import CustomSwitch from '../../../components/common/CustomSwitch'
 
 type Props = {}
 
-const DashboardPage = (props: Props) => {
+const DashboardPage = (_props: Props) => {
   const loc = useLocation();
   const navigate = useNavigate();
   const [selectedOption, setSelectedOption] = useState<string>(PATH.PROFILE);

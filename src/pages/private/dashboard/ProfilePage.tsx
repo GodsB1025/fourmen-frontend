@@ -1,5 +1,5 @@
 // ALL/frontend/pages/private/dashboard/ProfilePage.tsx
-import React, { useState } from "react";
+import { useState } from "react";
 import ProfileCalendar from "../../../components/common/ProfileCalendar";
 import "./Dashboard.css";
 import { useAuthStore } from "../../../stores/authStore";

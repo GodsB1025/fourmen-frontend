@@ -1,5 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
-import { fetchCompanyMembers, inviteCompanyMember, updateCompanyMemberRole, type CompanyMember, type MemberRole } from "../../../apis/Company";
+import { useEffect, useRef, useState } from "react";
+import { fetchCompanyMembers, inviteCompanyMember, updateCompanyMemberRole } from "../../../apis/Company";
+import type { CompanyMember, MemberRole } from "../../../apis/Types";
 import MemberList from "../../../components/company/MemberList";
 import InviteMemberModal from "../../../components/company/InviteMemberModal";
 import RoleManagementModal from "../../../components/company/RoleManagementModal"; // 모달 import

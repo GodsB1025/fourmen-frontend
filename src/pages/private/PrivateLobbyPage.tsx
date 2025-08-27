@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./PrivateLobbyPage.css";
 import { useModalStore } from "../../stores/modalStore";
 import { useNavigate } from "react-router-dom";

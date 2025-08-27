@@ -1,4 +1,4 @@
-import React, { useRef, useLayoutEffect, useState, useMemo, type RefObject } from "react";
+import { useRef, useLayoutEffect, useState, useMemo, type RefObject } from "react";
 import { createPortal } from "react-dom";
 import type { CompanyMember } from "../../apis/Types";
 import { useClickOutside } from "../../utils/useClickOutside";
@@ -20,7 +20,6 @@ interface InvitePanelDropdownProps {
 const InvitePanelDropdown = ({
     isOpen,
     onClose,
-    onConfirm,
     anchorRef,
     initialInvites,
     companyMembers,

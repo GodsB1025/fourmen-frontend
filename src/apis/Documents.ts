@@ -1,5 +1,5 @@
 import api from "../apis/Client";
-import type { ApiEnvelope, DocumentResponse, MeetingDoc, MeetingsWithDocsResponse, MinuteDetail, MinuteInfo, SharedMinuteResponse } from "./Types";
+import type { ApiEnvelope, DocumentResponse, MeetingDoc, MeetingsWithDocsResponse, SharedMinuteResponse } from "./Types";
 
 // -- 대시보드의 문서 부분에 문서를 조회하기 위한 함수
 export async function fetchDocuments(startDate: string, endDate: string): Promise<DocumentResponse> {

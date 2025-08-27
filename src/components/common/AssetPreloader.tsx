@@ -1,4 +1,3 @@
-import React from "react";
 import { CreateIcon, JoinIcon, ContractIcon, DashboardIcon } from "./LobbyIcons";
 
 // 이 컴포넌트는 화면에 보이지 않는 숨겨진 컨테이너를 렌더링합니다.

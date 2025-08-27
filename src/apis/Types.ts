@@ -63,6 +63,15 @@ export interface User {
     phone?: string;
 }
 
+export interface MeDto {
+  userId: number;
+  name: string;
+  email: string;
+  role: "USER" | "ADMIN" | "CONTRACT_ADMIN";
+  company: number | null;   // ← 회사 id
+  phone?: string;
+}
+
 export interface LoginRequest {
     email: string;
     password: string;

@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import type { MemberRole } from "../../apis/Company";
+import { useState } from "react";
+import type { MemberRole } from "../../apis/Types";
 
 type Props = {
   onSubmit: (p: { email: string; role: MemberRole }) => void | Promise<void>;

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './CreateSharingURLContent.css'
 import Toast from '../common/Toast';
 import { IconCopy } from '../../assets/icons';
@@ -16,7 +16,7 @@ const CreateSharingURLContent = ({
     
     const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    const [url, setUrl] = useState<string | null>(sharingURL)
+    const [url, _setUrl] = useState<string | null>(sharingURL)
 
     const copyURL = async () => {
         setIsCopied(false); 

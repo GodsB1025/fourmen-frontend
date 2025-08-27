@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { signup, sendVerificationEmail, verifyEmailCode } from "../../apis/Auth";
 import type { SignupRequest } from "../../apis/Types";
 import "./SignupPage.css";
