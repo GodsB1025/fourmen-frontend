@@ -12,7 +12,7 @@ class StompClientService {
         this.client = new Client({
             webSocketFactory: () => new SockJS(`${import.meta.env.VITE_API_BASE_URL}/ws/chat`),
             connectHeaders: {},
-            debug: (str) => {
+            debug: (_str) => {
                 // console.log(new Date(), str);
             },
             reconnectDelay: 10000,

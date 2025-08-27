@@ -31,7 +31,7 @@ const daysAgo = (n: number) => {
 
 // --- 회의록 공유 모달 ---
 const ShareMinuteModal = ({
-    minute,
+    //minute,
     onClose,
     onShare,
 }: {
@@ -318,7 +318,7 @@ export default function DocumentsPage() {
                                     onChange={(date) => {
                                         if (date instanceof Date) setRange([date, date]);
                                     }}
-                                    formatDay={(locale, date) => format(date, "d")}
+                                    formatDay={(_locale, date) => format(date, "d")}
                                     tileContent={({ date, view }) => {
                                         const ymd = format(date, "yyyy-MM-dd");
                                         if (view === "month" && meetingDates.has(ymd)) {
@@ -353,8 +353,8 @@ export default function DocumentsPage() {
                     <>
                         <section className="docs-section">
                             <h2 className="section-title">회의 기반 문서</h2>
-                            {filteredDocs?.meetingsWithDocs?.length > 0 ? (
-                                filteredDocs.meetingsWithDocs.map((dailyDocs) => (
+                            {(filteredDocs?.meetingsWithDocs?.length ?? 0) > 0 ? (
+                                (filteredDocs?.meetingsWithDocs ?? []).map((dailyDocs) => (
                                     <div key={dailyDocs.date} className="daily-group">
                                         <h3 className="date-header">{format(new Date(dailyDocs.date), "yyyy년 M월 d일")}</h3>
                                         <div className="accordion">
@@ -381,9 +381,9 @@ export default function DocumentsPage() {
                                                                                 : "AI 요약"}
                                                                         </span>
                                                                     </button>
-                                                                    {minute.contracts?.length > 0 && (
+                                                                    {(minute.contracts?.length ?? 0) > 0 && (
                                                                         <div className="accordion-content contract-list">
-                                                                            {minute.contracts.map((contract) => (
+                                                                            {(minute.contracts ?? []).map((contract) => (
                                                                                 <div
                                                                                     key={contract.contractId}
                                                                                     className="document-leaf clickable"
@@ -409,9 +409,9 @@ export default function DocumentsPage() {
                         </section>
                         <section className="docs-section">
                             <h2 className="section-title">기타 계약서</h2>
-                            {filteredDocs?.standaloneContracts?.length > 0 ? (
+                            {filteredDocs?.standaloneContracts?.length ?? 0 > 0 ? (
                                 <div className="standalone-list">
-                                    {filteredDocs.standaloneContracts.map((contract) => (
+                                    {(filteredDocs?.standaloneContracts ?? []).map((contract) => (
                                         <div
                                             key={contract.contractId}
                                             className="document-leaf standalone clickable"

@@ -1,4 +1,4 @@
-import React, { type JSX, useEffect } from 'react';
+import { type JSX, useEffect } from 'react';
 import Footer from '../../components/common/Footer';
 import mans from '../../assets/imgs/man.png'
 import { useNavigate } from "react-router-dom";

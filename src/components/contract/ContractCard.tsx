@@ -1,5 +1,4 @@
 // ALL/frontend/components/contract/ContractCard.tsx
-import React from "react";
 import "./ContractCard.css"; // Import the new robust CSS
 import type { Contract } from "../../apis/Types";
 

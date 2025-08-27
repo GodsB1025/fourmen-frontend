@@ -1,4 +1,3 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // 간단한 아이콘 SVG (컴포넌트 내부에 포함하여 별도 파일이 필요 없음)

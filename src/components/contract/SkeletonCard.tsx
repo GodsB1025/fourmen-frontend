@@ -1,4 +1,3 @@
-import React from 'react';
 import './ContractCard.css'; // 실제 카드 스타일을 가져옵니다.
 import './SkeletonCard.css'; // 스켈레톤 전용 스타일을 분리합니다.
 

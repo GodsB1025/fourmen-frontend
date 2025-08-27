@@ -1,12 +1,13 @@
 import "./JoinMeetingContent.css";
 import { useEffect, useMemo, useState } from "react";
-import { getMeetings, getMeetingInfo } from "../../apis/Meeting"; // getMeetingInfo import 추가
+import { getMeetings, getMeetingInfo } from "../../apis/Meeting";
 import type { Meeting } from "../../apis/Types";
 import MeetingRoomList from "./MeetingRoomList";
 import { useNavigate } from "react-router-dom";
 import { PATH } from "../../types/paths";
 import { useModalStore } from "../../stores/modalStore";
 import CustomSwitch from "../common/CustomSwitch";
+import Toast from "../common/Toast"; // Toast 컴포넌트 import
 
 const JoinMeetingContent = () => {
     const navigate = useNavigate();
@@ -15,7 +16,7 @@ const JoinMeetingContent = () => {
     const [selectedOption, setSelectedOption] = useState("my");
     const [meetingRooms, setMeetingRooms] = useState<Meeting[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
-    const [joiningId, setJoiningId] = useState<number | null>(null); // 현재 입장 시도 중인 회의 ID 상태
+    const [joiningId, setJoiningId] = useState<number | null>(null);
 
     const [error, setError] = useState<string | null>(null);
     const [busy, setBusy] = useState(false);
@@ -29,24 +30,19 @@ const JoinMeetingContent = () => {
         setSelectedOption(value);
     };
 
-    // 참가 버튼 클릭 시 권한 확인 로직 추가
     const navigateMeetingRoom = async (meetingId: number) => {
-        setJoiningId(meetingId); // 입장 시도 상태로 변경
+        setJoiningId(meetingId);
         try {
-            // 1. 회의 참가 API를 호출하여 권한 확인
             await getMeetingInfo(meetingId.toString());
-
-            // 2. 권한이 있으면 회의실로 이동
             const destination = PATH.VIDEO_ROOM.replace(":meetingId", meetingId.toString());
             navigate(destination);
             closeModal();
         } catch (err: unknown) {
-            // 3. 권한이 없으면 (API 호출 실패 시) 에러 메시지 표시
-            let errorMessage = "회의에 참가할 권한이 없습니다."
-            if(err instanceof Error) errorMessage = err.message
-            alert(errorMessage);
+            const errorMessage = "회의에 참가할 권한이 없습니다.";
+
+            setError(errorMessage); // alert 대신 setError 사용
         } finally {
-            setJoiningId(null); // 입장 시도 상태 해제
+            setJoiningId(null);
         }
     };
 
@@ -68,8 +64,8 @@ const JoinMeetingContent = () => {
                 const data = await getMeetings(selectedOption);
                 setMeetingRooms(data);
             } catch (err: unknown) {
-                let errorMessage = "회의 목록 조회 중 오류가 발생했습니다.";
-                if (err instanceof Error) errorMessage = err.message;
+                const errorMessage = "회의 목록 조회 중 오류가 발생했습니다.";
+
                 setError(errorMessage);
             } finally {
                 setBusy(false);
@@ -82,11 +78,7 @@ const JoinMeetingContent = () => {
     return (
         <div className="join-meeting-container">
             <div className="switch-wrapper">
-                <CustomSwitch
-                    options={options}
-                    value={selectedOption}
-                    onChange={handleChange}
-                />
+                <CustomSwitch options={options} value={selectedOption} onChange={handleChange} />
             </div>
 
             <div className="search-bar-container">
@@ -99,13 +91,8 @@ const JoinMeetingContent = () => {
                 />
             </div>
 
-            <MeetingRoomList
-                busy={busy}
-                error={error}
-                meetingRooms={filteredMeetingRooms}
-                handleClick={navigateMeetingRoom}
-                joiningId={joiningId} // 입장 시도 중인 회의 ID를 props로 전달
-            />
+            <MeetingRoomList busy={busy} error={error} meetingRooms={filteredMeetingRooms} handleClick={navigateMeetingRoom} joiningId={joiningId} />
+            {error && <Toast message={error} onClose={() => setError(null)} type="error" />}
         </div>
     );
 };

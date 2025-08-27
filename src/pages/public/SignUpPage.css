@@ -255,17 +255,50 @@ button.ghost {
   color: white;
 }
 
-/* ✅ .primary 클래스 버튼이 비활성화 상태일 때 스타일 (회색) */
+/* ✅ .primary 클래스 버튼이 비활성화 상태 스타일 */
 .primary:disabled {
-  background-color: #cccccc; /* 회색 */
+  background-color: #cccccc;
   cursor: not-allowed;
-  opacity: 0.7; /* 약간 투명하게 */
+  opacity: 0.7;
 }
-
 
 /* 반응형 */
 @media (max-width: 720px) {
   .su-typegrid { grid-template-columns: 1fr; gap: 20px; }
   .su-typecard { width: 220px; }
   .su-typecard-icon svg { width: 104px; height: 104px; }
+}
+
+/* =========================
+   NEW: 제목~입력창 사이 회색 카드
+   ========================= */
+.hint-card {
+  width: 100%;
+  background: #f1f5f9;          /* 밝은 회색 */
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 18px 20px;
+  margin: 8px 0 18px;           /* 제목과 입력 사이 간격 */
+}
+
+.hint-progress { margin-bottom: 10px; }
+
+/* 카드 안 메타(좌: 라벨, 우: %) */
+.hint-card .meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 4px 0 6px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.hint-title { font-weight: 800; color: #1f2937; }
+.hint-pct   { opacity: .9; }
+
+.hint-desc {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--muted);
 }

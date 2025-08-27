@@ -1,4 +1,3 @@
-import React from "react";
 import type { CompanyMember, MemberRole } from "../../apis/Types";
 import "./MemberList.css";
 

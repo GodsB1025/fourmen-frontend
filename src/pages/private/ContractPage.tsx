@@ -1,5 +1,5 @@
 // ALL/frontend/pages/private/ContractPage.tsx
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getContractTemplate, getCompletedContracts } from "../../apis/Contract";
 import type { Contract, CompletedContract } from "../../apis/Types";
 import { useModalStore } from "../../stores/modalStore";
