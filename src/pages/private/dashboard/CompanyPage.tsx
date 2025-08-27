@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { fetchCompanyMembers, inviteCompanyMember, updateCompanyMemberRole } from "../../../apis/Company";
 import type { CompanyMember, MemberRole } from "../../../apis/Types";
 import MemberList from "../../../components/company/MemberList";

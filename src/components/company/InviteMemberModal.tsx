@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import type { MemberRole } from "../../apis/Types";
 import "./InviteMemberModal.css";
 import Toast from "../common/Toast"; // Toast 컴포넌트 import

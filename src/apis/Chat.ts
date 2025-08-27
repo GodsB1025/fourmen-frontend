@@ -1,6 +1,4 @@
 import api from "./Client";
-import type { User } from "./Types";
-
 // 채팅방 타입 정의에 unreadCount 추가
 export interface ChatRoom {
     roomId: number;

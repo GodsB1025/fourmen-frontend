@@ -16,7 +16,7 @@ const SlideToSubmitButton: React.FC<SlideToSubmitButtonProps> = ({ onSubmit, dis
   const sliderRef = useRef<HTMLDivElement>(null);
   const handleRef = useRef<HTMLDivElement>(null);
 
-  const handleInteractionStart = (clientX: number) => {
+  const handleInteractionStart = (_clientX: number) => {
     if (disabled || loading || isCompleted) return;
     setIsDragging(true);
   };

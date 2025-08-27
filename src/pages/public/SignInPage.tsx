@@ -13,7 +13,7 @@ const SignInPage = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [err, setErr] = useState<string | null>(null);
-    const [busy, setBusy] = useState(false);
+    const [_busy, setBusy] = useState(false);
     const loginUser = useAuthStore((state) => state.login);
     const nav = useNavigate();
 

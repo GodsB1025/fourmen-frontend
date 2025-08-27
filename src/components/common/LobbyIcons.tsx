@@ -1,5 +1,3 @@
-import React from "react";
-
 export const CreateIcon = () => (
     // width와 height 속성 제거
     <svg viewBox="0 0 24 24">

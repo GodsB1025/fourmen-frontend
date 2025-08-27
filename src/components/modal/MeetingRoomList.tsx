@@ -1,4 +1,3 @@
-import React from "react";
 import "./MeetingRoomList.css";
 import type { Meeting } from "../../apis/Types";
 

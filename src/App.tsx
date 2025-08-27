@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useAuthStore } from './stores/authStore';
 import { Outlet, useNavigation } from 'react-router-dom';
 import { initCsrf } from './apis/Client';

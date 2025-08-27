@@ -1,5 +1,6 @@
+// UPDATE: src/routers/router.tsx
 import { lazy, Suspense } from "react";
-import { createBrowserRouter, type RouteObject } from "react-router-dom";
+import { createHashRouter, type RouteObject } from "react-router-dom"; // ← 여기만 변경
 import Loading from "../components/common/Loading";
 import { PATH } from "../types/paths";
 
@@ -24,62 +25,62 @@ const MessengerPage = lazy(() => import("../pages/private/MessengerPage"));
 const PageLoader = () => <Loading />;
 
 const routes: RouteObject[] = [
-    {
-        element: <App />,
+  {
+    element: <App />,
+    children: [
+      {
+        // 인증이 필요한 경로
+        element: <PrivateRoute />, // 부모에서 인증을 체크
         children: [
-            {
-                // 인증이 필요한 경로
-                element: <PrivateRoute />, // 부모에서 인증을 체크
+          {
+            element: <PrivateLayout />,
+            children: [
+              {
+                path: PATH.DASHBOARD,
+                element: <DashboardPage />,
                 children: [
-                    {
-                        element: <PrivateLayout />,
-                        children: [
-                            {
-                                path: PATH.DASHBOARD,
-                                element: <DashboardPage />,
-                                children: [
-                                    { path: PATH.PROFILE, element: <ProfilePage /> },
-                                    { path: PATH.COMPANY, element: <CompanyPage /> },
-                                    { path: PATH.DOCUMENTS, element: <DocumentsPage /> },
-                                ],
-                            },
-                            { path: PATH.CONTRACT, element: <ContractPage /> },
-                            { path: PATH.COMMANDER, element: <PrivateLobbyPage /> },
-                            { path: PATH.VIDEO_ROOM, element: <VideoRoomPage /> },
-                            { path: PATH.MESSENGER, element: <MessengerPage /> },
-                        ],
-                    },
+                  { path: PATH.PROFILE, element: <ProfilePage /> },
+                  { path: PATH.COMPANY, element: <CompanyPage /> },
+                  { path: PATH.DOCUMENTS, element: <DocumentsPage /> },
                 ],
-            },
-            {
-                // Public Routes (인증이 필요 없는 경로)
-                element: <PublicLayout />,
-                children: [
-                    { path: PATH.ROOT, element: <LobbyPage /> },
-                    { path: PATH.SIGN_IN, element: <SignInPage /> },
-                    { path: PATH.SIGN_UP, element: <SignupPage /> },
-                ],
-            },
-            {
-                // 404 Not Found
-                path: "*",
-                element: <NotFoundPage />,
-            },
+              },
+              { path: PATH.CONTRACT, element: <ContractPage /> },
+              { path: PATH.COMMANDER, element: <PrivateLobbyPage /> },
+              { path: PATH.VIDEO_ROOM, element: <VideoRoomPage /> },
+              { path: PATH.MESSENGER, element: <MessengerPage /> },
+            ],
+          },
         ],
-    },
+      },
+      {
+        // Public Routes (인증이 필요 없는 경로)
+        element: <PublicLayout />,
+        children: [
+          { path: PATH.ROOT, element: <LobbyPage /> },
+          { path: PATH.SIGN_IN, element: <SignInPage /> },
+          { path: PATH.SIGN_UP, element: <SignupPage /> },
+        ],
+      },
+      {
+        // 404 Not Found
+        path: "*",
+        element: <NotFoundPage />,
+      },
+    ],
+  },
 ];
 
 // Suspense를 적용하여 라우터 객체를 감싸는 함수
 const wrapInSuspense = (routes: RouteObject[]): RouteObject[] => {
-    return routes.map((route) => {
-        if (route.element) {
-            route.element = <Suspense fallback={<PageLoader />}>{route.element}</Suspense>;
-        }
-        if (route.children) {
-            route.children = wrapInSuspense(route.children);
-        }
-        return route;
-    });
+  return routes.map((route) => {
+    if (route.element) {
+      route.element = <Suspense fallback={<PageLoader />}>{route.element}</Suspense>;
+    }
+    if (route.children) {
+      route.children = wrapInSuspense(route.children);
+    }
+    return route;
+  });
 };
 
-export const router = createBrowserRouter(wrapInSuspense(routes));
+export const router = createHashRouter(wrapInSuspense(routes)); // ← 여기만 변경

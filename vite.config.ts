@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react";
 
 export default defineConfig({
     plugins: [react()],
+    base: './',
     define: {
         global: "window",
     },
@@ -10,7 +11,7 @@ export default defineConfig({
         port: 5173, // 프론트 포트
         proxy: {
             "/api": {
-                target: "http://localhost:8081",
+                target: "https://4menpro.duckdns.org/api",
                 changeOrigin: true,
                 ws: true,
                 secure: false,

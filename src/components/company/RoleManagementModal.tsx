@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import type { CompanyMember, MemberRole } from "../../apis/Company";
+import { useState } from "react";
+import type { CompanyMember, MemberRole } from "../../apis/Types";
 import "./RoleManagementModal.css";
 
 const roleLabel: Record<MemberRole, string> = {
