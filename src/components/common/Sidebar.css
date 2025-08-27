@@ -18,25 +18,11 @@
     width: var(--sb-width);
     min-width: var(--sb-width);
     height: 100%;
-    background: var(--bg);
+    background: rgba(255, 255, 255, 0.5);
     border-right: 1px solid var(--line);
-    box-shadow: var(--shadow);
+    /* box-shadow: var(--shadow); */
     padding: 16px 10px;
-}
-
-.sidebar-unread-badge {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    background-color: #ef4444;
-    color: white;
-    font-size: 0.7rem;
-    font-weight: bold;
-    padding: 2px 6px;
-    border-radius: 999px;
-    min-width: 18px;
-    text-align: center;
-    line-height: 1;
+    z-index: 20;
 }
 
 /* 사용자 정보 */
@@ -88,16 +74,34 @@
     background: var(--bg-hover);
 }
 .nav-item.is-active-sidebar {
-    background: #4b52ff;
+    background-color: #6d72ff;
     color: #fff;
 }
-.icon {
+.icon-sidebar {
     width: 20px;
     display: inline-flex;
     justify-content: center;
 }
 .nav-item > span {
     font-size: 1rem;
+}
+
+#sidebar-unread-badge {
+    position: absolute;
+    right: 8px;
+    background-color: #ef4444;
+    box-shadow: 
+    inset -2px -2px 4px #ef4444,
+    inset 2px -2px 4px #ef4444,
+    inset 0px 2px 3px #e9a9a0;
+    color: white;
+    font-size: 0.8rem;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 999px;
+    min-width: 18px;
+    text-align: center;
+    line-height: 1;
 }
 
 /* ───── 로그아웃 ───── */
@@ -143,4 +147,53 @@
     outline: none;
     box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.25);
     border-radius: 8px;
+}
+
+/* --- 비활성화 & 툴팁 스타일 추가 --- */
+.nav-item:disabled {
+    background-color: #f3f4f6;
+    color: #9ca3af;
+    cursor: not-allowed;
+}
+
+.nav-item:disabled:hover {
+    background-color: #f3f4f6;
+}
+
+.nav-item:disabled .icon-sidebar,
+.nav-item:disabled .label {
+    color: #9ca3af;
+}
+
+.tooltip {
+    visibility: hidden;
+    width: 100px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    left: 105%; /* 버튼 오른쪽에 위치 */
+    top: 50%;
+    margin-top: -15px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tooltip::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 100%; /* 화살표를 왼쪽에 */
+    margin-top: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent #555 transparent transparent;
+}
+
+.nav-item:disabled:hover .tooltip {
+    visibility: visible;
+    opacity: 1;
 }

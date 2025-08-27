@@ -5,6 +5,7 @@ import { useAuthStore } from "../../stores/authStore";
 import { useChatStore } from "../../stores/chatStore";
 import { logout as apiLogout } from "../../apis/Auth";
 import { useNavigate } from "react-router-dom";
+import { IconAISummary } from "../../assets/icons";
 
 function IconHome() {
     return (
@@ -46,20 +47,6 @@ function IconPower() {
     );
 }
 
-// AI 비서 아이콘 추가
-function IconAiAssistant() {
-    return (
-        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-            <path
-                d="M12 2a2 2 0 0 0-2 2v2a2 2 0 0 0 4 0V4a2 2 0 0 0-2-2zM8 10a4 4 0 1 0 8 0 4 4 0 0 0-8 0zM4 10a8 8 0 1 1 16 0v2a8 8 0 0 1-16 0v-2z"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-            />
-        </svg>
-    );
-}
-
 function IconMessenger() {
     return (
         <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
@@ -79,24 +66,19 @@ type NavItem = {
     key: string;
     label: string;
     icon: JSX.Element;
-    onClick?: () => void; // 각 아이템에 대한 커스텀 클릭 핸들러 (선택 사항)
+    onClick?: () => void;
+    disabled?: boolean;
 };
 
 type SidebarProps = {
     onNavigate?: (key: string) => void;
     activeKey?: string;
-    onOpenCreateModal?: () => void; // 모달을 열기 위한 함수들을 props로 받음
+    onOpenCreateModal?: () => void;
     onOpenJoinModal?: () => void;
-    onOpenAiAssistantModal?: () => void; // AI 비서 모달 핸들러 추가
+    onOpenAiAssistantModal?: () => void;
 };
 
-export default function Sidebar({
-    onNavigate,
-    activeKey,
-    onOpenCreateModal,
-    onOpenJoinModal,
-    onOpenAiAssistantModal, // props 추가
-}: SidebarProps) {
+export default function Sidebar({ onNavigate, activeKey, onOpenCreateModal, onOpenJoinModal, onOpenAiAssistantModal }: SidebarProps) {
     const { user, logout: logoutFromStore } = useAuthStore();
     const { chatRooms } = useChatStore();
     const totalUnreadCount = useMemo(() => {
@@ -104,17 +86,26 @@ export default function Sidebar({
     }, [chatRooms]);
     const nav = useNavigate();
 
+    const hasCompany = !!user?.company;
+    const isUserRole = user?.role === "USER";
+
     const items: NavItem[] = useMemo(
         () => [
             { key: PATH.COMMANDER, label: "HOME", icon: <IconHome /> },
             { key: PATH.DASHBOARD, label: "대시보드", icon: <IconCalendar /> },
-            { key: PATH.CONTRACT, label: "전자 계약", icon: <IconContract /> },
-            { key: PATH.MESSENGER, label: "메신저", icon: <IconMessenger /> },
+            { key: PATH.CONTRACT, label: "전자 계약", icon: <IconContract />, disabled: isUserRole },
+            { key: PATH.MESSENGER, label: "메신저", icon: <IconMessenger />, disabled: !hasCompany },
             { key: "create", label: "회의 생성", icon: <IconVideo />, onClick: onOpenCreateModal },
             { key: "join", label: "회의 참가", icon: <IconVideo />, onClick: onOpenJoinModal },
-            { key: "aiAssistant", label: "AI 비서", icon: <IconAiAssistant />, onClick: onOpenAiAssistantModal }, // AI 비서 메뉴 추가
+            {
+                key: "aiAssistant",
+                label: "AI 비서",
+                icon: <IconAISummary strokeWidth="1.5" />,
+                onClick: onOpenAiAssistantModal,
+                disabled: !hasCompany,
+            },
         ],
-        [onOpenCreateModal, onOpenJoinModal, onOpenAiAssistantModal] //
+        [onOpenCreateModal, onOpenJoinModal, onOpenAiAssistantModal, user]
     );
 
     const handleLogout = async () => {
@@ -130,7 +121,6 @@ export default function Sidebar({
 
     return (
         <aside className="sidebar" role="complementary" aria-label="사이드바">
-            {/* 사용자 정보 (아바타 없음) */}
             {user && (
                 <div className="user">
                     <div className="user-name" title={user.name}>
@@ -142,31 +132,35 @@ export default function Sidebar({
                 </div>
             )}
 
-            {/* 내비게이션 */}
             <nav className="nav" aria-label="사이드바 메뉴">
-                {items.map((item) => (
-                    <button
-                        key={item.key}
-                        type="button"
-                        className={`nav-item ${activeKey?.startsWith(item.key) ? "is-active-sidebar" : ""}`} //
-                        onClick={() => {
-                            if (item.onClick) {
-                                item.onClick(); // 커스텀  onClick이 있으면 그걸 실행
-                            } else {
-                                onNavigate?.(item.key);
-                            }
-                        }}>
-                        <span className="icon">{item.icon}</span>
-                        <span className="label">{item.label}</span>
-                        {item.key === PATH.MESSENGER && totalUnreadCount > 0 && <span className="sidebar-unread-badge">{totalUnreadCount}</span>}
-                    </button>
-                ))}
+                {items.map((item) => {
+                    const isDisabled = !!item.disabled;
+                    return (
+                        <button
+                            key={item.key}
+                            type="button"
+                            className={`nav-item ${activeKey?.startsWith(item.key) ? "is-active-sidebar" : ""}`}
+                            onClick={() => {
+                                if (isDisabled) return;
+                                if (item.onClick) {
+                                    item.onClick();
+                                } else {
+                                    onNavigate?.(item.key);
+                                }
+                            }}
+                            disabled={isDisabled}>
+                            <span className="icon-sidebar">{item.icon}</span>
+                            <span className="label">{item.label}</span>
+                            {item.key === PATH.MESSENGER && totalUnreadCount > 0 && <span id="sidebar-unread-badge">{totalUnreadCount}</span>}
+                            {isDisabled && <span className="tooltip">권한 필요</span>}
+                        </button>
+                    );
+                })}
             </nav>
 
-            {/* 로그아웃 */}
             <div className="logout">
                 <button type="button" className="logout-btn" onClick={handleLogout}>
-                    <span className="icon">
+                    <span className="icon-sidebar">
                         <IconPower />
                     </span>
                     <span className="label danger">로그아웃</span>

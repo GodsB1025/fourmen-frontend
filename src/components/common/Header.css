@@ -1,10 +1,9 @@
 :root {
-  --header-bg: #ffffff;        /* 스샷처럼 아주 옅은 회색 */
+  --header-bg: #ffffffef;        /* 스샷처럼 아주 옅은 회색 */
   --header-fg: #0f0f0f;        /* 텍스트 기본색 */
   --muted-fg: #585858;         /* 링크 기본색 */
   --border: #e6e6e6;           /* 하단 구분선 */
   --height: 56px;
-  --maxw: 1120px;
   --padx: 16px;
 }
 
@@ -14,12 +13,12 @@
   z-index: 100;
   background: var(--header-bg);
   border-bottom: 1px solid var(--border); /* 하단 얇은 라인 */
-  backdrop-filter: saturate(180%) blur(2px); /* 살짝 또렷하게 */
+  backdrop-filter: saturate(180%) blur(15px); /* 살짝 또렷하게 */
 }
 
 .inner {
   height: var(--height);
-  max-width: var(--maxw);
+  width: 1120px;
   margin: 0 auto;
   padding: 0 var(--padx);
   display: flex;
@@ -42,17 +41,21 @@
   font-size: 14px;
   line-height: 1;
   text-decoration: none;
-  color: var(--muted-fg);
+  color: #fff;
   background: transparent;
-  border: none;
-  padding: 8px 10px;
+  background-color: #4B52FF;
+  border: 1px solid #4B52FF;
+  border-radius: 2rem;
+  padding: 10px 17px;
   cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, border 0.2s ease;
 }
 
 .loginLink:hover,
 .loginBtn:hover {
-  color: var(--header-fg);
-  text-decoration: none;
+  background-color: #fff;
+  color: #4B52FF;
+  border: 1px solid #4B52FF;
 }
 
 @media (prefers-color-scheme: dark) {

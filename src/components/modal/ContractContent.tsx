@@ -11,9 +11,10 @@ import { fetchMeetingsWithDocs, fetchSharedMinutes } from "../../apis/Documents"
 import { getMinuteDetails, getMinutesForMeeting } from "../../apis/Meeting";
 import Markdown from "react-markdown";
 import Toast from "../common/Toast";
-import { IconAISummary, IconArrowLeft, IconArrowRight, IconAutoREC, IconPancil, FileTextIcon } from "../../assets/icons"; // FileTextIcon import 추가
+import { IconAISummary, IconArrowLeft, IconArrowRight, IconAutoREC, IconPancil, FileTextIcon } from "../../assets/icons";
 import SlideToSubmitButton from "../common/SlideToSubmitButton";
 import CustomSwitch from "../common/CustomSwitch";
+import { useModalStore } from "../../stores/modalStore";
 
 interface ContractContentProps {
     templateId: string;
@@ -21,6 +22,7 @@ interface ContractContentProps {
 }
 
 const ContractContent: React.FC<ContractContentProps> = ({ templateId, eformsignTemplateId }) => {
+    const closeModal = useModalStore((state) => state.closeModal);
     const [step, setStep] = useState<number>(0);
     const [data, setData] = useState<AllContractData>(initialContractData[templateId]);
     const [recipientData, setRecipientData] = useState({ name: "", email: "", phoneNumber: "" });
@@ -33,8 +35,7 @@ const ContractContent: React.FC<ContractContentProps> = ({ templateId, eformsign
     const [minutesLoading, setMinutesLoading] = useState({ list: false, detail: false });
     const [busy, setBusy] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
-
-    // ✅ 선택된 회의록 ID를 저장할 상태 추가
+    const [success, setSuccess] = useState<string | null>(null);
     const [selectedMinuteId, setSelectedMinuteId] = useState<number | null>(null);
 
     const docTabOptions = [
@@ -94,9 +95,11 @@ const ContractContent: React.FC<ContractContentProps> = ({ templateId, eformsign
                 documentTitle,
             });
 
-            // ✅ sendContract 호출 시 selectedMinuteId를 함께 전달
             await sendContract(payload, eformsignTemplateId, selectedMinuteId);
-            alert("계약서가 성공적으로 발송되었습니다.");
+            setSuccess("계약서가 성공적으로 발송되었습니다.");
+            setTimeout(() => {
+                closeModal();
+            }, 1500);
         } catch (error) {
             console.error("계약서 발송 실패:", error);
             setError("계약서 발송에 실패했습니다.");
@@ -133,7 +136,6 @@ const ContractContent: React.FC<ContractContentProps> = ({ templateId, eformsign
         try {
             const minuteDetails = await getMinuteDetails(String(meetingId), minuteId);
             setSelectedMinuteContent(minuteDetails.content);
-            // ✅ 회의록 내용을 불러올 때, 선택된 회의록 ID도 상태에 저장
             setSelectedMinuteId(minuteId);
         } catch (err: unknown) {
             let errorMessage = "회의록 정보를 불러오는 데 실패했습니다.";
@@ -222,15 +224,16 @@ const ContractContent: React.FC<ContractContentProps> = ({ templateId, eformsign
                     <h2>회의록 가져오기</h2>
                     {selectedMinuteContent && (
                         <button
+                            className="back-button"
                             onClick={() => {
                                 setSelectedMinuteContent(null);
-                                // ✅ '뒤로가기' 시 선택된 회의록 ID도 초기화
                                 setSelectedMinuteId(null);
                             }}>
-                            뒤로가기
+                            <IconArrowLeft /> 목록으로
                         </button>
                     )}
                 </div>
+
                 <div className="content-body">
                     <CustomSwitch options={docTabOptions} value={docTab} onChange={setDocTab} />
                     <div style={{ marginTop: "1rem" }}>
@@ -313,6 +316,7 @@ const ContractContent: React.FC<ContractContentProps> = ({ templateId, eformsign
                     </div>
                 </div>
             </div>
+            {success && <Toast message={success} onClose={() => setSuccess(null)} type="success" />}
             {error && <Toast message={error} onClose={() => setError(null)} type="error" />}
         </div>
     );

@@ -26,5 +26,5 @@
 
 /* 활성화된 버튼에 마우스를 올렸을 때 효과 */
 .action-button.active:hover {
-    background-color: #4a39a8;
+    background-color: #424ac2;
 }

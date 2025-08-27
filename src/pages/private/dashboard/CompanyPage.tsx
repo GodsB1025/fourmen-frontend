@@ -3,9 +3,10 @@ import { fetchCompanyMembers, inviteCompanyMember, updateCompanyMemberRole } fro
 import type { CompanyMember, MemberRole } from "../../../apis/Types";
 import MemberList from "../../../components/company/MemberList";
 import InviteMemberModal from "../../../components/company/InviteMemberModal";
-import RoleManagementModal from "../../../components/company/RoleManagementModal"; // 모달 import
+import RoleManagementModal from "../../../components/company/RoleManagementModal";
 import { useAuthStore } from "../../../stores/authStore";
 import "./CompanyPage.css";
+import Toast from "../../../components/common/Toast"; // Toast 컴포넌트 import
 
 // Helper 함수들은 변경 없이 그대로 둡니다.
 function canManageMember(currentRole: MemberRole | undefined, meId: number | string | undefined, target: CompanyMember) {
@@ -46,7 +47,7 @@ export default function CompanyPage() {
     const optimRef = useRef<CompanyMember[]>([]);
 
     const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
-    const [editingMember, setEditingMember] = useState<CompanyMember | null>(null); // 권한 수정할 멤버 상태
+    const [editingMember, setEditingMember] = useState<CompanyMember | null>(null);
 
     const setOptimistics = (updater: (prev: CompanyMember[]) => CompanyMember[]) => {
         _setOptimisticsState((prev) => {
@@ -91,7 +92,7 @@ export default function CompanyPage() {
         try {
             await Promise.all(pendingInvites.map((p) => inviteCompanyMember(p)));
         } catch {
-            alert("일부 멤버를 초대하는 데 실패했습니다. 목록을 새로고침합니다.");
+            setErr("일부 멤버를 초대하는 데 실패했습니다. 목록을 새로고침합니다."); // alert 대신 setErr 사용
         } finally {
             const server = await fetchCompanyMembers();
             setMembers(reconcile(server, optimRef.current));
@@ -99,20 +100,18 @@ export default function CompanyPage() {
         }
     }
 
-    // 모달에서 저장 시 호출될 함수
     async function handleSaveRoleChange(newRole: MemberRole) {
         if (!editingMember) return;
 
         const prevMembers = members;
-        // UI 즉시 업데이트
         setMembers((list) => list.map((m) => (m.id === editingMember.id ? { ...m, role: newRole } : m)));
-        setEditingMember(null); // 모달 닫기
+        setEditingMember(null);
 
         try {
             await updateCompanyMemberRole(editingMember.id, newRole);
         } catch {
-            setMembers(prevMembers); // 실패 시 롤백
-            alert("권한 변경에 실패했습니다.");
+            setMembers(prevMembers);
+            setErr("권한 변경에 실패했습니다."); // alert 대신 setErr 사용
         }
     }
 
@@ -131,22 +130,19 @@ export default function CompanyPage() {
                 )}
             </header>
 
-            {err && <div className="company-error-banner">{err}</div>}
-
             <div className="member-list-card">
                 <MemberList
                     items={members}
                     busy={busy}
                     myRole={myRole}
                     meId={meId}
-                    onManageRole={setEditingMember} // 관리 버튼 클릭 시 editingMember 상태 설정
+                    onManageRole={setEditingMember}
                     canManage={(t) => canManageMember(myRole, meId, t)}
                 />
             </div>
 
             {isInviteModalOpen && canInvite && <InviteMemberModal onClose={() => setIsInviteModalOpen(false)} onInvite={handleBulkInvite} />}
 
-            {/* editingMember가 있을 때만 권한 관리 모달을 렌더링 */}
             {editingMember && (
                 <RoleManagementModal
                     member={editingMember}
@@ -155,6 +151,7 @@ export default function CompanyPage() {
                     onSave={handleSaveRoleChange}
                 />
             )}
+            {err && <Toast message={err} onClose={() => setErr(null)} type="error" />}
         </div>
     );
 }

@@ -2,13 +2,14 @@ import { useRef, useLayoutEffect, useState, useMemo, type RefObject } from "reac
 import { createPortal } from "react-dom";
 import type { CompanyMember } from "../../apis/Types";
 import { useClickOutside } from "../../utils/useClickOutside";
-import "./CreateMeetingContent.css"; // 스타일은 기존 CSS를 재활용합니다.
+import "./CreateMeetingContent.css";
+import { IconChevronUp, IconPlus, IconUserSearch } from "../../assets/icons";
+import { motion } from "framer-motion"
 
 // CreateMeetingContent에서 전달받을 Props 타입 정의
 interface InvitePanelDropdownProps {
     isOpen: boolean;
     onClose: () => void;
-    onConfirm: (emails: Set<string>) => void;
     anchorRef: RefObject<HTMLDivElement | null>; // 위치 기준으로 삼을 요소의 ref
     initialInvites: string[];
     companyMembers: CompanyMember[];
@@ -16,6 +17,29 @@ interface InvitePanelDropdownProps {
     currentParticipants: string[];
     onSelectParticipant: (email: string) => void;
 }
+
+const dropdownVariants = {
+    hidden: {
+        opacity: 0,
+        height: 0,
+    },
+    visible: {
+        opacity: 1,
+        height: "auto", // 최종 높이를 자동으로 계산
+        transition: {
+            duration: 0.25,
+            ease: "easeOut",
+        },
+    },
+    exit: {
+        opacity: 0,
+        height: 0,
+        transition: {
+            duration: 0.2,
+            ease: "easeIn",
+        },
+    }
+} as const;
 
 const InvitePanelDropdown = ({
     isOpen,
@@ -73,7 +97,7 @@ const InvitePanelDropdown = ({
     if (!isOpen) return null;
 
     return createPortal(
-        <div
+        <motion.div
             ref={panelRef}
             className="invite-dropdown-panel"
             style={{
@@ -81,11 +105,18 @@ const InvitePanelDropdown = ({
                 top: `${position.top + 8}px`,
                 left: `${position.left}px`,
                 width: `${position.width}px`,
+                overflow: 'hidden',
             }}
+            variants={dropdownVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
         >
+            <button className="btn-invite-close" onClick={()=>onClose()}><IconChevronUp/></button>
             {companyMembers.length > 0 && (
                 <div className="company-member-section">
                     <div className="invite-search">
+                        <IconUserSearch strokeColor="#aaa"/>
                         <input type="text" placeholder="팀원 이름 또는 이메일로 검색" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
                     </div>
                     <ul className="member-list">
@@ -99,13 +130,13 @@ const InvitePanelDropdown = ({
                                     <span className="member-name">{member.name}</span>
                                     <span className="member-email">{member.email}</span>
                                 </div>
-                                <span className="add-indicator">+</span>
+                                <IconPlus className="add-indicator"/>
                             </li>
                         ))}
                     </ul>
                 </div>
             )}
-        </div>,
+        </motion.div>,
         document.body
     );
 };

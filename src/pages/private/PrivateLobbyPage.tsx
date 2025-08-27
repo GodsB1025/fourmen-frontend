@@ -6,6 +6,8 @@ import { PATH } from "../../types/paths";
 import { getTodayEvents } from "../../apis/Calendar";
 import type { TodayEvent } from "../../apis/Types";
 import { CreateIcon, JoinIcon, ContractIcon, DashboardIcon } from "../../components/common/LobbyIcons";
+import { useAuthStore } from "../../stores/authStore";
+import AnimatedCirclesBackground from "../../components/lobby/AnimatedCirclesBackground";
 
 const formatTime = (isoString: string | null): string => {
     if (!isoString) return "";
@@ -23,6 +25,9 @@ const PrivateLobbyPage = () => {
     const [ongoingMeetings, setOngoingMeetings] = useState<TodayEvent[]>([]);
     const [loading, setLoading] = useState(true);
     const [isPageReady, setIsPageReady] = useState(false);
+
+    const user = useAuthStore((state)=>state.user)
+    console.log(user)
 
     useEffect(() => {
         // 브라우저가 다음 프레임을 그릴 준비가 되었을 때 상태를 업데이트합니다.
@@ -108,7 +113,13 @@ const PrivateLobbyPage = () => {
                         <JoinIcon />
                         <span className="action-button__label">회의 참여</span>
                     </button>
-                    <button className="lobby-action-button" onClick={() => navigate(PATH.CONTRACT)}>
+                    <button 
+                        className={user?.role==="USER" ? `disable-button` : `lobby-action-button`} 
+                        onClick={() => {
+                            user?.role!=="USER" &&
+                            navigate(PATH.CONTRACT)
+                        }}
+                    >
                         <ContractIcon />
                         <span className="action-button__label">전자 계약</span>
                     </button>
@@ -118,6 +129,17 @@ const PrivateLobbyPage = () => {
                     </button>
                 </div>
             </aside>
+            <div style={{
+                width: "100%", 
+                height: "100%", 
+                position: "fixed",
+                top: "0",
+                left: "0",
+                zIndex: "5", 
+                backgroundColor: "rgba(255,255,255,0.8)",
+                backdropFilter: "blur(30px)",
+            }}/>
+            <AnimatedCirclesBackground />
         </div>
     );
 };

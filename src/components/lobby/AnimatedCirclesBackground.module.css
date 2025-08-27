@@ -1,0 +1,114 @@
+/* 전체 배경을 감싸는 컨테이너 */
+.backgroundContainer {
+  position: fixed; /* 다른 콘텐츠 위에 고정 */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1; /* 다른 콘텐츠보다 뒤에 위치하도록 설정 */
+  overflow: hidden; /* 원이 화면 밖으로 나가도 스크롤바가 생기지 않도록 함 */
+  background-color: #ffffff; /* 기본 배경색 */
+}
+
+/* 모든 원의 공통 스타일 */
+.circle {
+  position: absolute;
+  border-radius: 50%;
+}
+
+/* 개별 원의 스타일 (색상, 크기, 위치, 애니메이션) */
+/* 원본 이미지와 비슷하게 크기와 위치를 설정했습니다. 자유롭게 수정하세요. */
+
+.lime {
+  width: 65vmax; /* 화면의 최대 크기에 비례하여 크기 조절 */
+  height: 65vmax;
+  background-color: #adb3e4;
+  top: 10vh;
+  right: -25vw;
+  animation: moveLime 15s ease-in-out infinite alternate;
+}
+
+.red {
+  width: 55vmax;
+  height: 55vmax;
+  background-color: #5572f2;
+  bottom: -45vh;
+  left: -23vw;
+  animation: moveRed 18s ease-in-out infinite alternate;
+}
+
+.magenta {
+  width: 30vmax;
+  height: 30vmax;
+  background-color: #444fe6;
+  top: 5vh;
+  left: 50vw;
+  animation: moveMagenta 12s ease-in-out infinite alternate;
+}
+
+.blue {
+  width: 40vmax;
+  height: 40vmax;
+  background-color: #4477e6;
+  bottom: -25vh;
+  left: 40vw;
+  animation: moveBlue 20s ease-in-out infinite alternate;
+}
+
+.yellow {
+  width: 10vmax;
+  height: 10vmax;
+  background-color: #8596e2;
+  top: 3vh;
+  left: 15vw;
+  animation: moveYellow 16s ease-in-out infinite alternate;
+}
+
+
+/* 각 원의 움직임을 정의하는 Keyframes */
+/* transform: translate(x, y) 값을 조절하여 움직임의 방향과 거리를 설정할 수 있습니다. */
+
+@keyframes moveLime {
+  from {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  to {
+    transform: translate(-20px, 30px) rotate(10deg);
+  }
+}
+
+@keyframes moveRed {
+  from {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  to {
+    transform: translate(40px, -25px) rotate(-15deg);
+  }
+}
+
+@keyframes moveMagenta {
+  from {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  to {
+    transform: translate(30px, 20px) rotate(20deg);
+  }
+}
+
+@keyframes moveBlue {
+  from {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  to {
+    transform: translate(-30px, -15px) rotate(-5deg);
+  }
+}
+
+@keyframes moveYellow {
+  from {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  to {
+    transform: translate(75px, 120px) rotate(10deg);
+  }
+}

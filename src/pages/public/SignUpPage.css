@@ -6,14 +6,7 @@
   --primary: #4B52FF;  /* 통일 색상 */
   --shadow: none;
 }
-
-.su-wrap {
-  min-height: 100vh;
-  background: #fff;
-  color: var(--text);
-}
-
-/* 상단바 (레이아웃에 이미 있으면 생략 가능) */
+/* 상단바 */
 .su-topbar {
   display: flex;
   align-items: center;
@@ -33,23 +26,41 @@
 
 /* 카드 박스 */
 .su-card {
-  width: min(720px, calc(100% - 32px));
-  margin: 36px auto;
+  display: flex;
+  flex-direction: column;
+  justify-self: center;
+  justify-content: center;
+  align-items: center;
+  width: 720px;
+  height: 90vh;
   padding: 28px;
   border-radius: 16px;
   background: #fff;
-  box-shadow: none; /* ✅ 그림자 제거 */
+}
+
+.su-card>svg {
+  margin-bottom: 60px;
 }
 
 /* 제목 */
 .su-title {
-  margin: 60px 0 20px;   /* ⬅️ 위로부터 60px 띄우고, 아래 카드랑도 20px 간격 */
-  font-size: 22px;
-  font-weight: 800;
+  font-size: 2rem;
+  font-weight: 500;
   text-align: center;
 }
 
-/* (기존) 진행률 바 — 유지해도 되고 미사용이면 제거 가능 */
+/* 진행률 바 */
+.su-progress {
+  display: flex;
+  flex-direction: column;
+  justify-self: center;
+  gap: 1.2rem;
+  width: 60%;
+  padding: 1.5rem 1.5rem;
+  margin: 3rem 0 5rem 0;
+  border-radius: 1rem;
+  background-color: #e9e9e9;
+}
 .su-progress .bar {
   height: 6px;
   background: #f3f4f6;
@@ -59,18 +70,27 @@
 .su-progress .fill { height: 100%; background: var(--primary); }
 .su-progress .meta {
   display: flex;
-  justify-content: space-between;
-  margin: 6px 2px 18px;
-  font-size: 12px;
-  color: var(--muted);
+  flex-direction: column;
+  gap: 0.8rem;
+}
+.su-progress .meta span {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #000
+}
+.su-progress p {
+  font-size: 0.8rem;
 }
 
 /* 단계 영역 */
-.su-step { display: grid; gap: 14px; }
+.su-step { 
+  display: grid;
+  gap: 14px;
+  width: 100%;
+}
 
 /* 선택 섹션: 중앙(조금 아래) 배치 */
 .su-step.su-typepick {
-  min-height: calc(100vh - 120px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -98,11 +118,6 @@
   width: 400px; /* 원하시는 카드 너비 */
   height: auto;
 
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-  align-items: center;
-
   text-align: center;
   padding: 28px 24px;
   cursor: pointer;
@@ -118,17 +133,17 @@
 }
 
 .su-typecard:focus-visible {
-  outline: 3px solid var(--primary); /* ✅ 포커스 링 통일 */
+  outline: 3px solid var(--primary);
   outline-offset: 3px;
 }
 
 .su-typecard.active {
-  border-color: var(--primary);  /* ✅ 클릭/선택 보더 통일 */
+  border-color: var(--primary); 
+  background-color: #f5f5ff;
 }
 
 /* 아이콘: 배경판 제거 + 크게 */
 .su-typecard-icon {
-  margin: 0 auto 8px;
   display: grid;
   place-items: center;
   background: transparent;  /* ✅ 회색 카드 배경 제거 */
@@ -136,8 +151,7 @@
   border-radius: 0;
 }
 .su-typecard-icon svg {
-  width: 120px; height: 120px;       /* ✅ 크게 */
-  fill: none;                         /* 선형 아이콘 */
+  fill: none;   
   stroke: currentColor;
   stroke-width: 12;
   stroke-linecap: round;
@@ -147,12 +161,14 @@
 
 /* 타이포 */
 .su-typecard-title {
-  font-size: 18px;      /* 살짝 크게 */
+  display: inline-block;
+  font-size: 1.3rem;
   font-weight: 800;
   color: var(--text);
 }
 .su-typecard-desc {
-  margin: 0 auto;
+  display: block;
+  margin-top: 3rem;
   max-width: 360px;
   font-size: 12px;
   line-height: 1.6;
@@ -168,37 +184,19 @@ label { font-size: 12px; color: var(--muted); }
   margin-bottom: 6px;
 }
 
-/* 관리자 코드 안내 박스 */
-.su-adminbox {
-  background: #f3f4f6;
-  border-radius: 12px;
-  padding: 12px 14px;
-  display: grid;
-  gap: 6px;
-}
-.su-adminbox .stripe {
-  height: 6px;
-  background: linear-gradient(90deg, #4f46e5, #a855f7, #22d3ee);
-  border-radius: 999px;
-}
-.su-adminbox .desc {
-  margin: 0;
-  font-size: 12px;
-  color: var(--muted);
-}
-
 /* 버튼 영역 */
 .su-actions {
   display: flex;
   gap: 8px;
-  justify-content: flex-end;
+  justify-content: center;
   margin-top: 4px;
 }
 
-button {
+.su-btn {
+  min-width: 80px;
   height: 40px;
   padding: 0 14px;
-  border-radius: 10px;
+  border-radius: 2rem;
   border: 1px solid var(--line);
   background: #fff;
   cursor: pointer;
@@ -235,10 +233,17 @@ button.ghost {
 
 /* 완료 화면 */
 .su-done {
-  display: grid;
-  justify-items: center;
-  gap: 10px;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  gap: 1.5rem;
   padding: 32px 0;
+}
+.su-done p {
+  line-height: 150%;
+}
+.su-done p span {
+  color: var(--primary)
 }
 .su-error {
   margin-top: 12px;

@@ -13,9 +13,8 @@
     flex-shrink: 0;
 }
 .dash-body {
-    padding: 1.5rem;
+    /* padding: 1.5rem; */
     overflow-y: auto;
-    background-color: #f9fafb;
     flex-grow: 1;
 }
 
@@ -23,31 +22,12 @@
 .dash-tabs-center {
     display: flex;
     justify-content: center;
-}
-.dash-tabs {
-    display: inline-flex;
-    gap: 6px;
-    padding: 4px;
-    border: 1px solid #e5e7eb;
-    border-radius: 999px;
-    background: #f3f4f6;
-}
-.dash-tab {
-    padding: 8px 16px;
-    border-radius: 999px;
-    font-size: 14px;
-    color: #4b5563;
-    text-decoration: none;
-    transition: all 0.2s ease;
-}
-.dash-tab[aria-current="page"] {
-    color: #3b82f6;
-    background: #ffffff;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    padding: 0.8rem 0;
 }
 
 /* --- ★★★ 프로필 페이지 신규 레이아웃 ★★★ --- */
 .profile-page-layout {
+    padding:    2rem;
     display: flex;
     flex-direction: column;
     gap: 1.5rem; /* 상단과 하단(캘린더) 사이의 간격 */
@@ -56,7 +36,7 @@
 /* 상단 정보 영역 (프로필 + 알림) */
 .profile-top-section {
     display: grid;
-    grid-template-columns: 1fr 1fr; /* 정확히 1:1 비율로 나눔 */
+    grid-template-columns: 1fr 2.5fr; /* 정확히 1:1 비율로 나눔 */
     gap: 1.5rem;
     align-items: stretch; /* 두 카드의 높이를 동일하게 맞춤 */
 }

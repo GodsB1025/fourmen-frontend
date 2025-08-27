@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./AiAssistantContent.css";
+import ai_image from '../../assets/imgs/ai_sparkle.svg'
 import { searchIntelligence } from "../../apis/Intelligence";
 import ActionButton from "../common/ActionButton";
 
@@ -36,7 +37,9 @@ const AiAssistantContent = () => {
                     </div>
                 ) : (
                     <div className="placeholder-section">
-                        <div className="placeholder-icon">🤖</div>
+                        <div className="placeholder-icon">
+                            <img src={ai_image} alt="ai아이콘" />
+                        </div>
                         <h3 className="placeholder-title">무엇이 궁금하신가요?</h3>
                         <p className="placeholder-desc">
                             회의록 내용을 기반으로 답변해 드립니다.

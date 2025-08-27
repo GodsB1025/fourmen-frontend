@@ -107,6 +107,7 @@ export interface SharedMinuteResponse {
     meetingTitle: string;
     authorName: string;
     sharedAt: string;
+    contracts: ContractInfo[];
 }
 
 // 전자계약

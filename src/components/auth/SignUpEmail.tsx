@@ -19,7 +19,6 @@ const SignUpEmail = ({
 }: SignUpEmailProps) => {
   return (
     <section className="su-step">
-        <p className="su-hint">인증을 위해 이메일을 입력하세요.</p>
         <TextInput
             value={f.email}
             onChange={(e) => setF({ ...f, email: e.target.value })}
@@ -28,10 +27,15 @@ const SignUpEmail = ({
             autoComplete="email"
         />
         <div className="su-actions">
-            <button onClick={goPrev}>이전</button>
+            <button 
+                className='su-btn'
+                onClick={goPrev}
+            >
+                이전
+            </button>
             {/* 👇 이 부분의 disabled 속성이 변경되었습니다. */}
             <button 
-                className="primary" 
+                className="primary su-btn" 
                 disabled={busy || f.email.trim() === ''} 
                 onClick={handleClick}
             >

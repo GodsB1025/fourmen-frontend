@@ -1,11 +1,13 @@
 import "./Header.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { PATH } from "../../types/paths";
 import { useAuthStore } from "../../stores/authStore";
 import type { User } from "../../apis/Types";
+import { IconLogo } from "../../assets/icons";
 
 const Header = () => {
 
+  const navigate = useNavigate()
   const user : User | null = useAuthStore((state)=>state.user)
   const isAuthenticated : boolean = useAuthStore((state)=>state.isAuthenticated)
 
@@ -13,7 +15,7 @@ const Header = () => {
     <header className="header" role="banner">
       <div className="inner">
         <Link to={PATH.ROOT} className="brand" aria-label="4MEN Home">
-          4MEN
+          <IconLogo/>
         </Link>
         <nav aria-label="Primary">
           {isAuthenticated && user? (
@@ -21,7 +23,12 @@ const Header = () => {
               {user.name}님 안녕하세요.
             </Link>
           ) : (
-            <Link to={PATH.SIGN_IN} className="loginLink">Log in</Link>
+            <button 
+              className="loginLink"
+              onClick={() => navigate(PATH.SIGN_IN)}
+            >
+              LOGIN
+            </button>
           )}
         </nav>
       </div>

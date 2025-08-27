@@ -3,6 +3,7 @@
     display: flex;
     gap: 30px; /* 양쪽 섹션 사이의 간격 */
     border-radius: 8px; /* 모달의 둥근 모서리 */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     color: #333;
     width: 100%;
 }
@@ -14,8 +15,10 @@
     flex-direction: column;
     min-width: 0; /* flex item이 줄어들 수 있도록 설정 */
 }
-.form-section{ flex: 0.4 }
-.content-section { 
+.form-section {
+    flex: 0.4;
+}
+.content-section {
     flex: 1;
 }
 
@@ -48,20 +51,18 @@
     color: #fff;
 }
 .contract-next,
-.contract-prev
-{
+.contract-prev {
     width: 3rem;
     height: 1.8rem;
     border-radius: 2rem;
     /* overflow: hidden; */
 }
 
-
 /* 오른쪽 회의록 본문 스타일 */
 .content-body {
     border-left: 1px solid #e0e0e0;
     padding: 15px;
-    background-color: #fff;
+    /* background-color: #fff; */
     /* border-radius: 4px; */
     flex-grow: 1; /* 남은 공간을 모두 채우도록 설정 */
     overflow-y: auto; /* 내용이 길어지면 스크롤바 생성 */
@@ -77,7 +78,6 @@
 .content-body p:last-child {
     margin-bottom: 0;
 }
-
 
 /* 회의 및 회의록 목록 스타일 */
 .meeting-list,
@@ -110,7 +110,7 @@
 .minute-item svg {
     display: inline-block;
 }
-.minute-item>div {
+.minute-item > div {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -137,9 +137,10 @@
 
 /* pre 태그 자동 줄바꿈 문제 해결 */
 .minute-content-display pre {
-    white-space: pre-wrap;   /* 공백/줄바꿈 유지, 자동 줄바꿈 허용 */
-    word-wrap: break-word;     /* 긴 단어 강제 줄바꿈 */
-    margin: 0;                 /* 기본 마진 제거 */
+    white-space: pre-wrap; /* 공백/줄바꿈 유지, 자동 줄바꿈 허용 */
+    word-wrap: break-word; /* 긴 단어 강제 줄바꿈 */
+    font-family: inherit; /* 주변 폰트 스타일 상속 */
+    margin: 0; /* 기본 마진 제거 */
     flex-grow: 1;
 }
 
@@ -155,41 +156,41 @@
 /* 스텝들을 감싸는 뷰포트 컨테이너 */
 /* 이 컨테이너를 벗어나는 내용은 숨겨서 한 번에 한 스텝만 보이게 합니다. */
 .form-steps-viewport {
-  overflow: hidden;
-  position: relative;
-  width: 100%;
-  margin-bottom: 20px; /* 폼과 하단 버튼 사이의 간격 */
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    margin-bottom: 20px; /* 폼과 하단 버튼 사이의 간격 */
 }
 
 /* 실제 스텝들이 들어있는 트랙 컨테이너 */
 /* 이 컨테이너가 좌우로 움직이며 스텝 전환 효과를 만듭니다. */
 .form-steps-track {
-  display: flex;
-  width: 200%; /* 2개의 스텝을 담아야 하므로 200% */
-  /* transform 속성 변경 시 0.4초 동안 부드러운 전환 효과 적용 */
-  transition: transform 0.4s ease-in-out; 
+    display: flex;
+    width: 200%; /* 2개의 스텝을 담아야 하므로 200% */
+    /* transform 속성 변경 시 0.4초 동안 부드러운 전환 효과 적용 */
+    transition: transform 0.4s ease-in-out;
 }
 
 /* 각 스텝 아이템 */
 .form-step {
-  width: 50%; /* 트랙 너비의 절반을 차지 (100% / 2개 스텝) */
-  flex-shrink: 0; /* 스텝의 너비가 줄어들지 않도록 고정 */
+    width: 50%; /* 트랙 너비의 절반을 차지 (100% / 2개 스텝) */
+    flex-shrink: 0; /* 스텝의 너비가 줄어들지 않도록 고정 */
 }
 
 /* step 상태에 따라 트랙의 위치를 이동시킵니다. */
 .form-steps-track.step-0 {
-  transform: translateX(0%); /* 첫 번째 스텝 보이기 */
+    transform: translateX(0%); /* 첫 번째 스텝 보이기 */
 }
 
 .form-steps-track.step-1 {
-  transform: translateX(-50%); /* 왼쪽으로 50% 이동하여 두 번째 스텝 보이기 */
+    transform: translateX(-50%); /* 왼쪽으로 50% 이동하여 두 번째 스텝 보이기 */
 }
 
 /* 하단 네비게이션 버튼들을 담는 컨테이너 */
 .form-navigation {
-  display: flex;
-  justify-content: space-between; /* 이전/다음 버튼과 전송 버튼을 양쪽으로 배치 */
-  align-items: center;
+    display: flex;
+    justify-content: space-between; /* 이전/다음 버튼과 전송 버튼을 양쪽으로 배치 */
+    align-items: center;
 }
 
 /* 이전/다음 버튼을 묶는 그룹 */
@@ -199,13 +200,37 @@
 }
 
 .form-navigation {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .submit-button-wrapper {
-  flex-grow: 1; /* 남은 공간을 모두 차지 */
-  margin-left: 10px; /* 이전/다음 버튼과의 최소 간격 */
-  max-width: 300px; /* 슬라이드 버튼의 최대 너비 (선택사항) */
+    flex-grow: 1; /* 남은 공간을 모두 차지 */
+    margin-left: 10px; /* 이전/다음 버튼과의 최소 간격 */
+    max-width: 300px; /* 슬라이드 버튼의 최대 너비 (선택사항) */
+}
+
+/* ✅ 뒤로가기 버튼 스타일 추가 */
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.4rem 0.8rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background-color: #ffffff;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.back-button:hover {
+    background-color: #f9fafb;
+    border-color: #a5b4fc;
+    color: #4f46e5;
+}
+.back-button svg {
+    width: 16px;
+    height: 16px;
 }
