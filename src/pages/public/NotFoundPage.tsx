@@ -96,4 +96,4 @@ const styles = {
     backgroundColor: '#4b52ff',
     border: 'none',
   },
-};
+} as const;

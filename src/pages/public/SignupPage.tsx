@@ -4,12 +4,12 @@ import "./SignupPage.css";
 import SignUpTypePick from "../../components/auth/SignUpTypePick";
 import SignUpEmail from "../../components/auth/SignUpEmail";
 import SignUpAuthCode from "../../components/auth/SignUpAuthCode";
-import type { Step, Form, UserType } from "../../types/auth";
+import type { Step, Form, } from "../../types/auth";
 import SignUpInfo from "../../components/auth/SignUpInfo";
 import SignUpAdminCode from "../../components/auth/SignUpAdminCode";
 import SmoothProgressBar from "../../components/auth/SmoothProgressBar";
 import Toast from "../../components/common/Toast";
-import { replace, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { PATH } from "../../types/paths";
 import { IconCheck } from "../../assets/icons";
 

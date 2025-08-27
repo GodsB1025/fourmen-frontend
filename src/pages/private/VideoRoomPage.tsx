@@ -89,7 +89,7 @@ const VideoRoomPage = () => {
 
     // AI 회의록 (STT)
     const [isRecording, setIsRecording] = useState(false);
-    const [sttResults, setSttResults] = useState<SttData[]>([]);
+    const [_sttResults, setSttResults] = useState<SttData[]>([]);
 
     const [error, setError] = useState<string | null>(null);
     const [busy, setBusy] = useState({ video: false, minute: false });
