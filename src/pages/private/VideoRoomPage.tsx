@@ -14,10 +14,52 @@ import {
 import type { Meeting, CreateMeetingURLRequest } from "../../apis/Types";
 import { PATH } from "../../types/paths";
 import "./VideoRoomPage.css";
+import styles from "./VideoRoomPage.module.css"
 import { useAuthStore } from "../../stores/authStore";
 import { useModalStore } from "../../stores/modalStore";
 import Toast from "../../components/common/Toast";
 import { IconShare } from "../../assets/icons";
+
+interface ConfirmationModalProps  {
+    isOpen: boolean;
+    onCancel: () => void;
+    onConfirm: () => void;
+    title: string;
+    children: React.ReactNode; // 모달 본문 내용을 유연하게 받기 위해 children 사용
+}
+
+const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
+    isOpen,
+    onCancel,
+    onConfirm,
+    title,
+    children,
+}) => {
+    if (!isOpen) {
+        return null;
+    }
+
+    return (
+        <div className={styles.modalOverlay}>
+            <div className={styles.modalContent}>
+                <h2 className={styles.modalTitle}>{title}</h2>
+
+                <div className={styles.modalBody}>
+                    {children}
+                </div>
+
+                <div className={styles.modalButtonContainer}>
+                    <button className={`${styles.modalButton} ${styles.cancelButton}`} onClick={onCancel}>
+                        취소
+                    </button>
+                    <button className={`${styles.modalButton} ${styles.confirmButton}`} onClick={onConfirm}>
+                        회의 종료
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
 
 // STT 데이터 타입 정의
 interface SttData {
@@ -38,6 +80,7 @@ const VideoRoomPage = () => {
     const [videoURL, setVideoURL] = useState<string>("");
     const [sharingVideoURL, setSharingVideoURL] = useState<string | null>(null)
     const [isMinutesVisible, setIsMinutesVisible] = useState(false);
+    const [isEndMeetingModalOpen, setIsEndMeetingModalOpen] = useState(false);
 
     // 수동 회의록
     const [isWritingMinute, setIsWritingMinute] = useState(false);
@@ -189,17 +232,23 @@ const VideoRoomPage = () => {
         }
     };
 
-    const handleEndMeeting = async () => {
-        if (!meetingId || !window.confirm("정말로 회의를 종료하시겠습니까?")) return;
+    const confirmEndMeeting = async () => {
+        if (!meetingId) return;
         try {
             await disableMeetingRoom(meetingId);
-            alert("회의가 종료되었습니다.");
+            // alert("회의가 종료되었습니다."); // 토스트나 다른 방식으로 대체 가능
             navigate(PATH.COMMANDER);
         } catch (err: unknown) {
-            let errorMessage = "회의 종료에 실패했습니다."
-            if(err instanceof Error) errorMessage = err.message
+            let errorMessage = "회의 종료에 실패했습니다.";
+            if (err instanceof Error) errorMessage = err.message;
             setError(errorMessage);
+        } finally {
+            setIsEndMeetingModalOpen(false); // 로직 실행 후 모달 닫기
         }
+    };
+
+    const handleEndMeeting = () => {
+        setIsEndMeetingModalOpen(true);
     };
 
     // --- AI Recording Logic ---
@@ -416,6 +465,14 @@ const VideoRoomPage = () => {
                     <span>{isMinutesVisible ? "숨기기" : "회의록"}</span>
                 </button>
             </div>
+            <ConfirmationModal
+                isOpen={isEndMeetingModalOpen}
+                onCancel={() => setIsEndMeetingModalOpen(false)} // 취소 버튼 클릭 시 모달 닫기
+                onConfirm={confirmEndMeeting} // 확인 버튼 클릭 시 종료 로직 실행
+                title="회의 종료 확인"
+            >
+                <p>정말로 회의를 종료하시겠습니까? <br /> 종료 후에는 다시 참여할 수 없습니다.</p>
+            </ConfirmationModal>
             {error && (
                 <Toast
                     message={error} 
