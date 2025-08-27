@@ -1,10 +1,10 @@
 import React from "react";
+import icon from "../../assets/favicon.svg"
 import "./Footer.css";
 
 type TeamMember = { name: string; email: string };
 
 type FooterProps = {
-  brand?: string;
   address?: string;
   phone?: string;
   email?: string;
@@ -14,7 +14,6 @@ type FooterProps = {
 };
 
 export default function Footer({
-  brand = "4MEN",
   address = "광주광역시 동구 중앙로 196",
   phone = "+82-010-0000-0000",
   email = "example@gmail.com",
@@ -29,7 +28,9 @@ export default function Footer({
   return (
     <footer className={`site-footer ${className}`} role="contentinfo">
       <div className="site-footer__inner">
-        <div className="site-footer__brand">{brand}</div>
+        <div className="site-footer__brand">
+          <img src={icon} alt="로고" style={{ width: "40px" }} />
+        </div>
 
         <div className="site-footer__cols">
           <section className="site-footer__left" aria-labelledby="org-info">
