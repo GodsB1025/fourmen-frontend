@@ -64,12 +64,12 @@ export interface User {
 }
 
 export interface MeDto {
-  userId: number;
-  name: string;
-  email: string;
-  role: "USER" | "ADMIN" | "CONTRACT_ADMIN";
-  company: number | null;   // ← 회사 id
-  phone?: string;
+    userId: number;
+    name: string;
+    email: string;
+    role: "USER" | "ADMIN" | "CONTRACT_ADMIN";
+    company: number | null; // ← 회사 id
+    phone?: string;
 }
 
 export interface LoginRequest {
@@ -80,7 +80,7 @@ export interface LoginRequest {
 export interface LoginResponse {
     result: "SUCCESS" | "ERROR";
     message: string;
-    data: User;
+    data: User & { csrfToken: string };
 }
 
 export interface GetMeResponse {

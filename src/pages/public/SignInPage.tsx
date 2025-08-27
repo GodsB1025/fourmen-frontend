@@ -23,7 +23,7 @@ const SignInPage = () => {
         setErr(null);
         setBusy(true);
         try {
-            var data = await login({ email: email.trim(), password });
+            const data = await login({ email: email.trim(), password });
             const user: User = {
                 userId: data.userId,
                 name: data.name,
@@ -31,10 +31,10 @@ const SignInPage = () => {
                 role: data.role,
                 company: data.company,
             };
-            loginUser(user);
+            loginUser(user, data.csrfToken);
             nav(PATH.COMMANDER, { replace: true });
         } catch (e: unknown) {
-            let errorMessage = "로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요"
+            let errorMessage = "로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요";
             // if(e instanceof Error) errorMessage = e.message
             setErr(errorMessage);
         } finally {
@@ -43,18 +43,10 @@ const SignInPage = () => {
     };
 
     return (
-        <div
-        className="signin-page"
-        >
+        <div className="signin-page">
             <AssetPreloader /> {/* ✨ 여기에 Preloader 컴포넌트를 추가합니다 */}
             <Login email={email} password={password} setEmail={setEmail} setPassword={setPassword} handleSubmit={handleLogin} />
-            {err && 
-                <Toast 
-                    message={err}
-                    onClose={() => setErr(null)}
-                    type="error"
-                />
-            }
+            {err && <Toast message={err} onClose={() => setErr(null)} type="error" />}
         </div>
     );
 };
