@@ -282,9 +282,9 @@ export interface DocumentResponse {
 // 회의록 상세 보기 응답 타입
 export interface MinuteDetail {
     minuteId: number;
-    meetingId: number;
-    meetingTitle: string;
-    type: "AUTO" | "SELF" | "SUMMARY";
+    meetingId?: number;
+    meetingTitle?: string;
+    type?: "AUTO" | "SELF" | "SUMMARY";
     authorName: string;
     createdAt: string;
     content: string;

@@ -1,6 +1,6 @@
 import React from 'react'
 import TextInput from '../common/TextInput';
-import type { Form, Step } from '../../types/auth';
+import type { Form } from '../../types/auth';
 
 interface  SignUpAdminCodeProps {
     f: Form,

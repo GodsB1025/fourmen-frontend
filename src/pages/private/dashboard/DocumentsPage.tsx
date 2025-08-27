@@ -145,7 +145,7 @@ const MinuteDetailModal = ({
                     </button>
                 </header>
                 <div className="document-modal-subheader">
-                    <span className={`badge type-${minute.type.toLowerCase()}`}>{minuteTypeLabel[minute.type]}</span>
+                    <span className={`badge type-${minute.type!.toLowerCase()}`}>{minuteTypeLabel[minute.type!]}</span>
                     <span className="meta">작성자: {minute.authorName}</span>
                     <span className="meta">작성일: {format(new Date(minute.createdAt), "yyyy.MM.dd HH:mm")}</span>
                 </div>
@@ -203,7 +203,7 @@ export default function DocumentsPage() {
     const handleShareMinute = async (userIds: number[]) => {
         if (!viewingMinute) return;
         try {
-            await shareMinute(viewingMinute.meetingId, viewingMinute.minuteId, userIds);
+            await shareMinute(viewingMinute.meetingId!, viewingMinute.minuteId, userIds);
             alert("성공적으로 공유되었습니다.");
             setIsShareModalOpen(false);
         } catch (error) {
@@ -232,26 +232,28 @@ export default function DocumentsPage() {
         const lowercasedQuery = searchQuery.toLowerCase().trim();
         if (!lowercasedQuery) return docs;
 
-        const filteredMeetingsWithDocs = docs.meetingsWithDocs
-            .map((dailyDocs) => {
-                const filteredMeetings = dailyDocs.meetings.filter((meeting) => {
-                    if (meeting.meetingTitle.toLowerCase().includes(lowercasedQuery)) return true;
-                    return meeting.minutes?.some(
-                        (minute) =>
-                            minute.type.toLowerCase().includes(lowercasedQuery) ||
-                            minute.contracts?.some((contract) => contract.title.toLowerCase().includes(lowercasedQuery))
-                    );
-                });
-                return { ...dailyDocs, meetings: filteredMeetings };
-            })
-            .filter((dailyDocs) => dailyDocs.meetings.length > 0);
-
-        const filteredStandaloneContracts = docs.standaloneContracts?.filter((contract) => contract.title.toLowerCase().includes(lowercasedQuery));
-
-        return {
-            meetingsWithDocs: filteredMeetingsWithDocs,
-            standaloneContracts: filteredStandaloneContracts,
-        };
+        if(docs.meetingsWithDocs) {
+            const filteredMeetingsWithDocs = docs.meetingsWithDocs
+                .map((dailyDocs) => {
+                    const filteredMeetings = dailyDocs.meetings.filter((meeting) => {
+                        if (meeting.meetingTitle.toLowerCase().includes(lowercasedQuery)) return true;
+                        return meeting.minutes?.some(
+                            (minute) =>
+                                minute.type.toLowerCase().includes(lowercasedQuery) ||
+                                minute.contracts?.some((contract) => contract.title.toLowerCase().includes(lowercasedQuery))
+                        );
+                    });
+                    return { ...dailyDocs, meetings: filteredMeetings };
+                })
+                .filter((dailyDocs) => dailyDocs.meetings.length > 0);
+                
+            const filteredStandaloneContracts = docs.standaloneContracts?.filter((contract) => contract.title.toLowerCase().includes(lowercasedQuery));
+                
+            return {
+                meetingsWithDocs: filteredMeetingsWithDocs,
+                standaloneContracts: filteredStandaloneContracts,
+            };
+        }
     }, [docs, searchQuery, activeTab]);
 
     const filteredSharedMinutes = useMemo(() => {
