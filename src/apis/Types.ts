@@ -194,6 +194,7 @@ export interface CompletedContract {
     title: string;
     completedAt: string;
     fileUrlBase: string;
+    previewImageUrl: string;
 }
 
 // -----------------------------
@@ -252,6 +253,7 @@ export interface ContractInfo {
     contractId: number;
     title: string;
     completedPdfUrl: string; // PDF URL 포함
+    status: "SENT" | "COMPLETED";
 }
 
 // 회의에 속한 회의록 정보 (목록 조회용)
@@ -272,6 +274,7 @@ export interface StandaloneContract {
     title: string;
     createdAt?: string;
     completedPdfUrl: string; // PDF URL 포함
+    status: "SENT" | "COMPLETED";
 }
 
 export interface DocumentResponse {

@@ -29,6 +29,17 @@ const daysAgo = (n: number) => {
     return d;
 };
 
+// --- 계약서 상태 뱃지 컴포넌트 ---
+const ContractStatusBadge = ({ status }: { status: "SENT" | "COMPLETED" }) => {
+    if (!status) return null;
+
+    const isCompleted = status === "COMPLETED";
+    const badgeClass = isCompleted ? "status-badge completed" : "status-badge sent";
+    const text = isCompleted ? "완료" : "진행중";
+
+    return <span className={badgeClass}>{text}</span>;
+};
+
 // --- 회의록 공유 모달 ---
 const ShareMinuteModal = ({
     //minute,
@@ -232,7 +243,7 @@ export default function DocumentsPage() {
         const lowercasedQuery = searchQuery.toLowerCase().trim();
         if (!lowercasedQuery) return docs;
 
-        if(docs.meetingsWithDocs) {
+        if (docs.meetingsWithDocs) {
             const filteredMeetingsWithDocs = docs.meetingsWithDocs
                 .map((dailyDocs) => {
                     const filteredMeetings = dailyDocs.meetings.filter((meeting) => {
@@ -246,9 +257,11 @@ export default function DocumentsPage() {
                     return { ...dailyDocs, meetings: filteredMeetings };
                 })
                 .filter((dailyDocs) => dailyDocs.meetings.length > 0);
-                
-            const filteredStandaloneContracts = docs.standaloneContracts?.filter((contract) => contract.title.toLowerCase().includes(lowercasedQuery));
-                
+
+            const filteredStandaloneContracts = docs.standaloneContracts?.filter((contract) =>
+                contract.title.toLowerCase().includes(lowercasedQuery)
+            );
+
             return {
                 meetingsWithDocs: filteredMeetingsWithDocs,
                 standaloneContracts: filteredStandaloneContracts,
@@ -392,6 +405,8 @@ export default function DocumentsPage() {
                                                                                     onClick={() => handleOpenContractPdf(contract.completedPdfUrl)}>
                                                                                     <BriefcaseIcon />
                                                                                     <span>{contract.title}</span>
+                                                                                    {/* 상태 뱃지 추가 */}
+                                                                                    <ContractStatusBadge status={contract.status} />
                                                                                 </div>
                                                                             ))}
                                                                         </div>
@@ -423,6 +438,8 @@ export default function DocumentsPage() {
                                                 <span className="title">{contract.title}</span>
                                                 <span className="date">{format(new Date(contract.createdAt!), "yyyy.MM.dd")}</span>
                                             </div>
+                                            {/* 상태 뱃지 추가 */}
+                                            <ContractStatusBadge status={contract.status} />
                                         </div>
                                     ))}
                                 </div>
@@ -463,6 +480,8 @@ export default function DocumentsPage() {
                                                                 onClick={() => handleOpenContractPdf(contract.completedPdfUrl)}>
                                                                 <BriefcaseIcon />
                                                                 <span>{contract.title}</span>
+                                                                {/* 상태 뱃지 추가 */}
+                                                                <ContractStatusBadge status={contract.status} />
                                                             </div>
                                                         ))}
                                                     </div>

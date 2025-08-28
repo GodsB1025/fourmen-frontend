@@ -32,8 +32,8 @@ const ContractPage = () => {
     ];
 
     const handleChange = (value: string) => {
-        setActiveTab(value)
-    }
+        setActiveTab(value);
+    };
 
     useEffect(() => {
         if (!hasPermission) return;
@@ -50,8 +50,8 @@ const ContractPage = () => {
             const data = await getContractTemplate();
             setTemplates(data);
         } catch (err: unknown) {
-            let errorMessage = "템플릿을 불러오는 데 실패했습니다."
-            if(err instanceof Error) errorMessage = err.message
+            let errorMessage = "템플릿을 불러오는 데 실패했습니다.";
+            if (err instanceof Error) errorMessage = err.message;
             setError(errorMessage);
             setTemplates([]);
         }
@@ -62,8 +62,8 @@ const ContractPage = () => {
             const data = await getCompletedContracts();
             setCompletedContracts(data);
         } catch (err: unknown) {
-            let errorMessage = "완료된 계약서를 불러오는 데 실패했습니다."
-            if(err instanceof Error) errorMessage = err.message
+            let errorMessage = "완료된 계약서를 불러오는 데 실패했습니다.";
+            if (err instanceof Error) errorMessage = err.message;
             setError(errorMessage);
             setCompletedContracts([]);
         }
@@ -89,21 +89,11 @@ const ContractPage = () => {
         <div className="contract-page">
             <header className="contract-header">
                 <h1>전자 계약</h1>
-                <CustomSwitch
-                    options={options}
-                    value={activeTab}
-                    onChange={handleChange}
-                />
+                <CustomSwitch options={options} value={activeTab} onChange={handleChange} />
             </header>
 
             <main className="contract-content">
-                {error && (
-                    <Toast
-                        message={error} 
-                        onClose={() => setError(null)}
-                        type="error"
-                    />
-                )}
+                {error && <Toast message={error} onClose={() => setError(null)} type="error" />}
                 <div className="card-grid">
                     {busy
                         ? Array.from({ length: 4 }).map((_, index) => <SkeletonCard key={index} />)
@@ -112,7 +102,7 @@ const ContractPage = () => {
                               <ContractCard key={template.templateId} contract={template} handleClick={() => openContractModal(template)} />
                           ))
                         : completedContracts.map((contract) => {
-                              const imageUrl = `${baseURL}${contract.fileUrlBase}.png`;
+                              const imageUrl = `${baseURL}${contract.previewImageUrl}.png`;
                               const pdfUrl = `${baseURL}${contract.fileUrlBase}.pdf`;
 
                               return (
