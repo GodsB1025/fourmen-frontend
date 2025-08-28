@@ -96,7 +96,7 @@ export default function Sidebar({ onNavigate, activeKey, onOpenCreateModal, onOp
             { key: PATH.CONTRACT, label: "전자 계약", icon: <IconContract />, disabled: isUserRole },
             { key: PATH.MESSENGER, label: "메신저", icon: <IconMessenger />, disabled: !hasCompany },
             { key: "create", label: "회의 생성", icon: <IconVideo />, onClick: onOpenCreateModal },
-            { key: "join", label: "회의 참가", icon: <IconVideo />, onClick: onOpenJoinModal },
+            { key: "join", label: "회의 참여", icon: <IconVideo />, onClick: onOpenJoinModal },
             {
                 key: "aiAssistant",
                 label: "AI 비서",

@@ -5,9 +5,10 @@ import { useNavigate } from "react-router-dom";
 import { PATH } from "../../types/paths";
 import { getTodayEvents } from "../../apis/Calendar";
 import type { TodayEvent } from "../../apis/Types";
-import { CreateIcon, JoinIcon, ContractIcon, DashboardIcon } from "../../components/common/LobbyIcons";
+import { JoinIcon, ContractIcon, DashboardIcon } from "../../components/common/LobbyIcons";
 import { useAuthStore } from "../../stores/authStore";
 import AnimatedCirclesBackground from "../../components/lobby/AnimatedCirclesBackground";
+import { IconPlus } from "../../assets/icons";
 
 const formatTime = (isoString: string | null): string => {
     if (!isoString) return "";
@@ -106,7 +107,7 @@ const PrivateLobbyPage = () => {
             <aside className="side-panel">
                 <div className="action-grid">
                     <button className="lobby-action-button" onClick={() => openModal("create")}>
-                        <CreateIcon />
+                        <IconPlus strokeColor="#fff" />
                         <span className="action-button__label">회의 생성</span>
                     </button>
                     <button className="lobby-action-button" onClick={() => openModal("join")}>
@@ -120,7 +121,7 @@ const PrivateLobbyPage = () => {
                             navigate(PATH.CONTRACT)
                         }}
                     >
-                        <ContractIcon />
+                        <ContractIcon strokeColor={user?.role==="USER" ? "#a6a8aa" : "currentColor" }/>
                         <span className="action-button__label">전자 계약</span>
                     </button>
                     <button className="lobby-action-button" onClick={() => navigate(PATH.DASHBOARD)}>
