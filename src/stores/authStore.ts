@@ -1,103 +1,107 @@
 import { create } from "zustand";
+import { persist } from 'zustand/middleware';
 import type { User, Company } from "../apis/Types";
 import { getMe } from "../apis/Auth";
 
-/**
- * 백엔드 /me 응답을 느슨하게 수용하기 위한 로컬 타입
- * - id 혹은 userId 둘 중 하나가 올 수 있음
- * - company 가 number(id) 이거나 Company 객체 또는 null 일 수 있음
- */
 type MeLike = {
-    id?: number;
-    userId?: number;
-    name: string;
-    email: string;
-    role: User["role"];
-    phone?: string;
-    company: number | Company | null;
+  id?: number;
+  userId?: number;
+  name: string;
+  email: string;
+  role: User["role"];
+  phone?: string;
+  company: number | Company | null;
 };
 
 type AuthState = {
-    user: User | null;
-    csrfToken: string | null;
-    isAuthenticated: boolean;
-    isAuthChecked: boolean;
-    login: (u: User, csrf: string) => void;
-    logout: () => void;
-    checkAuth: () => Promise<void>; // ← async 에 맞게 수정
+  user: User | null;
+  csrfToken: string | null;
+  isAuthenticated: boolean;
+  isAuthChecked: boolean;
+  login: (u: User, csrf: string) => void;
+  logout: () => void;
+  checkAuth: () => Promise<void>;
 };
 
-export const useAuthStore = create<AuthState>()((set, get) => ({
-    user: null,
-    csrfToken: null,
-    isAuthenticated: false,
-    isAuthChecked: false,
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set, get) => ({
+      user: null,
+      csrfToken: null,
+      isAuthenticated: false,
+      isAuthChecked: false,
 
-    // 로그인 시 실행
-    login: (u, csrf) => {
+      login: (u, csrf) => {
         set({
-            user: u,
-            csrfToken: csrf,
-            isAuthenticated: true,
-            isAuthChecked: true,
+          user: u,
+          csrfToken: csrf,
+          isAuthenticated: true,
+          isAuthChecked: true,
         });
-    },
+      },
 
-    // 로그아웃 시 실행
-    logout: () => {
+      logout: () => {
+        // localStorage에서 auth-storage 아이템을 직접 지워 확실하게 초기화합니다.
+        localStorage.removeItem('auth-storage');
         set({
-            user: null,
-            csrfToken: null,
-            isAuthenticated: false,
-            isAuthChecked: true,
+          user: null,
+          csrfToken: null,
+          isAuthenticated: false,
+          isAuthChecked: true,
         });
-    },
-
-    // 인증 상태 복구
-    checkAuth: async () => {
+      },
+      
+      checkAuth: async () => {
         try {
-            console.log("사용자 정보 불러오기 실행중...");
-            const data = (await getMe()) as MeLike | null;
+          // 👇 accessToken 존재 여부를 확인하는 코드를 완전히 삭제합니다.
+          // const accessTokenExists = document.cookie.includes('accessToken=');
+          // if (!accessTokenExists) {
+          //     get().logout();
+          //     return;
+          // }
 
-            if (!data) {
-                get().logout();
-                return;
-            }
+          const data = (await getMe()) as MeLike | null;
 
-            // id 필드 정규화 (id 또는 userId)
-            const userId = data.userId ?? data.id;
-            if (userId == null) {
-                throw new Error("Invalid /me payload: missing user id");
-            }
-
-            // company 정규화: 객체일 때만 User.company 에 넣고, 숫자(id)면 추후 필요 시 별도 조회
-            let company: Company | null = null;
-            if (typeof data.company === "object" && data.company !== null) {
-                company = data.company as Company;
-            } else {
-                company = null;
-                // 필요 시: 여기서 company id(data.company 가 number 인 경우)로 상세 조회하여 객체로 매핑하세요.
-                // 예) const company = await getCompanyById(data.company as number);
-            }
-
-            const user: User = {
-                userId,
-                name: data.name,
-                email: data.email,
-                role: data.role,
-                phone: data.phone,
-                company, // Company | null (id만 온 경우는 null로 보관)
-            };
-
-            set({
-                user,
-                isAuthenticated: true,
-            });
-        } catch (error) {
-            console.error("Auth check failed:", error);
+          if (!data) {
             get().logout();
+            return;
+          }
+
+          const userId = data.userId ?? data.id;
+          if (userId == null) {
+            throw new Error("Invalid /me payload: missing user id");
+          }
+
+          let company: Company | null = null;
+          if (typeof data.company === "object" && data.company !== null) {
+            company = data.company as Company;
+          }
+
+          const user: User = {
+            userId,
+            name: data.name,
+            email: data.email,
+            role: data.role,
+            phone: data.phone,
+            company,
+          };
+
+          // user 정보가 성공적으로 로드되면 isAuthenticated 상태를 true로 설정합니다.
+          set({
+            user,
+            isAuthenticated: true,
+          });
+        } catch (error) {
+          console.error("Auth check failed:", error);
+          get().logout();
         } finally {
-            set({ isAuthChecked: true });
+          set({ isAuthChecked: true });
         }
-    },
-}));
+      },
+    }),
+    {
+      name: 'auth-storage',
+      partialize: (state) => ({ user: state.user, csrfToken: state.csrfToken }),
+    }
+  )
+);
