@@ -23,7 +23,7 @@ const CreateMeetingContent = () => {
     const [isInvitePanelOpen, setInvitePanelOpen] = useState(false);
     const [meetingName, setMeetingName] = useState("");
     const [scheduledAt, setScheduledAt] = useState(new Date());
-    const [isAiSummaryOn, setAiSummaryOn] = useState(true);
+    const [isAiSummaryOn, setAiSummaryOn] = useState(user?.company!==null);
     const [participantEmails, setParticipantEmails] = useState<string[]>([]);
     const [companyMembers, setCompanyMembers] = useState<CompanyMember[]>([]);
 
@@ -165,11 +165,21 @@ const CreateMeetingContent = () => {
                     </div>
                 </div>
 
+                {
+                    
+                }
+
                 <div className="form-footer">
                     <div className="ai-toggle">
                         <label htmlFor="ai-summary">AI 요약 사용</label>
                         <label className="switch">
-                            <input id="ai-summary" type="checkbox" checked={isAiSummaryOn} onChange={() => setAiSummaryOn(!isAiSummaryOn)} />
+                            <input 
+                                id="ai-summary" 
+                                type="checkbox" 
+                                checked={isAiSummaryOn} 
+                                onChange={() => setAiSummaryOn(!isAiSummaryOn)} 
+                                disabled={user?.company===null}
+                            />
                             <span className="slider round"></span>
                         </label>
                     </div>

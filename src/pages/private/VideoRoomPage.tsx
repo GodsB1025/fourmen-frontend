@@ -101,19 +101,21 @@ const VideoRoomPage = () => {
 
     // --- Data Loading Effect ---
     useEffect(() => {
-        if (!meetingId) return;
+        if (!meetingId ) return;
         const loadMeetingData = async () => {
             try {
                 const info = await getMeetingInfo(meetingId);
                 setMeetingInfo(info);
 
-                const minutes = await getMinutesForMeeting(meetingId);
-                const manualMinuteInfo = minutes.find((m) => m.type === "SELF");
+                if(user?.company !== null){
+                    const minutes = await getMinutesForMeeting(meetingId);
+                    const manualMinuteInfo = minutes.find((m) => m.type === "SELF");
 
-                if (manualMinuteInfo) {
-                    const details = await getMinuteDetails(meetingId, manualMinuteInfo.minuteId);
-                    setManualMinuteId(details.minuteId);
-                    setManualMinuteContent(details.content);
+                    if (manualMinuteInfo) {
+                        const details = await getMinuteDetails(meetingId, manualMinuteInfo.minuteId);
+                        setManualMinuteId(details.minuteId);
+                        setManualMinuteContent(details.content);
+                    }
                 }
             } catch (err: any) {
                 setError(err.message || "회의 정보를 불러오는 중 오류가 발생했습니다.");

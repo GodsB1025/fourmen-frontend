@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { sendVerificationEmail,} from "../../apis/Auth";
+import { sendVerificationEmail, signup, verifyEmailCode,} from "../../apis/Auth";
 import "./SignupPage.css";
 import SignUpTypePick from "../../components/auth/SignUpTypePick";
 import SignUpEmail from "../../components/auth/SignUpEmail";
@@ -12,6 +12,7 @@ import Toast from "../../components/common/Toast";
 import { useNavigate } from "react-router-dom";
 import { PATH } from "../../types/paths";
 import { IconCheck } from "../../assets/icons";
+import type { SignupRequest } from "../../apis/Types";
 
 export default function SignupWizard() {
   const navigate = useNavigate()
@@ -57,25 +58,26 @@ export default function SignupWizard() {
 
   }, [step, f.type]);
 
-  // 회색 카드에 들어갈 도움말
-  // const stepHelp: Record<number, string> = {
-  //   1: "인증을 위해 이메일을 입력해주세요.",
-  //   2: "메일로 받은 6자리 인증코드를 입력해주세요.",
-  //   3: "이름/비밀번호/연락처 등 기본 정보를 입력해주세요.",
-  //   4: "관리자 전용 인증 코드를 입력해주세요.",
-  // };
-
   async function handleSendEmail() {
-    // setErr(null);
-    // goNext();
-    // return;
+    setErr(null);
 
     // 필요 시 실제 발송 로직
-    if (!/^\S+@\S+\.\S+$/.test(f.email)) { setErr("이메일 형식이 올바르지 않습니다."); return; }
+    if (!/^\S+@\S+\.\S+$/.test(f.email)) { 
+      setErr("이메일 형식이 올바르지 않습니다."); 
+      return; 
+    }
     setBusy(true);
-    try { await sendVerificationEmail(f.email); goNext(); }
-    catch (e:any) { setErr(e?.message || "인증 메일 전송에 실패했습니다."); }
-    finally { setBusy(false); }
+    try { 
+      await sendVerificationEmail(f.email);
+      goNext();
+    } catch (e: unknown) {
+      let errorMessage = "인증 메일 전송에 실패했습니다.";
+      if(e instanceof Error) errorMessage = e.message
+      setErr(errorMessage); 
+    }
+    finally { 
+      setBusy(false); 
+    }
   }
 
   async function handleVerifyCode() {
@@ -86,7 +88,7 @@ export default function SignupWizard() {
     setErr(null);
     setBusy(true);
     try {
-      // await verifyEmailCode(f.email, f.code);
+      await verifyEmailCode(f.email, f.code);
       goNext();
     } catch (e: unknown) {
       let errorMessage = "인증코드가 올바르지 않습니다."
@@ -103,23 +105,23 @@ export default function SignupWizard() {
     console.log("회원가입 로직 실행")
     setBusy(false)
     setStep(5);
-    // try {
-    //   const payload: SignupRequest = {
-    //     email: f.email.trim(),
-    //     password: f.pw,
-    //     name: f.name.trim(),
-    //     phone: f.phone.trim(),
-    //     adminCode: f.type === "ADMIN" ? f.adminKey.trim() : "",
-    //   };
-    //   await signup(payload);
-    //   setStep(5);
-    // } catch (e: unknown) {
-    //   let errorMessage = "회원가입 중 오류가 발생했습니다."
-    //   if(e instanceof Error) errorMessage = e.message
-    //   setErr(errorMessage);
-    // } finally {
-    //   setBusy(false);
-    // }
+    try {
+      const payload: SignupRequest = {
+        email: f.email.trim(),
+        password: f.pw,
+        name: f.name.trim(),
+        phone: f.phone.trim(),
+        adminCode: f.type === "ADMIN" ? f.adminKey.trim() : "",
+      };
+      await signup(payload);
+      setStep(5);
+    } catch (e: unknown) {
+      let errorMessage = "회원가입 중 오류가 발생했습니다."
+      if(e instanceof Error) errorMessage = e.message
+      setErr(errorMessage);
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (

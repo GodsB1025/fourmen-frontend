@@ -8,9 +8,11 @@ import { PATH } from "../../types/paths";
 import { useModalStore } from "../../stores/modalStore";
 import CustomSwitch from "../common/CustomSwitch";
 import Toast from "../common/Toast"; // Toast 컴포넌트 import
+import { useAuthStore } from "../../stores/authStore";
 
 const JoinMeetingContent = () => {
     const navigate = useNavigate();
+    const user = useAuthStore((state) => state.user)
     const closeModal = useModalStore((state) => state.closeModal);
 
     const [selectedOption, setSelectedOption] = useState("my");
@@ -21,10 +23,12 @@ const JoinMeetingContent = () => {
     const [error, setError] = useState<string | null>(null);
     const [busy, setBusy] = useState(false);
 
-    const options = [
-        { value: "my", label: "내 회의", disabled: false },
-        { value: "company", label: "회사 회의", disabled: false },
-    ];
+    const options = user?.company === null
+        ?[{ value: "my", label: "내 회의", disabled: false },]
+        :[
+            { value: "my", label: "내 회의", disabled: false },
+            { value: "company", label: "회사 회의", disabled: false },
+        ];
 
     const handleChange = (value: string) => {
         setSelectedOption(value);

@@ -39,7 +39,7 @@ const PrivateLayout = () => {
             case "create":
                 return "새 회의 생성";
             case "join":
-                return "회의 참가";
+                return "회의 참여";
             case "contractForm":
                 return "전자 계약서 작성";
             case "aiAssistant":

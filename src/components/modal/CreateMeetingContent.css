@@ -293,6 +293,10 @@ input:checked + .slider::after {
 .slider.round {
     border-radius: 28px;
 }
+input:disabled + .slider {
+    background-image: none;
+    background-color: #b4b4b4 !important;
+}
 
 /* 드롭다운 패널 스타일 */
 .invite-dropdown-panel {
