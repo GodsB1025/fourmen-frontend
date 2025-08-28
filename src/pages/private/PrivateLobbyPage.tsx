@@ -41,7 +41,7 @@ const PrivateLobbyPage = () => {
 
     useEffect(() => {
         const fetchAndProcessEvents = async () => {
-            setLoading(true);
+            // setLoading(true);
             const events = await getTodayEvents();
             const now = new Date();
             const ongoing = events.filter((event) => {
