@@ -170,26 +170,23 @@
 }
 
 .lobby-action-button svg {
-    width: 28px;
-    height: 28px;
+    flex: 0.8;
+    width: 4rem;
+    height: auto;
     color: #6b7280;
     transition: color 0.2s;
     flex-shrink: 0;
 }
 
 .disable-button {
-    background-color: #c5c5c5;
-    box-shadow: 
-        inset -4px -4px 15px #c7c7c7,
-        inset 4px -4px 15px #c7c7c7,
-        inset 0px 4px 15px #e2e2e2;
+    background-color: #e0e0e0;
     color: #6b6b6b;
     cursor: auto;
 }
 .disable-button svg {
-    width: 28px;
-    height: 28px;
-    color: #6b7280;
+    width: 4rem;
+    height: auto;
+    filter: #a6a8aa;
     flex-shrink: 0;
 }
 

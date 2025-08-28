@@ -86,7 +86,7 @@ const ContractContent: React.FC<ContractContentProps> = ({ templateId, eformsign
             const user = await getUser();
             const recipientInfo: RecipientInfo = recipientData;
             const userInfo: UserInfo = { name: user!.name, email: user!.email, phoneNumber: user!.phone! };
-            const documentTitle = `${recipientInfo.name}님의 전자 계약서 (템플릿 ID: ${templateId})`;
+            const documentTitle = `${recipientInfo.name}님의 전자 계약서`;
 
             const payload = createContractPayload({
                 formData: data,

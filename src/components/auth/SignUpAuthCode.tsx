@@ -1,6 +1,7 @@
 import React from 'react'
 import TextInput from '../common/TextInput';
 import type { Form } from '../../types/auth';
+import { IconLongArrowLeft, IconLongArrowRight } from '../../assets/icons';
 
 interface  SignUpAuthCodeProps {
     f: Form,
@@ -27,9 +28,11 @@ const SignUpAuthCode = ({
             maxLength={6}
             />
             <div className="su-actions">
-                <button className='su-btn' onClick={goPrev}>이전</button>
+                <button className='su-btn' onClick={goPrev}>
+                    <IconLongArrowLeft/>
+                </button>
                 <button className="primary su-btn" disabled={busy} onClick={handleClick}>
-                    {busy ? "확인중..." : "다음"}
+                    <IconLongArrowRight/>
                 </button>
             </div>
         </section>
