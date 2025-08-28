@@ -1,6 +1,6 @@
 import React from 'react'
 import type { Form } from '../../types/auth';
-import { IconLongArrowRight, IconUser, IconUserPro } from '../../assets/icons';
+import { IconUser, IconUserPro } from '../../assets/icons';
 
 type signupType = "USER" | "ADMIN";
 interface PickUpProps {
@@ -13,7 +13,6 @@ interface PickUpProps {
 const SignUpTypePick = ({
   f,
   setF,
-  setErr,
   goNext,
 }: PickUpProps) => {
 
