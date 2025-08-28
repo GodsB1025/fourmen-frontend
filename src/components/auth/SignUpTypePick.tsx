@@ -2,6 +2,7 @@ import React from 'react'
 import type { Form } from '../../types/auth';
 import { IconLongArrowRight, IconUser, IconUserPro } from '../../assets/icons';
 
+type signupType = "USER" | "ADMIN";
 interface PickUpProps {
   f: Form,
   setF: React.Dispatch<React.SetStateAction<Form>>,
@@ -15,15 +16,21 @@ const SignUpTypePick = ({
   setErr,
   goNext,
 }: PickUpProps) => {
+
+  const handleClick = ( type: signupType ) => {
+    setF((p) => ({ ...p, type}))
+    goNext()
+  }
+
   return (
     <section className="su-step su-typepick">
       <div className="su-typegrid">
         {/* 일반 회원 */}
         <button
           type="button"
-          className={`su-typecard ${f.type === "USER" ? "active" : ""}`}
+          className={`su-typecard`}
           aria-pressed={f.type === "USER"}
-          onClick={() => setF((p) => ({ ...p, type: "USER" }))}
+          onClick={ () => handleClick("USER") }
         >
           <div className="su-typecard-icon" aria-hidden>
             <IconUser/>
@@ -37,9 +44,9 @@ const SignUpTypePick = ({
         {/* 관리자 회원 */}
         <button
           type="button"
-          className={`su-typecard ${f.type === "ADMIN" ? "active" : ""}`}
+          className={`su-typecard`}
           aria-pressed={f.type === "ADMIN"}
-          onClick={() => setF((p) => ({ ...p, type: "ADMIN" }))}
+          onClick={ () => handleClick("ADMIN") }
         >
           <div className="su-typecard-icon" aria-hidden>
             <IconUserPro/>
@@ -48,19 +55,6 @@ const SignUpTypePick = ({
           <p className="su-typecard-desc">
             조직/관리자용입니다. 팀과 권한을 관리하세요.
           </p>
-        </button>
-      </div>
-
-      <div className="su-actions">
-        <button
-          className="su-btn primary"
-          onClick={() => {
-            if (!f.type) return setErr("가입 유형을 선택하세요.");
-            setErr(null);
-            goNext();
-          }}
-        >
-          <IconLongArrowRight/>
         </button>
       </div>
     </section>

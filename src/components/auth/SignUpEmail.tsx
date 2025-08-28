@@ -1,6 +1,7 @@
 import React from 'react'
 import TextInput from '../common/TextInput';
 import type { Form } from '../../types/auth';
+import { IconLongArrowLeft, IconLongArrowRight } from '../../assets/icons';
 
 interface  SignUpEmailProps {
     f: Form,
@@ -31,7 +32,7 @@ const SignUpEmail = ({
                 className='su-btn'
                 onClick={goPrev}
             >
-                이전
+                <IconLongArrowLeft/>
             </button>
             {/* 👇 이 부분의 disabled 속성이 변경되었습니다. */}
             <button 
@@ -39,7 +40,7 @@ const SignUpEmail = ({
                 disabled={busy || f.email.trim() === ''} 
                 onClick={handleClick}
             >
-                {busy ? "발송중..." : "인증 메일 보내기"}
+                <IconLongArrowRight/>
             </button>
         </div>
     </section>
