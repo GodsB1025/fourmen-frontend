@@ -7,6 +7,7 @@ import RoleManagementModal from "../../../components/company/RoleManagementModal
 import { useAuthStore } from "../../../stores/authStore";
 import "./CompanyPage.css";
 import Toast from "../../../components/common/Toast"; // Toast 컴포넌트 import
+import { AnimatePresence } from "framer-motion";
 
 // Helper 함수들은 변경 없이 그대로 둡니다.
 function canManageMember(currentRole: MemberRole | undefined, meId: number | string | undefined, target: CompanyMember) {
@@ -111,7 +112,7 @@ export default function CompanyPage() {
             await updateCompanyMemberRole(editingMember.id, newRole);
         } catch {
             setMembers(prevMembers);
-            setErr("권한 변경에 실패했습니다."); // alert 대신 setErr 사용
+            setErr("권한 변경에 실패했습니다.");
         }
     }
 
@@ -141,7 +142,11 @@ export default function CompanyPage() {
                 />
             </div>
 
-            {isInviteModalOpen && canInvite && <InviteMemberModal onClose={() => setIsInviteModalOpen(false)} onInvite={handleBulkInvite} />}
+            <AnimatePresence>
+                {isInviteModalOpen && canInvite &&
+                    <InviteMemberModal onClose={() => setIsInviteModalOpen(false)} onInvite={handleBulkInvite} />
+                }
+            </AnimatePresence>
 
             {editingMember && (
                 <RoleManagementModal

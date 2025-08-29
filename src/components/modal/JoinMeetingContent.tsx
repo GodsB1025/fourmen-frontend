@@ -44,7 +44,7 @@ const JoinMeetingContent = () => {
         } catch (err: unknown) {
             const errorMessage = "회의에 참가할 권한이 없습니다.";
 
-            setError(errorMessage); // alert 대신 setError 사용
+            setError(errorMessage);
         } finally {
             setJoiningId(null);
         }

@@ -111,8 +111,10 @@ const VideoRoomPage = () => {
                         setManualMinuteContent(details.content);
                     }
                 }
-            } catch (err: any) {
-                setError(err.message || "회의 정보를 불러오는 중 오류가 발생했습니다.");
+            } catch (err: unknown) {
+                let errorMessage = "회의 정보를 불러오는 중 오류가 발생했습니다."
+                if(err instanceof Error) errorMessage = err.message
+                setError( errorMessage );
             }
         };
         loadMeetingData();
