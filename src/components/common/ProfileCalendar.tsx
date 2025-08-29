@@ -7,6 +7,7 @@ import { fetchCalendar, mapToEventInput, addCalendarEvent, updateCalendarEvent, 
 import { initCsrf } from "../../apis/Client";
 import { broadcastCalendarUpdated } from "../../utils/calendarBus";
 import "./ProfileCalendar.css";
+import Toast from "./Toast";
 
 type Props = { onMonthChange?: (date: Date) => void };
 type ModalState = { open: false; dateStr: "" } | { open: true; dateStr: string };
@@ -50,6 +51,8 @@ const formatTime = (isoString: string | null): string => {
 
 export default function ProfileCalendar({ onMonthChange }: Props) {
     const [modal, setModal] = useState<ModalState>({ open: false, dateStr: "" });
+    const [error, setError] = useState<string | null>(null)
+    const [info, setInfo] = useState<string | null>(null)
     const calRef = useRef<FullCalendar | null>(null);
     const [modalEvents, setModalEvents] = useState<any[]>([]);
 
@@ -155,7 +158,7 @@ export default function ProfileCalendar({ onMonthChange }: Props) {
                 eventDrop={async (info) => {
                     if (isMeeting(info.event)) {
                         info.revert();
-                        alert(BLOCK_MSG);
+                        setInfo(BLOCK_MSG);
                         return;
                     }
                     try {
@@ -176,14 +179,14 @@ export default function ProfileCalendar({ onMonthChange }: Props) {
                         refetch();
                         broadcastCalendarUpdated();
                     } catch {
-                        alert("일정 이동 중 오류 발생");
+                        setError("일정 이동 중 오류 발생");
                         info.revert();
                     }
                 }}
                 eventResize={async (info) => {
                     if (isMeeting(info.event)) {
                         info.revert();
-                        alert(BLOCK_MSG);
+                        setInfo(BLOCK_MSG);
                         return;
                     }
                     try {
@@ -204,7 +207,7 @@ export default function ProfileCalendar({ onMonthChange }: Props) {
                         refetch();
                         broadcastCalendarUpdated();
                     } catch {
-                        alert("일정 기간 변경 중 오류 발생");
+                        setError("일정 기간 변경 중 오류 발생");
                         info.revert();
                     }
                 }}
@@ -230,7 +233,7 @@ export default function ProfileCalendar({ onMonthChange }: Props) {
                                         await addCalendarEvent({ title, start: startIso, end: endIso });
                                     } catch (error: any) {
                                         console.error("일정 추가 실패:", error?.response || error);
-                                        alert("일정 추가에 실패했습니다.");
+                                        setError("일정 추가에 실패했습니다.");
                                         return;
                                     } finally {
                                         try {
@@ -245,6 +248,8 @@ export default function ProfileCalendar({ onMonthChange }: Props) {
                                         console.warn("일정은 추가되었으나 목록 갱신 실패:", e);
                                     }
                                 }}
+                                info={info}
+                                setInfo={setInfo}
                             />
 
                             <EventList
@@ -259,7 +264,7 @@ export default function ProfileCalendar({ onMonthChange }: Props) {
                                         refetch();
                                         broadcastCalendarUpdated();
                                     } catch {
-                                        alert("일정 수정 중 오류 발생");
+                                        setError("일정 수정 중 오류 발생");
                                     }
                                 }}
                                 onDelete={async (id) => {
@@ -271,9 +276,11 @@ export default function ProfileCalendar({ onMonthChange }: Props) {
                                         refetch();
                                         broadcastCalendarUpdated();
                                     } catch {
-                                        alert("삭제 중 오류 발생");
+                                        setError("삭제 중 오류 발생");
                                     }
                                 }}
+                                info={info}
+                                setInfo={setInfo}
                             />
                         </section>
 
@@ -285,6 +292,20 @@ export default function ProfileCalendar({ onMonthChange }: Props) {
                     </div>
                 </div>
             )}
+            { error &&
+                <Toast 
+                    message={error}
+                    onClose={() => setError(null)}
+                    type="error"
+                />
+            }
+            { info &&
+                <Toast 
+                    message={info}
+                    onClose={() => setInfo(null)}
+                    type="info"
+                />
+            }
         </div>
     );
 }
@@ -293,9 +314,13 @@ export default function ProfileCalendar({ onMonthChange }: Props) {
 function CreateForm({
     dateStr,
     onCreated,
+    info,
+    setInfo
 }: {
     dateStr: string;
     onCreated: (payload: { title: string; startIso: string; endIso: string }) => Promise<void>;
+    info: string | null;
+    setInfo: React.Dispatch<React.SetStateAction<string | null>>;
 }) {
     const [title, setTitle] = useState("");
     const [allDay, setAllDay] = useState(false);
@@ -324,11 +349,11 @@ function CreateForm({
     const handleSubmit = async () => {
         if (!title.trim() || busy) return;
         if (endDate < startDate) {
-            alert("종료 날짜가 시작보다 빠를 수 없습니다.");
+            setInfo("종료 날짜가 시작보다 빠를 수 없습니다.");
             return;
         }
         if (!allDay && startDate === endDate && endHM <= startHM) {
-            alert("종료 시간이 시작보다 빨라야 합니다.");
+            setInfo("종료 시간이 시작보다 빨라야 합니다.");
             return;
         }
 
@@ -376,6 +401,13 @@ function CreateForm({
                 style={{ marginTop: "1rem", width: "100%" }}>
                 추가
             </button>
+            { info &&
+                <Toast 
+                    message={info}
+                    onClose={() => setInfo(null)}
+                    type="info"
+                />
+            }
         </div>
     );
 }
@@ -385,10 +417,14 @@ function EventList({
     items,
     onEdit,
     onDelete,
+    info,
+    setInfo
 }: {
     items: any[];
     onEdit: (id: string, patch: { title?: string; start?: string; end?: string }) => Promise<void>;
     onDelete: (id: string) => Promise<void>;
+    info: string | null;
+    setInfo: React.Dispatch<React.SetStateAction<string | null>>;
 }) {
     const [editingId, setEditingId] = useState<string | null>(null);
 
@@ -438,16 +474,16 @@ function EventList({
         if (!title.trim()) return;
 
         if (endDate < startDate) {
-            alert("종료 날짜가 시작보다 빠를 수 없습니다.");
+            setInfo("종료 날짜가 시작보다 빠를 수 없습니다.");
             return;
         }
         if (!allDay && startDate === endDate && endHM <= startHM) {
-            alert("종료 시간이 시작보다 빨라야 합니다.");
+            setInfo("종료 시간이 시작보다 빨라야 합니다.");
             return;
         }
 
         if ((ev?.extendedProps?.event_type ?? ev?.event_type) === "meeting") {
-            alert(BLOCK_MSG);
+            setInfo(BLOCK_MSG);
             return;
         }
 
@@ -537,6 +573,13 @@ function EventList({
                     </li>
                 );
             })}
+            { info &&
+                <Toast 
+                    message={info}
+                    onClose={() => setInfo(null)}
+                    type="info"
+                />
+            }
         </ul>
     );
 }
