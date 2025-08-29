@@ -1,14 +1,13 @@
 import { useEffect } from 'react';
 import { useAuthStore } from './stores/authStore';
 import { Outlet, useNavigation } from 'react-router-dom';
-import { initCsrf } from './apis/Client';
+// import { initCsrf } from './apis/Client'; // 1. 이 줄을 삭제합니다.
 import Loading from './components/common/Loading';
 import './App.css';
 
 function App() {
-  initCsrf();
+  // initCsrf(); // 2. 이 줄을 삭제합니다.
   const navigation = useNavigation();
-  // const checkAuth = useAuthStore((state) => state.checkAuth);
   const { checkAuth, isAuthChecked } = useAuthStore()
 
   // 앱이 처음 마운트될 때 한 번만 실행되며 인증 상태를 불러온다.

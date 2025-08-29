@@ -139,7 +139,7 @@ function LobbyPage(): JSX.Element | null {
         {/* Highlight card */}
         <section className="highlight container">
           <div className="highlight-card">
-            <div className="checkerboard md" aria-hidden="true" />
+            <div className="checkerboard md" aria-hidden="true"/>
             <div className="highlight-text">
               <h3>단순한 회의 툴이 아닙니다.</h3>
               <p>

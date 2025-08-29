@@ -190,9 +190,6 @@ export default function SignupWizard() {
             f={f}
             busy={busy}
             setF={setF}
-            setBusy={setBusy}
-            setErr={setErr}
-            setStep={setStep}
             goPrev={goPrev}
             goSignUp={handleSignUp}
           />
