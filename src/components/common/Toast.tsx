@@ -12,7 +12,7 @@ interface ToastProps {
 const Toast: React.FC<ToastProps> = ({
   message,
   onClose,
-  duration = 2500,
+  duration = 2000,
   type = 'error',
 }) => {
 

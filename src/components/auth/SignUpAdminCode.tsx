@@ -1,6 +1,7 @@
 import React from 'react'
 import TextInput from '../common/TextInput';
 import type { Form } from '../../types/auth';
+import { IconLongArrowLeft, IconLongArrowRight } from '../../assets/icons';
 
 interface  SignUpAdminCodeProps {
     f: Form,
@@ -26,12 +27,14 @@ const SignUpAdminCode = ({
                 placeholder="예시: A3ZE48SZ"
             />
             <div className="su-actions">
-                <button className='su-btn' onClick={goPrev}>이전</button>
+                <button className='su-btn' onClick={goPrev}>
+                    <IconLongArrowRight/>
+                </button>
                 <button
                     className="primary su-btn"
                     disabled={busy}
                     onClick={() => goSignUp()}>
-                    {busy ? "확인중..." : "다음"}
+                    <IconLongArrowLeft/>
                 </button>
             </div>
         </section>

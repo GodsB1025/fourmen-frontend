@@ -96,4 +96,4 @@ const styles: Record<string, CSSProperties> = {
     backgroundColor: '#4b52ff',
     border: 'none',
   },
-};
+} as const;

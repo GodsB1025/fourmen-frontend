@@ -46,6 +46,20 @@ export const IconLongArrowRight = () => {
     )
 }
 
+export const IconLongArrowLeft = () => {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+            className="icon icon-tabler icons-tabler-outline icon-tabler-arrow-narrow-right"
+        >
+            <path stroke="none" d="M0 0h30v24H0z" fill="none"/>
+            <path d="M-1 12l24 0" />
+            <path d="M-1 12l4 4" />
+            <path d="M-1 12l4 -4" />
+        </svg>
+    )
+}
+
 export const IconArrowLeft = ({ fillColor = "none", strokeColor = "currentColor" }: Props) => {
     return (
         <svg
@@ -88,8 +102,8 @@ export const IconPancil = ({ fillColor = "none", strokeColor = "currentColor" }:
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
+            width="18"
+            height="18"
             viewBox="0 0 24 24"
             fill={fillColor}
             stroke={strokeColor}
@@ -108,8 +122,8 @@ export const IconAISummary = ({ fillColor = "none", strokeColor = "currentColor"
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
+            width="18"
+            height="18"
             viewBox="0 0 24 24"
             fill={fillColor}
             stroke={strokeColor}

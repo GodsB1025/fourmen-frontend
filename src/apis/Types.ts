@@ -64,12 +64,12 @@ export interface User {
 }
 
 export interface MeDto {
-  userId: number;
-  name: string;
-  email: string;
-  role: "USER" | "ADMIN" | "CONTRACT_ADMIN";
-  company: number | null;   // ← 회사 id
-  phone?: string;
+    userId: number;
+    name: string;
+    email: string;
+    role: "USER" | "ADMIN" | "CONTRACT_ADMIN";
+    company: number | null; // ← 회사 id
+    phone?: string;
 }
 
 export interface LoginRequest {
@@ -80,7 +80,7 @@ export interface LoginRequest {
 export interface LoginResponse {
     result: "SUCCESS" | "ERROR";
     message: string;
-    data: User;
+    data: User & { csrfToken: string };
 }
 
 export interface GetMeResponse {
@@ -194,6 +194,7 @@ export interface CompletedContract {
     title: string;
     completedAt: string;
     fileUrlBase: string;
+    previewImageUrl: string;
 }
 
 // -----------------------------
@@ -252,6 +253,7 @@ export interface ContractInfo {
     contractId: number;
     title: string;
     completedPdfUrl: string; // PDF URL 포함
+    status: "SENT" | "COMPLETED";
 }
 
 // 회의에 속한 회의록 정보 (목록 조회용)
@@ -272,6 +274,7 @@ export interface StandaloneContract {
     title: string;
     createdAt?: string;
     completedPdfUrl: string; // PDF URL 포함
+    status: "SENT" | "COMPLETED";
 }
 
 export interface DocumentResponse {
@@ -282,9 +285,9 @@ export interface DocumentResponse {
 // 회의록 상세 보기 응답 타입
 export interface MinuteDetail {
     minuteId: number;
-    meetingId: number;
-    meetingTitle: string;
-    type: "AUTO" | "SELF" | "SUMMARY";
+    meetingId?: number;
+    meetingTitle?: string;
+    type?: "AUTO" | "SELF" | "SUMMARY";
     authorName: string;
     createdAt: string;
     content: string;

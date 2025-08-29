@@ -34,10 +34,9 @@ api.interceptors.request.use(
         }
         if (!config.headers["Accept"]) config.headers["Accept"] = "application/json";
 
-        const csrf = getCookie("XSRF-TOKEN") || getCookie("CSRF-TOKEN") || getCookie("csrf_token");
+        const csrf = useAuthStore.getState().csrfToken;
         if (csrf) {
             (config.headers as any)["X-XSRF-TOKEN"] = csrf;
-            (config.headers as any)["X-CSRF-TOKEN"] = csrf;
         }
         return config;
     },

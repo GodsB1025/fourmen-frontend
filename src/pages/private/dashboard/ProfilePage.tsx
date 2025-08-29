@@ -82,7 +82,6 @@ const ProfilePage = () => {
                     </div>
                 </section>
 
-                {/* Alerts Widget */}
                 <section className="profile-widget">
                     <h3 className="widget-title">
                         <BellIcon />
