@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -78,6 +78,17 @@ export default function ProfileCalendar({ onMonthChange }: Props) {
         });
     };
 
+    const fetchEventsCallback = useCallback(async (_info: any, success: (events: any[]) => void) => {
+        try {
+            const list = await fetchCalendar();
+            const safe = list.map(mapToEventInput).filter((ev: any) => !ev.__invalid);
+            success(safe as any);
+        } catch (e) {
+            console.error("FullCalendar events load error:", e);
+            success([]);
+        }
+    }, []);
+
     const openModalFor = async (dateStr: string) => {
         try {
             const events = await fetchEventsForDate(dateStr);
@@ -130,16 +141,7 @@ export default function ProfileCalendar({ onMonthChange }: Props) {
                     if (et === "meeting") info.el.classList.add("evt-meeting");
                     else info.el.classList.add("evt-personal");
                 }}
-                events={async (_info, success) => {
-                    try {
-                        const list = await fetchCalendar();
-                        const safe = list.map(mapToEventInput).filter((ev: any) => !ev.__invalid);
-                        success(safe as any);
-                    } catch (e) {
-                        console.error("FullCalendar events load error:", e);
-                        success([]);
-                    }
-                }}
+                events={fetchEventsCallback}
                 dateClick={(arg) => {
                     void openModalFor(arg.dateStr);
                 }}
