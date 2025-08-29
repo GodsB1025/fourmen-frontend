@@ -70,7 +70,11 @@ api.interceptors.response.use(
             }
             isRefreshing = true;
             try {
-                await api.post("/auth/refresh");
+                // `/auth/refresh` 호출 후 응답에서 새로운 CSRF 토큰을 받아 저장
+                const { data } = await api.post("/auth/refresh");
+                if (data.data.csrfToken) {
+                    useAuthStore.getState().setCsrfToken(data.data.csrfToken);
+                }
                 isRefreshing = false;
                 flush(true);
                 return api(original);

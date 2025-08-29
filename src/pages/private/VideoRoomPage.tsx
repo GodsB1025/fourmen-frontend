@@ -14,27 +14,22 @@ import {
 import type { Meeting, CreateMeetingURLRequest } from "../../apis/Types";
 import { PATH } from "../../types/paths";
 import "./VideoRoomPage.css";
-import styles from "./VideoRoomPage.module.css"
+import styles from "./VideoRoomPage.module.css";
 import { useAuthStore } from "../../stores/authStore";
 import { useModalStore } from "../../stores/modalStore";
 import Toast from "../../components/common/Toast";
 import { IconShare } from "../../assets/icons";
 
-interface ConfirmationModalProps  {
+interface ConfirmationModalProps {
     isOpen: boolean;
     onCancel: () => void;
     onConfirm: () => void;
     title: string;
-    children: React.ReactNode; // 모달 본문 내용을 유연하게 받기 위해 children 사용
+    children: React.ReactNode;
+    isConfirming?: boolean; // 확인 버튼 로딩 상태를 위한 prop 추가
 }
 
-const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
-    isOpen,
-    onCancel,
-    onConfirm,
-    title,
-    children,
-}) => {
+const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ isOpen, onCancel, onConfirm, title, children, isConfirming }) => {
     if (!isOpen) {
         return null;
     }
@@ -44,16 +39,14 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             <div className={styles.modalContent}>
                 <h2 className={styles.modalTitle}>{title}</h2>
 
-                <div className={styles.modalBody}>
-                    {children}
-                </div>
+                <div className={styles.modalBody}>{children}</div>
 
                 <div className={styles.modalButtonContainer}>
-                    <button className={`${styles.modalButton} ${styles.cancelButton}`} onClick={onCancel}>
+                    <button className={`${styles.modalButton} ${styles.cancelButton}`} onClick={onCancel} disabled={isConfirming}>
                         취소
                     </button>
-                    <button className={`${styles.modalButton} ${styles.confirmButton}`} onClick={onConfirm}>
-                        회의 종료
+                    <button className={`${styles.modalButton} ${styles.confirmButton}`} onClick={onConfirm} disabled={isConfirming}>
+                        {isConfirming ? "회의 종료 중..." : "회의 종료"}
                     </button>
                 </div>
             </div>
@@ -73,14 +66,15 @@ const VideoRoomPage = () => {
     const navigate = useNavigate();
     const { meetingId } = useParams<{ meetingId: string }>();
     const user = useAuthStore((state) => state.user);
-    const openModal = useModalStore((state) => state.openModal)
+    const openModal = useModalStore((state) => state.openModal);
 
     // --- State Management ---
     const [meetingInfo, setMeetingInfo] = useState<Meeting | null>(null);
     const [videoURL, setVideoURL] = useState<string>("");
-    const [sharingVideoURL, setSharingVideoURL] = useState<string | null>(null)
+    const [sharingVideoURL, setSharingVideoURL] = useState<string | null>(null);
     const [isMinutesVisible, setIsMinutesVisible] = useState(false);
     const [isEndMeetingModalOpen, setIsEndMeetingModalOpen] = useState(false);
+    const [isEndingMeeting, setIsEndingMeeting] = useState(false); // 회의 종료 로딩 상태 추가
 
     // 수동 회의록
     const [isWritingMinute, setIsWritingMinute] = useState(false);
@@ -101,13 +95,13 @@ const VideoRoomPage = () => {
 
     // --- Data Loading Effect ---
     useEffect(() => {
-        if (!meetingId ) return;
+        if (!meetingId) return;
         const loadMeetingData = async () => {
             try {
                 const info = await getMeetingInfo(meetingId);
                 setMeetingInfo(info);
 
-                if(user?.company !== null){
+                if (user?.company !== null) {
                     const minutes = await getMinutesForMeeting(meetingId);
                     const manualMinuteInfo = minutes.find((m) => m.type === "SELF");
 
@@ -142,7 +136,7 @@ const VideoRoomPage = () => {
             if (!isDragging) return;
             wasDragged.current = true; // 드래그가 발생했음을 표시
             if (!hasBeenDragged) setHasBeenDragged(true); // 첫 드래그 시 상태 변경
-            
+
             setPosition({
                 x: e.clientX - dragOffset.current.x,
                 y: e.clientY - dragOffset.current.y,
@@ -218,7 +212,7 @@ const VideoRoomPage = () => {
         if (!meetingId || !manualMinuteContent.trim()) return;
         setBusy((prev) => ({ ...prev, minute: true }));
         try {
-            if(manualMinuteId) {
+            if (manualMinuteId) {
                 await updateManualMinute(meetingId, manualMinuteId, manualMinuteContent);
             } else {
                 const newMinute = await submitManualMinute(meetingId, manualMinuteContent);
@@ -226,8 +220,8 @@ const VideoRoomPage = () => {
             }
             setIsWritingMinute(false);
         } catch (err: unknown) {
-            let errorMessage = "회의록 저장에 실패했습니다."
-            if(err instanceof Error) errorMessage = err.message
+            let errorMessage = "회의록 저장에 실패했습니다.";
+            if (err instanceof Error) errorMessage = err.message;
             setError(errorMessage);
         } finally {
             setBusy((prev) => ({ ...prev, minute: false }));
@@ -235,17 +229,18 @@ const VideoRoomPage = () => {
     };
 
     const confirmEndMeeting = async () => {
-        if (!meetingId) return;
+        if (!meetingId || isEndingMeeting) return;
+        setIsEndingMeeting(true);
         try {
             await disableMeetingRoom(meetingId);
-            // alert("회의가 종료되었습니다."); // 토스트나 다른 방식으로 대체 가능
             navigate(PATH.COMMANDER);
         } catch (err: unknown) {
             let errorMessage = "회의 종료에 실패했습니다.";
             if (err instanceof Error) errorMessage = err.message;
             setError(errorMessage);
         } finally {
-            setIsEndMeetingModalOpen(false); // 로직 실행 후 모달 닫기
+            setIsEndingMeeting(false);
+            setIsEndMeetingModalOpen(false);
         }
     };
 
@@ -325,27 +320,27 @@ const VideoRoomPage = () => {
     };
 
     const openModalShareURL = async () => {
-        if(sharingVideoURL) {
-            openModal("sharingURL", { sharingURL: sharingVideoURL })
-            return
+        if (sharingVideoURL) {
+            openModal("sharingURL", { sharingURL: sharingVideoURL });
+            return;
         }
-        if(meetingId) {
+        if (meetingId) {
             try {
-                setError(null)
-                const url = await createSharingMeetingURL(meetingId)
-                setSharingVideoURL(url)
-                openModal("sharingURL", { sharingURL: url })
+                setError(null);
+                const url = await createSharingMeetingURL(meetingId);
+                setSharingVideoURL(url);
+                openModal("sharingURL", { sharingURL: url });
             } catch (err: unknown) {
-                let errorMessage = "공유 URL 생성에 실패했습니다."
-                if(err instanceof Error) errorMessage = err.message
-                setError(errorMessage)
+                let errorMessage = "공유 URL 생성에 실패했습니다.";
+                if (err instanceof Error) errorMessage = err.message;
+                setError(errorMessage);
             } finally {
                 // setBusy()
             }
         } else {
-            setError("meetingId가 없습니다.")
+            setError("meetingId가 없습니다.");
         }
-    }
+    };
 
     // --------------------------------- JSX ------------------------------------
     return (
@@ -356,32 +351,21 @@ const VideoRoomPage = () => {
                     <span>{meetingInfo ? new Date(meetingInfo.scheduledAt).toLocaleString() : "..."}</span>
                 </div>
                 <div className="actions-section">
-                    <button
-                        className="btn btn-sharing"
-                        onClick={openModalShareURL}
-                    >
-                        Share<IconShare/>
+                    <button className="btn btn-sharing" onClick={openModalShareURL}>
+                        Share
+                        <IconShare />
                     </button>
                     {meetingInfo?.useAiMinutes && (
-                        <button 
-                            onClick={handleRecordButtonClick} 
-                            className={`btn btn-ai ${isRecording ? "recording" : ""}`}
-                        >
+                        <button onClick={handleRecordButtonClick} className={`btn btn-ai ${isRecording ? "recording" : ""}`}>
                             {isRecording ? "AI 기록 중지" : "AI 기록 시작"}
                         </button>
                     )}
                     {user?.userId === meetingInfo?.hostId && (
-                        <button
-                            onClick={handleEndMeeting} 
-                            className="btn btn-danger"
-                        >
-                            회의 종료
+                        <button onClick={handleEndMeeting} className="btn btn-danger" disabled={isEndingMeeting}>
+                            {isEndingMeeting ? "종료 중..." : "회의 종료"}
                         </button>
                     )}
-                    <button 
-                        onClick={() => navigate(PATH.COMMANDER)} 
-                        className="btn btn-secondary"
-                    >
+                    <button onClick={() => navigate(PATH.COMMANDER)} className="btn btn-secondary">
                         나가기
                     </button>
                 </div>
@@ -438,15 +422,15 @@ const VideoRoomPage = () => {
                 className={`videoroom-footer ${isDragging ? "is-dragging" : ""}`}
                 onMouseDown={handleMouseDown}
                 style={
-                    hasBeenDragged ?
-                        { 
-                            left: `${position.x}px`,
-                            top: `${position.y}px`,
-                            bottom: "auto",
-                            right: "auto",
-                        } : {}
-                }
-            >
+                    hasBeenDragged
+                        ? {
+                              left: `${position.x}px`,
+                              top: `${position.y}px`,
+                              bottom: "auto",
+                              right: "auto",
+                          }
+                        : {}
+                }>
                 <button
                     className={`toggle-minutes-btn ${isMinutesVisible ? "active" : ""}`}
                     onClick={handleToggleMinutesClick}
@@ -469,19 +453,15 @@ const VideoRoomPage = () => {
             </div>
             <ConfirmationModal
                 isOpen={isEndMeetingModalOpen}
-                onCancel={() => setIsEndMeetingModalOpen(false)} // 취소 버튼 클릭 시 모달 닫기
-                onConfirm={confirmEndMeeting} // 확인 버튼 클릭 시 종료 로직 실행
+                onCancel={() => setIsEndMeetingModalOpen(false)}
+                onConfirm={confirmEndMeeting}
                 title="회의 종료 확인"
-            >
-                <p>정말로 회의를 종료하시겠습니까? <br /> 종료 후에는 다시 참여할 수 없습니다.</p>
+                isConfirming={isEndingMeeting}>
+                <p>
+                    정말로 회의를 종료하시겠습니까? <br /> 종료 후에는 다시 참여할 수 없습니다.
+                </p>
             </ConfirmationModal>
-            {error && (
-                <Toast
-                    message={error} 
-                    onClose={() => setError(null)}
-                    type="error"
-                />
-            )}
+            {error && <Toast message={error} onClose={() => setError(null)} type="error" />}
         </div>
     );
 };
