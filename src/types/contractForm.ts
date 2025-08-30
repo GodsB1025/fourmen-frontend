@@ -1,3 +1,4 @@
+export interface ContractData {}
 export interface ContractData_201 {
     "근로자": string,
     "시작년": string,
@@ -15,7 +16,7 @@ export interface ContractData_202 {
     quantity: string
 }
 
-export type AllContractData = ContractData_201 | ContractData_202;
+export type AllContractData = ContractData | ContractData_201 | ContractData_202;
 
 // 모든 계약서 폼 컴포넌트가 공통으로 받을 Props 타입 (Generic 사용)
 export interface ContractFormProps<T> {

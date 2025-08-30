@@ -38,6 +38,8 @@ const ContractContent: React.FC<ContractContentProps> = ({ templateId, eformsign
     const [success, setSuccess] = useState<string | null>(null);
     const [selectedMinuteId, setSelectedMinuteId] = useState<number | null>(null);
 
+    const [isFormStepRequired, setIsFormStepRequired] = useState<boolean>(true);
+
     const docTabOptions = [
         { value: "my", label: "내 문서" },
         { value: "shared", label: "공유받은 문서" },
@@ -45,12 +47,15 @@ const ContractContent: React.FC<ContractContentProps> = ({ templateId, eformsign
 
     const isFormValid = useMemo(() => {
         const isRecipientValid = recipientData.name.trim() !== "" && recipientData.email.trim() !== "" && recipientData.phoneNumber.trim() !== "";
+        if( !isFormStepRequired ) {
+            return isRecipientValid;
+        }
         const isContractDataValid = Object.values(data).every((value) => {
             if (typeof value === "string") return value.trim() !== "";
             return true;
         });
         return isRecipientValid && isContractDataValid;
-    }, [data, recipientData]);
+    }, [data, recipientData, isFormStepRequired]);
 
     const handleDataChange = (updatedFields: Partial<AllContractData>) => {
         setData((prevData) => ({
@@ -146,28 +151,38 @@ const ContractContent: React.FC<ContractContentProps> = ({ templateId, eformsign
         }
     };
 
-    const FormComponent = contractFormComponents[templateId];
+    const FormComponent = useMemo(() => contractFormComponents[templateId], [templateId]);
 
     useEffect(() => {
         loadDocuments();
     }, [docTab]);
 
     useEffect(() => {
-        setData(initialContractData[templateId]);
+        const formExists = !!contractFormComponents[templateId];
+        setIsFormStepRequired(formExists);
+        setData(initialContractData[templateId] || {});
+
+        if (formExists) {
+            setStep(0);
+        } else {
+            setStep(1);
+        }
     }, [templateId]);
 
     return (
         <div className="contract-container">
             <div className="form-section">
-                {step === 0 ? <h2>계약서 내용</h2> : <h2>수신자 정보</h2>}
-                {FormComponent ? (
+                <h2>{step === 0 && isFormStepRequired ? "계약서 내용" : "수신자 정보"}</h2>
+                {/* {FormComponent ? ( */}
                     <div>
                         <div className="form-steps-viewport">
                             <div className={`form-steps-track step-${step}`}>
                                 <div className="form-step">
+                                    {isFormStepRequired && FormComponent ? (
                                     <Suspense fallback={<div>Loading...</div>}>
                                         <FormComponent data={data} onChange={handleDataChange} />
                                     </Suspense>
+                                    ):( <div></div> )}
                                 </div>
                                 <div className="form-step">
                                     <div className="form-group">
@@ -199,12 +214,12 @@ const ContractContent: React.FC<ContractContentProps> = ({ templateId, eformsign
                         </div>
                         <div className="form-navigation">
                             <div className="step-buttons">
-                                {step === 1 && (
+                                {isFormStepRequired && step === 1 && (
                                     <button className="contract-button contract-prev" onClick={() => setStep(0)}>
                                         <IconArrowLeft />
                                     </button>
                                 )}
-                                {step === 0 && (
+                                {isFormStepRequired && step === 0 && (
                                     <button className="contract-button contract-next" onClick={() => setStep(1)}>
                                         <IconArrowRight />
                                     </button>
@@ -215,9 +230,9 @@ const ContractContent: React.FC<ContractContentProps> = ({ templateId, eformsign
                             </div>
                         </div>
                     </div>
-                ) : (
+                {/* ) : (
                     <div>유효하지 않은 계약서 템플릿입니다. (ID: {templateId})</div>
-                )}
+                )} */}
             </div>
             <div className="content-section">
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>

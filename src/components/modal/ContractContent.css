@@ -13,7 +13,7 @@
 .content-section {
     display: flex;
     flex-direction: column;
-    min-width: 0; /* flex item이 줄어들 수 있도록 설정 */
+    min-width: 270px; /* flex item이 줄어들 수 있도록 설정 */
 }
 .form-section {
     flex: 0.4;
@@ -175,6 +175,9 @@
 .form-step {
     width: 50%; /* 트랙 너비의 절반을 차지 (100% / 2개 스텝) */
     flex-shrink: 0; /* 스텝의 너비가 줄어들지 않도록 고정 */
+}
+.form-step:first-child {
+    padding-right: 5px;
 }
 
 /* step 상태에 따라 트랙의 위치를 이동시킵니다. */
