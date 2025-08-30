@@ -179,7 +179,6 @@ export default function SignupWizard() {
             f={f}
             setF={setF}
             setErr={setErr}
-            goPrev={goPrev}
             goNext={goNext}
             goSignUp={handleSignUp}
           />
