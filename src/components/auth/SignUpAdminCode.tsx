@@ -7,6 +7,7 @@ interface  SignUpAdminCodeProps {
     f: Form,
     busy: boolean,
     setF: React.Dispatch<React.SetStateAction<Form>>,
+    setErr: React.Dispatch<React.SetStateAction<string | null>>,
     goPrev: () => void,
     goSignUp: () => void,
 }
@@ -16,6 +17,7 @@ const SignUpAdminCode = ({
     f,
     busy,
     setF,
+    setErr,
     goPrev,
     goSignUp,
 }: SignUpAdminCodeProps) => {
@@ -28,13 +30,18 @@ const SignUpAdminCode = ({
             />
             <div className="su-actions">
                 <button className='su-btn' onClick={goPrev}>
-                    <IconLongArrowRight/>
+                    <IconLongArrowLeft/>
                 </button>
                 <button
                     className="primary su-btn"
                     disabled={busy}
-                    onClick={() => goSignUp()}>
-                    <IconLongArrowLeft/>
+                    onClick={() => {
+                            if(f.adminKey==="A3ZE48SZ")
+                                goSignUp()
+                            else 
+                                setErr("잘못된 관리자 코드입니다.")
+                        }}>
+                    <IconLongArrowRight/>
                 </button>
             </div>
         </section>
