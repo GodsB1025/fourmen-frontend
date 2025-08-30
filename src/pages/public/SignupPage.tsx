@@ -87,7 +87,6 @@ export default function SignupWizard() {
     }
     setErr(null);
     setBusy(true);
-
     try {
       await verifyEmailCode(f.email, f.code);
       goNext();
@@ -192,7 +191,6 @@ export default function SignupWizard() {
             f={f}
             busy={busy}
             setF={setF}
-            setErr={setErr}
             goPrev={goPrev}
             goSignUp={handleSignUp}
           />
