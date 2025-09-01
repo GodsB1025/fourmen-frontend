@@ -95,7 +95,13 @@ const JoinMeetingContent = () => {
                 />
             </div>
 
-            <MeetingRoomList busy={busy} error={error} meetingRooms={filteredMeetingRooms} handleClick={navigateMeetingRoom} joiningId={joiningId} />
+            <MeetingRoomList 
+                busy={busy} 
+                error={error} 
+                meetingRooms={filteredMeetingRooms} 
+                handleClick={navigateMeetingRoom} 
+                joiningId={joiningId} 
+            />
             {error && <Toast message={error} onClose={() => setError(null)} type="error" />}
         </div>
     );

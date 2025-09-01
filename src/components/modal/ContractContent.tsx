@@ -173,7 +173,6 @@ const ContractContent: React.FC<ContractContentProps> = ({ templateId, eformsign
         <div className="contract-container">
             <div className="form-section">
                 <h2>{step === 0 && isFormStepRequired ? "계약서 내용" : "수신자 정보"}</h2>
-                {/* {FormComponent ? ( */}
                     <div>
                         <div className="form-steps-viewport">
                             <div className={`form-steps-track step-${step}`}>
@@ -230,9 +229,6 @@ const ContractContent: React.FC<ContractContentProps> = ({ templateId, eformsign
                             </div>
                         </div>
                     </div>
-                {/* ) : (
-                    <div>유효하지 않은 계약서 템플릿입니다. (ID: {templateId})</div>
-                )} */}
             </div>
             <div className="content-section">
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>

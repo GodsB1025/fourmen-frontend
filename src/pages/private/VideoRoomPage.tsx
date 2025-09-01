@@ -147,10 +147,10 @@ const VideoRoomPage = () => {
 
         const handleMouseUp = () => {
             setIsDragging(false);
-            // 드래그 직후 클릭이벤트가 실행되는 것을 막기위해 짧은 딜레이 후 false로 변경
+            
             setTimeout(() => {
                 wasDragged.current = false;
-            }, 0);
+            }, 0); // 드래그 직후 클릭이벤트가 실행되는 것을 막기위해 짧은 딜레이 후 false로 변경
         };
 
         if (isDragging) {
@@ -426,27 +426,18 @@ const VideoRoomPage = () => {
                 style={
                     hasBeenDragged
                         ? {
-                              left: `${position.x}px`,
-                              top: `${position.y}px`,
-                              bottom: "auto",
-                              right: "auto",
-                          }
+                            left: `${position.x}px`,
+                            top: `${position.y}px`,
+                            bottom: "auto",
+                            right: "auto",
+                        }
                         : {}
                 }>
                 <button
                     className={`toggle-minutes-btn ${isMinutesVisible ? "active" : ""}`}
                     onClick={handleToggleMinutesClick}
                     aria-label={isMinutesVisible ? "회의록 숨기기" : "회의록 작성/보기"}>
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
                         <path d="m15 5 4 4" />
                     </svg>
