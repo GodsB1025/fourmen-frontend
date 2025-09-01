@@ -376,7 +376,7 @@ const VideoRoomPage = () => {
             <main className="videoroom-main-content">
                 <div className="video-wrapper">
                     {videoURL ? (
-                        <iframe src={videoURL} allow="camera; microphone; fullscreen; speaker; display-capture" title="Video Meeting" />
+                        <iframe src={videoURL} allow="camera; microphone; fullscreen; speaker; display-capture" title="Video Meeting" scrolling="no" />
                     ) : (
                         <div className="placeholder">
                             <h2>화상회의가 시작되지 않았습니다</h2>
