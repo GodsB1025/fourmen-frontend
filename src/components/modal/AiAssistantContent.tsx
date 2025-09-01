@@ -28,6 +28,15 @@ const AiAssistantContent = () => {
         }
     };
 
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            if (!busy && query.trim().length > 0) {
+                handleSubmit(e as any);
+            }
+        }
+    };
+
     return (
         <div className="ai-assistant-container">
             <div className="ai-assistant-body">
@@ -54,6 +63,7 @@ const AiAssistantContent = () => {
                     className="query-textarea"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
+                    onKeyDown={handleKeyDown}
                     placeholder="질문을 입력하세요..."
                     rows={3}
                     disabled={busy}
