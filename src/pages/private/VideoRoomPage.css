@@ -41,6 +41,7 @@
     flex-grow: 1;
     transition: width 0.4s ease-in-out;
     background-color: #000;
+    overflow: hidden;
 }
 .video-wrapper iframe {
     width: 100%;
