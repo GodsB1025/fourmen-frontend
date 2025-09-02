@@ -6,7 +6,7 @@ import "./MessengerPage.css";
 import { useAuthStore } from "../../stores/authStore";
 import { Navigate } from "react-router-dom";
 import { PATH } from "../../types/paths";
-import Toast from "../../components/common/Toast"; // Toast 컴포넌트 import
+import Toast from "../../components/common/Toast";
 
 const MessengerPage = () => {
     const [isNewChatModalOpen, setNewChatModalOpen] = useState(false);
@@ -24,7 +24,7 @@ const MessengerPage = () => {
         return (
             <>
                 {showGuardToast && (
-                    <Toast message="회사에 소속된 사용자만 메신저를 이용할 수 있습니다." onClose={() => setShowGuardToast(false)} type="error" />
+                    <Toast message="회사에 소속된 사용자만 메신저를 이용할 수 있습니다." onClose={() => setShowGuardToast(false)} type="info" />
                 )}
                 <Navigate to={PATH.COMMANDER} replace />
             </>

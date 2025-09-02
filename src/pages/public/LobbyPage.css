@@ -126,12 +126,14 @@
 .highlight-text p  { margin: 0; font-size: 12px; color: var(--muted); line-height: 1.7; }
 
 /* CTA band */
-.cta { background: var(--bg-soft); margin-top: 36px; }
+.cta { margin-top: 36px; }
 .cta-inner {
+  width: 100%;
   background-image: url('../../assets/imgs/lobby_footer.jpg');
   background-size: cover;
   display: flex;
   justify-content: center;
+  justify-self: center;
   align-items: center;
   gap: 12px;
   padding: 40px 0;

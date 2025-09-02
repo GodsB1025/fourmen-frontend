@@ -6,7 +6,7 @@ import {
     type ContractFormProps
 } from '../types/contractForm';
 
-// 컴포넌트를 동적으로 불러오기 (Lazy Loading)
+// 컴포넌트를 동적으로 불러오기
 const Contract_201 = React.lazy(() => import('../components/contract/forms/Contract_201'));
 
 // ID와 컴포넌트를 매핑

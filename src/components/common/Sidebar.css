@@ -1,8 +1,6 @@
 :root {
-    --sb-width: 240px;
     --line: #e5e7eb;
     --muted: #6b7280;
-    --danger: #f93737;
     --text: #111827;
     --bg: #ffffff;
     --bg-hover: #e2e3fa;
@@ -15,12 +13,10 @@
     top: 0;
     display: grid;
     grid-template-rows: auto 1fr auto; /* user / nav / logout */
-    width: var(--sb-width);
-    min-width: var(--sb-width);
+    width: 240px;
     height: 100%;
     background: rgba(255, 255, 255, 0.5);
     border-right: 1px solid var(--line);
-    /* box-shadow: var(--shadow); */
     padding: 16px 10px;
     z-index: 20;
 }
@@ -71,7 +67,7 @@
     box-shadow: none;
 }
 .nav-item:hover {
-    background: var(--bg-hover);
+    background: #e2e3fa;;
 }
 .nav-item.is-active-sidebar {
     background-color: #6d72ff;
@@ -128,7 +124,7 @@
     font-size: 1rem;
 }
 .logout-btn:hover {
-    background: var(--danger);
+    background: #f93737;
 }
 .logout-btn:hover span {
     color: #fff;
@@ -138,7 +134,7 @@
 }
 
 .label.danger {
-    color: var(--danger);
+    color: #f93737;
 }
 
 /* ───── 접근성 ───── */

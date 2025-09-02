@@ -59,7 +59,10 @@ const PrivateLayout = () => {
                 return <JoinMeetingContent />;
             case "contractForm":
                 return modalData?.templateId && modalData?.eformsignTemplateId ? (
-                    <ContractContent templateId={modalData.templateId} eformsignTemplateId={modalData.eformsignTemplateId} />
+                    <ContractContent
+                        templateId={modalData.templateId}
+                        eformsignTemplateId={modalData.eformsignTemplateId}
+                    />
                 ) : null;
             case "aiAssistant": // AI 비서 모달 컨텐츠 렌더링 추가
                 return <AiAssistantContent/>;

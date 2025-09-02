@@ -69,7 +69,7 @@ class StompClientService {
                 body: JSON.stringify({ content }),
             });
         } else {
-            console.error("STOMP client is not connected.");
+            console.error("STOMP client가 연결되지 않았습니다.");
         }
     }
 }
