@@ -32,7 +32,7 @@ const SignUpAdminCode = ({
                 </button>
                 <button
                     className="primary su-btn"
-                    disabled={busy}
+                    disabled={busy || f.adminKey===""}
                     onClick={() => goSignUp()}>
                     <IconLongArrowRight/>
                 </button>

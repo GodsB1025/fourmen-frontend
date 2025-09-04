@@ -6,7 +6,7 @@ type ModalType = "create" | "join" | "contractForm" | "aiAssistant" | "sharingUR
 // 모달에 전달할 데이터 타입을 확장 가능하게 정의
 interface ModalData {
     templateId?: string;
-    eformsignTemplateId?: string; // eformsignTemplateId 추가
+    eformsignTemplateId?: string;
     sharingURL?: string | null;
 }
 

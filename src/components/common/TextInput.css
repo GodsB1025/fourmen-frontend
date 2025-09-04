@@ -1,6 +1,7 @@
 .custom-input,
 .contract-custom-input
 {
+  color: var(--text);
   padding: 15px 15px;
   border: 1px solid #ccc;
   border-radius: 1rem;
@@ -20,7 +21,7 @@
 .custom-input::placeholder,
 .contract-custom-input::placeholder
 {
-  color: #b7b7b7;
+  color: var(--placeholder);
 }
 
 .custom-input:focus,

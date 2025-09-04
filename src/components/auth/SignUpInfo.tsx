@@ -7,6 +7,8 @@ interface SignUpInfoProps {
     f: Form,
     setF: React.Dispatch<React.SetStateAction<Form>>,
     setErr: React.Dispatch<React.SetStateAction<string | null>>,
+    busy: boolean,
+    goPrev: () => void,
     goNext: () => void,
     goSignUp: () => void,
 }
@@ -15,6 +17,8 @@ const SignUpInfo = ({
     f,
     setF,
     setErr,
+    busy,
+    goPrev,
     goNext,
     goSignUp,
 }: SignUpInfoProps) => {
@@ -38,6 +42,14 @@ const SignUpInfo = ({
     }
     return true
   }
+
+  const isFull =
+    f.email!=="" &&
+    f.code!=="" &&
+    f.name!=="" &&
+    f.phone!=="" &&
+    f.pw!=="" &&
+    f.pw2!=="";
 
   return (
     <section className="su-step">
@@ -84,6 +96,7 @@ const SignUpInfo = ({
         <div className="su-actions">
           <button
             className="primary su-btn"
+            disabled={busy || !isFull}
             onClick={() => {
               if(checkInput()) {
                 if (f.type === "ADMIN") goNext();

@@ -130,16 +130,7 @@ const PrivateLobbyPage = () => {
                     </button>
                 </div>
             </aside>
-            <div style={{
-                width: "100%", 
-                height: "100%", 
-                position: "fixed",
-                top: "0",
-                left: "0",
-                zIndex: "5", 
-                backgroundColor: "rgba(255,255,255,0.8)",
-                backdropFilter: "blur(30px)",
-            }}/>
+            <div className="private-lobby-bg" />
             <AnimatedCirclesBackground />
         </div>
     );

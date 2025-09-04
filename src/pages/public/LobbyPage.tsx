@@ -151,7 +151,7 @@ function LobbyPage(): JSX.Element | null {
 
         {/* CTA band */}
         <section className="cta">
-          <div className="container cta-inner">
+          <div className="container cta-inner" style={{margin: "0"}}>
             <p>지금 바로 비즈니스 미팅의 혁신을 경험하세요</p>
             <button className="btn-primary btn-small" onClick={handleClick}>시작하기</button>
           </div>

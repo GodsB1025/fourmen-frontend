@@ -1,12 +1,10 @@
 import { useEffect } from 'react';
 import { useAuthStore } from './stores/authStore';
 import { Outlet, useNavigation } from 'react-router-dom';
-// import { initCsrf } from './apis/Client'; // 1. 이 줄을 삭제합니다.
 import Loading from './components/common/Loading';
 import './App.css';
 
 function App() {
-  // initCsrf(); // 2. 이 줄을 삭제합니다.
   const navigation = useNavigation();
   const { checkAuth, isAuthChecked } = useAuthStore()
 

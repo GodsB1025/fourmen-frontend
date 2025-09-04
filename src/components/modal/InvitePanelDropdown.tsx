@@ -89,12 +89,11 @@ const InvitePanelDropdown = ({
         return companyMembers.filter(
             (member) =>
                 member.email !== currentUserEmail &&
-                !currentParticipants.includes(member.email) && // 현재 참여자 목록에 없는 사람만 필터링
-                (member.name.toLowerCase().includes(lowercasedQuery) || member.email.toLowerCase().includes(lowercasedQuery))
+                !currentParticipants.includes(member.email) &&
+                (member.name.toLowerCase().includes(lowercasedQuery)
+                || member.email.toLowerCase().includes(lowercasedQuery))
         );
     }, [searchQuery, companyMembers, pendingInvites, currentUserEmail]);
-
-    if (!isOpen) return null;
 
     return createPortal(
         <motion.div
