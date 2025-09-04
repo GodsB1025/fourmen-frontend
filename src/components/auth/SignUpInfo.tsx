@@ -1,13 +1,12 @@
 import React from 'react'
 import TextInput from '../common/TextInput';
 import type { Form, } from '../../types/auth';
-import { IconLongArrowLeft, IconLongArrowRight } from '../../assets/icons';
+import { IconLongArrowRight } from '../../assets/icons';
 
 interface SignUpInfoProps {
     f: Form,
     setF: React.Dispatch<React.SetStateAction<Form>>,
     setErr: React.Dispatch<React.SetStateAction<string | null>>,
-    goPrev: () => void,
     goNext: () => void,
     goSignUp: () => void,
 }
@@ -16,7 +15,6 @@ const SignUpInfo = ({
     f,
     setF,
     setErr,
-    goPrev,
     goNext,
     goSignUp,
 }: SignUpInfoProps) => {
@@ -84,9 +82,6 @@ const SignUpInfo = ({
           />
         </div>
         <div className="su-actions">
-          <button className='su-btn' onClick={goPrev}>
-            <IconLongArrowLeft/>
-          </button>
           <button
             className="primary su-btn"
             onClick={() => {
