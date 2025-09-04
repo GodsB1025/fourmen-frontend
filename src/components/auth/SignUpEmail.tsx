@@ -30,7 +30,10 @@ const SignUpEmail = ({
         <div className="su-actions">
             <button 
                 className='su-btn'
-                onClick={goPrev}
+                onClick={()=> {
+                    setF({...f,email:""})
+                    goPrev()
+                }}
             >
                 <IconLongArrowLeft/>
             </button>

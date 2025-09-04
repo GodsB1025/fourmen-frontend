@@ -1,7 +1,7 @@
 import React from 'react'
 import TextInput from '../common/TextInput';
 import type { Form, } from '../../types/auth';
-import { IconLongArrowLeft, IconLongArrowRight } from '../../assets/icons';
+import { IconLongArrowRight } from '../../assets/icons';
 
 interface SignUpInfoProps {
     f: Form,
@@ -94,9 +94,6 @@ const SignUpInfo = ({
           />
         </div>
         <div className="su-actions">
-          <button className='su-btn' onClick={goPrev}>
-            <IconLongArrowLeft/>
-          </button>
           <button
             className="primary su-btn"
             disabled={busy || !isFull}
