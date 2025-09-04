@@ -2,7 +2,6 @@
 .action-button {
     width: 30%;
     height: 40px;
-    /* margin-top: 20px; */
     border: none;
     border-radius: 2rem;
     background-color: #f2f2f2;
@@ -10,21 +9,26 @@
     font-size: 16px;
     font-weight: 500;
     cursor: pointer;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    transition: 
+        background-color 0.2s ease,
+        border 0.2s ease,
+        color 0.2s ease;
 }
 
 /* 비활성화 상태일 때의 커서 모양 */
 .action-button:disabled {
-    cursor: not-allowed;
+    cursor: auto;
 }
 
 /* 활성화 상태 (.active 클래스 추가 시) */
 .action-button.active {
-    background-color: #4b52ff;
-    color: #ffffff;
+    background-color: var(--primary);
+    color: var(--text-btn);
 }
 
 /* 활성화된 버튼에 마우스를 올렸을 때 효과 */
 .action-button.active:hover {
-    background-color: #424ac2;
+    border: 1px solid var(--primary);
+    background-color: var(--primary-hover);
+    color: var(--primary)
 }

@@ -24,7 +24,7 @@
 .signin-title {
     font-size: 28px;
     font-weight: 600;
-    color: #222;
+    color: var(--text);
     margin-bottom: 40px;
 }
 

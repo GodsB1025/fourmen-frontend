@@ -31,7 +31,11 @@ const SignUpAuthCode = ({
                 <button className='su-btn' onClick={goPrev}>
                     <IconLongArrowLeft/>
                 </button>
-                <button className="primary su-btn" disabled={busy} onClick={handleClick}>
+                <button 
+                    className="primary su-btn" 
+                    disabled={busy || f.code.length!==6} 
+                    onClick={handleClick}
+                >
                     <IconLongArrowRight/>
                 </button>
             </div>

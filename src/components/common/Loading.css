@@ -7,7 +7,7 @@
     height: 100vh;
 
     /* 반투명한 흰색 배경과 블러 효과 */
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: var(--header-bg);
     backdrop-filter: blur(3px);
 
     /* 내용을 중앙 정렬 */
@@ -27,12 +27,12 @@
     margin-top: 20px;
     font-size: 16px;
     font-weight: 500;
-    color: #333;
+    color: var(--text);
 }
 
 /* 간단한 CSS 스피너 애니메이션 */
 .loading-spinner {
-    border: 5px solid #f3f3f3; /* Light grey */
+    border: 5px solid var(--header-bg); /* Light grey */
     border-top: 5px solid #3899ec; /* Blue */
     border-radius: 50%;
     width: 50px;

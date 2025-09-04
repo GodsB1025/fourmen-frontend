@@ -59,9 +59,10 @@ export default function SignupWizard() {
   }, [step, f.type]);
 
   async function handleSendEmail() {
-    setErr(null);
+    // goNext();
 
-    // 필요 시 실제 발송 로직
+    // ----------------- 실제 발송 로직 -------------------
+    setErr(null);
     if (!/^\S+@\S+\.\S+$/.test(f.email)) { 
       setErr("이메일 형식이 올바르지 않습니다."); 
       return; 
@@ -81,11 +82,14 @@ export default function SignupWizard() {
   }
 
   async function handleVerifyCode() {
+    // goNext();
+
+    // ----------------- 실제 발송 로직 -------------------
+    setErr(null);
     if (!/^\d{6}$/.test(f.code)) {
       setErr("인증코드는 6자리 숫자입니다.");
       return;
     }
-    setErr(null);
     setBusy(true);
     try {
       await verifyEmailCode(f.email, f.code);
@@ -100,11 +104,11 @@ export default function SignupWizard() {
   }
 
   const handleSignUp = async () => {
+    // setStep(5)
+
+    // ----------------- 실제 발송 로직 -------------------
     setErr(null);
     setBusy(true);
-    console.log("회원가입 로직 실행")
-    setBusy(false)
-    setStep(5);
     try {
       const payload: SignupRequest = {
         email: f.email.trim(),
@@ -127,7 +131,7 @@ export default function SignupWizard() {
   return (
     <div className="su-wrap">
       <main className="su-card">
-        { step===5 && <IconCheck fillColor="#4B52FF" strokeColor="#fff"/> }
+        { step===5 && <IconCheck/> }
         <h1 className="su-title">{step !== 5 ? "회원가입" : "환영합니다!"}</h1>
 
         {/* 회색 카드: 모든 진행 중 단계(1~4)에서 노출 */}
@@ -179,6 +183,7 @@ export default function SignupWizard() {
             f={f}
             setF={setF}
             setErr={setErr}
+            busy={busy}
             goPrev={goPrev}
             goNext={goNext}
             goSignUp={handleSignUp}

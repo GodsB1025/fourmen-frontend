@@ -115,9 +115,9 @@
 
 /* --- Event Block Style (기본) --- */
 .profile-cal .fc-daygrid-event {
-    background-color: #dbeafe;
-    border: 1px solid #bfdbfe;
-    color: #4b52ff;
+    background-color: var(--header-bg);
+    border: 1px solid var(--line);
+    color: var(--primary);
     border-radius: 6px;
     padding: 3px 6px;
     font-size: 0.8rem;
