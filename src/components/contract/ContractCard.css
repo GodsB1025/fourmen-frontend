@@ -39,9 +39,9 @@
     /* 'contain'으로 이미지 전체가 왜곡 없이 보이도록 보장 */
     object-fit: contain;
 
-    border: 1px solid rgb(223, 223, 238);
+    border: 2px solid rgb(223, 223, 238);
     border-radius: 0.5rem;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 .card-item:hover .card-item__image {
     border: 2px solid rgb(75, 82, 255);
@@ -64,10 +64,13 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    color: #111827;
+    color: var(--text);
     transition: color 0.2s ease;
     line-height: 1;
 }
 .card-item:hover .card-item__title {
     color: #fff;
+}
+.card-item__date {
+    color: var(--muted);
 }

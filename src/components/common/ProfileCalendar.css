@@ -1,4 +1,10 @@
-/* --- Header Toolbar --- */
+.profile-cal {
+    --calender-today-bg: #e8f6ff;
+    --calender-number-text: #4e4e4e;
+    --fc-border-color: #ddd;
+    --fc-button-text-color: var(--text-btn);
+}
+
 .profile-cal .fc-header-toolbar {
     margin: 0 0 1.5rem !important;
     padding: 0 0.5rem;
@@ -16,13 +22,13 @@
 .profile-cal .fc-toolbar-title {
     font-size: 1.25rem !important;
     font-weight: 600 !important;
-    color: #1f2937;
+    color: var(--text);
 }
 .profile-cal .fc-button,
 .profile-cal .fc-button-primary {
-    background-color: #ffffff !important;
-    border: 1px solid #d1d5db !important;
-    color: #374151 !important;
+    background-color: var(--bg) !important;
+    border: 1px solid var(--line) !important;
+    color: var(--text) !important;
     box-shadow: none !important;
     transition: background-color 0.2s ease !important;
     padding: 0.5rem 1rem !important;
@@ -32,7 +38,8 @@
 }
 .profile-cal .fc-button-primary:not(:disabled):hover,
 .profile-cal .fc-button:not(:disabled):hover {
-    background-color: #f9fafb !important;
+    background-color: var(--primary) !important;
+    color: var(--primary-hover) !important;                                                                                                 
 }
 .profile-cal .fc-button-primary:disabled { opacity: 0.6; }
 .profile-cal .fc-button-group { gap: -1px; }
@@ -45,28 +52,31 @@
     border-top-right-radius: 8px !important;
     border-bottom-right-radius: 8px !important;
 }
-.profile-cal .fc-today-button { border-radius: 8px !important; }
+.profile-cal .fc-today-button { 
+    border-radius: 8px !important;
+}
 .profile-cal .fc-button-primary.fc-button-active {
-    background-color: #eef2ff !important;
-    border-color: #a5b4fc !important;
-    color: #3730a3 !important;
+    background-color: var(--primary) !important;
+    border-color: none !important;
+    color: var(--primary-hover) !important;
 }
 
 /* --- Main Calendar View --- */
 .profile-cal .fc-view-harness {
     border-radius: 12px;
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--line);
+    overflow: hidden;
 }
 .profile-cal .fc-col-header-cell {
-    background-color: #f9fafb;
-    color: #6b7280;
+    background-color: var(--line);
+    color: var(--text);
     font-size: 0.8rem;
     font-weight: 500;
     padding: 0.75rem 0;
     border-bottom-width: 1px !important;
 }
-.profile-cal .fc-daygrid-day { border-color: #f3f4f6; }
-.profile-cal .fc-day-today { background-color: #f0f9ff !important; }
+.profile-cal .fc-daygrid-day { border-color: var(--line); }
+.profile-cal .fc-day-today { background-color: var(--calender-today-bg) !important; }
 .profile-cal .fc-daygrid-day-frame {
     position: relative;
     min-height: 100px;
@@ -77,13 +87,13 @@
 .profile-cal .fc-daygrid-day-number {
     padding: 0.5rem;
     font-size: 0.875rem;
-    color: #374151;
+    color: var(--calender-number-text);
 }
 .profile-cal .fc-day-other .fc-daygrid-day-number { color: #9ca3af; }
 
 /* --- 가상요소 기반 +아이콘 (표시만) --- */
 .profile-cal .fc-daygrid-day.fc-day-no-events:hover .fc-daygrid-day-frame {
-    background-color: #f9fafb;
+    background-color: var(--bg);
 }
 .profile-cal .fc-day-no-events .fc-daygrid-day-frame::after {
     content: "";
@@ -93,8 +103,8 @@
     width: 24px;
     height: 24px;
     border-radius: 50%;
-    background-color: #ffffff;
-    border: 1px solid #e5e7eb;
+    background-color: var(--bg);
+    border: 1px solid var(--line);
     z-index: 3;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='12' y1='5' x2='12' y2='19'%3E%3C/line%3E%3Cline x1='5' y1='12' x2='19' y2='12'%3E%3C/line%3E%3C/svg%3E");
     background-position: center;
@@ -151,54 +161,58 @@
 
 /* --- Meeting vs Personal 색상(변수와 함께 강제) --- */
 .profile-cal .evt-meeting {
-  --fc-event-bg-color: #fff;
-  --fc-event-border-color: rgba(17, 17, 17, 0.5);
-  --fc-event-text-color: #111;
+    --fc-event-bg-color: #fff;
+    --fc-event-border-color: rgba(17, 17, 17, 0.5);
+    --fc-event-text-color: #111;
 
-  background: var(--fc-event-bg-color) !important;
-  border-color: var(--fc-event-border-color) !important;
-  color: var(--fc-event-text-color) !important;
+    background: var(--fc-event-bg-color) !important;
+    border-color: var(--fc-event-border-color) !important;
+    color: var(--fc-event-text-color) !important;
+    cursor: auto;
 }
 .profile-cal .evt-meeting .fc-event-title,
 .profile-cal .evt-meeting .fc-event-time,
 .profile-cal .evt-meeting .fc-event-main {
-  color: var(--fc-event-text-color) !important;
+    color: var(--fc-event-text-color) !important;
 }
 
 .profile-cal .evt-personal {
-  --fc-event-bg-color: #dbeafe;
-  --fc-event-border-color: #bfdbfe;
-  --fc-event-text-color: #4b52ff;
+    --fc-event-bg-color: #dbeafe;
+    --fc-event-border-color: #bfdbfe;
+    --fc-event-text-color: #4b52ff;
 
-  background: var(--fc-event-bg-color) !important;
-  border-color: var(--fc-event-border-color) !important;
-  color: var(--fc-event-text-color) !important;
+    background: var(--fc-event-bg-color) !important;
+    border-color: var(--fc-event-border-color) !important;
+    color: var(--fc-event-text-color) !important;
 }
 .profile-cal .evt-personal .fc-event-title,
 .profile-cal .evt-personal .fc-event-time,
 .profile-cal .evt-personal .fc-event-main,
 .profile-cal .evt-personal .fc-event-main {
-  color: var(--fc-event-text-color) !important;
+    color: var(--fc-event-text-color) !important;
 }
 
 .profile-cal .evt-meeting:hover {
-  background: #fff !important;
-  border-color: #000 !important;
+    background: var(--bg) !important;
+    border-color: var(--text) !important;
+}
+.profile-cal .evt-personal:hover {
+    border-color: var(--fc-event-border-color) !important;
+    background: var(--fc-event-bg-color) !important;
 }
 .profile-cal .evt-meeting .fc-daygrid-event-dot,
 .profile-cal .evt-meeting .fc-event-dot,
 .profile-cal .evt-meeting .fc-list-event-dot {
-  background: #111 !important;
-  border-color: #111 !important;
+    background: var(--fc-event-text-color) !important;
+    border-color: var(--fc-event-text-color) !important;
 }
 .profile-cal .evt-personal .fc-daygrid-event-dot,
 .profile-cal .evt-personal .fc-event-dot,
 .profile-cal .evt-personal .fc-list-event-dot {
-  background: #4b52ff !important;
-  border-color: #4b52ff !important;
+    background: var(--fc-event-text-color) !important;
+    border-color: var(--fc-event-text-color) !important;
 }
 
-/* --- More... link --- */
 .profile-cal .fc-daygrid-more-link {
     font-size: 0.75rem;
     font-weight: 500;
@@ -208,44 +222,62 @@
 }
 .profile-cal .fc-daygrid-more-link:hover { text-decoration: underline; }
 
+.profile-cal .fc-icon .fc-icon-chevron-right:hover::before {
+    color: var(--primary-hover);
+}
+
+
 /* --- Modal --- */
 .cal-modal { position: fixed; inset: 0; z-index: 50; }
 .cal-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.35); backdrop-filter: blur(4px); }
 .cal-dialog {
     position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
-    width: 520px; max-width: calc(100% - 32px); background: #fff; border-radius: 16px; overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.25); display: flex; flex-direction: column;
+    width: 520px; max-width: 
+    calc(100% - 32px); 
+    background: var(--bg); 
+    border-radius: 16px; 
+    overflow: hidden;
+    border: 1px solid var(--line);
+    display: flex; 
+    flex-direction: column;
 }
 .cal-dialog-head {
-    padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb;
+    padding: 1rem 1.5rem; border-bottom: 1px solid var(--line);
     display: flex; justify-content: space-between; align-items: center;
 }
-.cal-dialog-title { font-weight: 600; font-size: 1.125rem; }
+.cal-dialog-title { font-weight: 600; font-size: 1.125rem; color: var(--text); }
 .cal-x { border: none; background: transparent; font-size: 24px; line-height: 1; cursor: pointer; color: #6b7280; }
 .cal-dialog-body { padding: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem; }
 .cal-dialog-foot {
-    padding: 1rem 1.5rem; border-top: 1px solid #e5e7eb;
-    display: flex; justify-content: flex-end; gap: 8px; background-color: #f9fafb;
+    padding: 1rem 1.5rem; border-top: 1px solid var(--line);
+    display: flex; justify-content: flex-end; gap: 8px; background-color: var(--bg);
 }
 .cal-create { display: grid; gap: 1rem; }
 .cal-create-row { display: flex; flex-direction: column; gap: 0.5rem; }
-.cal-create-row label { font-size: 0.875rem; font-weight: 500; color: #374151; }
+.cal-create-row label { font-size: 0.875rem; font-weight: 500; color: var(--muted); }
 .cal-create-row input[type="text"],
 .cal-create-row input[type="date"],
 .cal-create-row input[type="time"] {
-    border: 1px solid #d1d5db; border-radius: 8px; padding: 8px 12px; outline: none; transition: all 0.2s ease;
+    background-color: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 8px; 
+    padding: 8px 12px; 
+    color: var(--text);
+    outline: none;
+    transition: all 0.2s ease;
 }
-.cal-create-row input:focus { border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.2); }
-.cal-empty { color: #6b7280; font-size: 14px; text-align: center; padding: 2rem; background-color: #f9fafb; border-radius: 8px; }
+.cal-create-row input:focus { border-color: #4B52FF; box-shadow: 0 0 0 2px rgba(59,130,246,0.2); }
+.cal-empty { color: #6b7280; font-size: 14px; text-align: center; padding: 2rem; background-color: var(--bg); border-radius: 8px; }
 .cal-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.75rem; }
-.cal-list-item { display: flex; justify-content: space-between; align-items: center; border: 1px solid #e5e7eb; border-radius: 10px; padding: 0.75rem 1rem; }
-.cal-title { font-weight: 500; }
+.cal-list-item { display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--line); border-radius: 10px; padding: 0.75rem 1rem; }
+.cal-title { font-weight: 500; color: var(--text) }
 
 /* --- Buttons --- */
-.cal-btn { border: 1px solid #d1d5db; background: #fff; border-radius: 8px; padding: 0.5rem 1rem; cursor: pointer; font-weight: 500; }
+.cal-modal .cal-actions { display: flex; gap: 0.5rem; }
+.cal-btn { border: 1px solid var(--line); background: var(--primary); border-radius: 8px; padding: 0.5rem 1rem; cursor: pointer; font-weight: 500; }
 .cal-btn:hover { background: #f9fafb; }
 .cal-btn[disabled] { opacity: 0.6; cursor: not-allowed; }
-.cal-primary { border-color: #3b82f6; background-color: #3b82f6; color: #fff; }
+.cal-primary { border-color: #4B52FF; background-color: #4B52FF; color: var(--primary); }
 .cal-primary:hover { background-color: #2563eb; }
 .cal-danger { border-color: #ef4444; color: #ef4444; }
 .cal-danger:hover { background-color: #fef2f2; }
@@ -256,11 +288,6 @@
   border-radius: 6px; background: #fff; color: #111; border: 1px solid #111;
 }
 
-/* hover 보정 */
-.profile-cal .evt-personal:hover {
-  border-color: rgba(75, 82, 255, 0.5) !important;
-  background: #dbeafe !important;
-}
 .profile-cal .fc-daygrid-block-event .fc-event-title::before {
   content: "";
   display: inline-block;
@@ -278,4 +305,22 @@
   height: 6px;
   margin: 0 6px 0 0; /* 제목과 간격 */
   border: none;      /* 기본 테마의 테두리 제거 */
+}
+
+@media (prefers-color-scheme: dark) {
+    .profile-cal {
+        --calender-today-bg:#202020;
+        --calender-number-text: #c2c2c2;
+        --fc-border-color: var(--line);
+    }
+    .profile-cal .evt-personal {
+        --fc-event-bg-color: #474747;
+        --fc-event-border-color: #6d6d6d;
+        --fc-event-text-color: var(--primary);
+    }
+    .profile-cal .evt-meeting {
+        --fc-event-bg-color: var(--bg);
+        --fc-event-border-color: rgba(241, 241, 241, 0.5);
+        --fc-event-text-color: var(--text);
+    }
 }

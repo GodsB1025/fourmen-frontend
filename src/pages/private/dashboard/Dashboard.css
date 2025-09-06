@@ -8,8 +8,8 @@
 }
 .dash-header {
     padding: 12px 0;
-    background-color: #ffffff;
-    border-bottom: 1px solid #e5e7eb;
+    background-color: var(--bg);
+    border-bottom: 1px solid var(--line);
     flex-shrink: 0;
 }
 .dash-body {
@@ -27,7 +27,7 @@
 
 /* --- ★★★ 프로필 페이지 신규 레이아웃 ★★★ --- */
 .profile-page-layout {
-    padding:    2rem;
+    padding: 2rem;
     display: flex;
     flex-direction: column;
     gap: 1.5rem; /* 상단과 하단(캘린더) 사이의 간격 */
@@ -49,9 +49,9 @@
 
 /* --- 공통 위젯/카드 스타일 --- */
 .profile-widget {
-    background-color: #ffffff;
+    background-color: var(--bg);
     border-radius: 16px;
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--line);
     padding: 1.5rem;
     display: flex;
     flex-direction: column;
@@ -64,9 +64,9 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    color: #1f2937;
+    color: var(--text);
     padding-bottom: 1rem;
-    border-bottom: 1px solid #f3f4f6;
+    border-bottom: 1px solid var(--line);
 }
 
 /* --- 프로필 정보 카드 (아바타 제거됨) --- */
@@ -88,17 +88,17 @@
 }
 
 .detail-value {
-    color: #111827;
+    color: var(--text);
     font-weight: 600;
     padding: 0.25rem 0.75rem;
-    background-color: #f3f4f6;
+    background-color: var(--line);
     border-radius: 8px;
 }
 
 /* --- 캘린더 위젯 (하단 전체 영역) --- */
 .calendar-full-widget {
-    background-color: #ffffff;
+    background-color: var(--bg);
     border-radius: 16px;
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--line);
     padding: 1.5rem;
 }

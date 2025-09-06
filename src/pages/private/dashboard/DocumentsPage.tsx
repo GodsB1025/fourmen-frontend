@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import DatePicker from "react-datepicker";
 import Calendar from "react-calendar";
-import { format } from "date-fns";
+import { endOfDay, endOfMonth, format, isWithinInterval, parseISO, startOfMonth } from "date-fns";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -194,6 +194,7 @@ export default function DocumentsPage() {
     const [isMinuteLoading, setIsMinuteLoading] = useState(false);
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
+    const [activeMonth, setActiveMonth] = useState(new Date());
 
     const tabOptions = [
         { value: "my", label: "내 문서" },
@@ -248,35 +249,72 @@ export default function DocumentsPage() {
     }, [docs, activeTab]);
 
     const filteredDocs = useMemo(() => {
+        // 1. 활성 탭이 "내 문서"가 아니거나 'docs' 데이터가 없으면 null 반환
         if (activeTab !== "my" || !docs) return null;
+        
+        // 2. Optional Chaining과 Nullish Coalescing으로 안전하게 데이터 추출 (undefined 방지)
+        const meetingsWithDocs = docs?.meetingsWithDocs ?? [];
+        const standaloneContracts = docs?.standaloneContracts ?? [];
+
+        // 3. 날짜 필터링을 위한 변수 초기화
+        let dateFilteredMeetingsWithDocs = meetingsWithDocs;
+        let dateFilteredStandaloneContracts = standaloneContracts;
+
+        // 4. 사용자가 선택한 날짜 범위(range)가 유효할 경우, 날짜 필터링 수행
+        if (range[0] && range[1]) {
+            // 4-1. 회의록/문서 날짜 필터링
+            dateFilteredMeetingsWithDocs = meetingsWithDocs.filter(dailyDocs => {
+                const currentDate = parseISO(dailyDocs.date); // 'yyyy-MM-dd' 문자열을 Date 객체로 변환
+                return isWithinInterval(currentDate, { start: range[0]!, end: endOfDay(range[1]!) });
+            });
+            
+            // 4-2. 독립 계약서 날짜 필터링
+            dateFilteredStandaloneContracts = standaloneContracts.filter(contract => {
+                if (!contract.createdAt) return false;
+                const currentDate = new Date(contract.createdAt);
+                return isWithinInterval(currentDate, { start: range[0]!, end: endOfDay(range[1]!) });
+            });
+        }
+
+        // 5. 검색어 필터링 준비
         const lowercasedQuery = searchQuery.toLowerCase().trim();
-        if (!lowercasedQuery) return docs;
 
-        if (docs.meetingsWithDocs) {
-            const filteredMeetingsWithDocs = docs.meetingsWithDocs
-                .map((dailyDocs) => {
-                    const filteredMeetings = dailyDocs.meetings.filter((meeting) => {
-                        if (meeting.meetingTitle.toLowerCase().includes(lowercasedQuery)) return true;
-                        return meeting.minutes?.some(
-                            (minute) =>
-                                minute.type.toLowerCase().includes(lowercasedQuery) ||
-                                minute.contracts?.some((contract) => contract.title.toLowerCase().includes(lowercasedQuery))
-                        );
-                    });
-                    return { ...dailyDocs, meetings: filteredMeetings };
-                })
-                .filter((dailyDocs) => dailyDocs.meetings.length > 0);
-
-            const filteredStandaloneContracts = docs.standaloneContracts?.filter((contract) =>
-                contract.title.toLowerCase().includes(lowercasedQuery)
-            );
-
+        // 6. 검색어가 없으면, 날짜 필터링 결과만 즉시 반환
+        if (!lowercasedQuery) {
             return {
-                meetingsWithDocs: filteredMeetingsWithDocs,
-                standaloneContracts: filteredStandaloneContracts,
+                meetingsWithDocs: dateFilteredMeetingsWithDocs,
+                standaloneContracts: dateFilteredStandaloneContracts,
             };
         }
-    }, [docs, searchQuery, activeTab]);
+
+        // 7. 검색어가 있으면, 날짜 필터링된 결과에 대해 추가로 검색어 필터링 수행
+        // 7-1. 회의록/문서 검색어 필터링
+        const searchFilteredMeetingsWithDocs = dateFilteredMeetingsWithDocs
+            .map((dailyDocs) => {
+                const filteredMeetings = dailyDocs.meetings.filter((meeting) => {
+                    if (meeting.meetingTitle.toLowerCase().includes(lowercasedQuery)) return true;
+                    return meeting.minutes?.some(
+                        (minute) =>
+                            minute.type.toLowerCase().includes(lowercasedQuery) ||
+                            minute.contracts?.some((contract) => contract.title.toLowerCase().includes(lowercasedQuery))
+                    );
+                });
+                return { ...dailyDocs, meetings: filteredMeetings };
+            })
+            .filter((dailyDocs) => dailyDocs.meetings.length > 0);
+
+        // 7-2. 독립 계약서 검색어 필터링
+        const searchFilteredStandaloneContracts = dateFilteredStandaloneContracts.filter((contract) =>
+            contract.title.toLowerCase().includes(lowercasedQuery)
+        );
+
+        // 8. 최종적으로 필터링된 두 종류의 데이터를 모두 반환
+        return {
+            meetingsWithDocs: searchFilteredMeetingsWithDocs,
+            standaloneContracts: searchFilteredStandaloneContracts,
+        };
+        
+    }, [docs, searchQuery, activeTab, range]); 
 
     const filteredSharedMinutes = useMemo(() => {
         if (activeTab !== "shared") return [];
@@ -292,13 +330,8 @@ export default function DocumentsPage() {
         setError(null);
 
         if (activeTab === "my") {
-            if (!range[0] || !range[1]) {
-                setLoading(false);
-                setDocs(null);
-                return;
-            }
-            const startDate = format(range[0], "yyyy-MM-dd");
-            const endDate = format(range[1], "yyyy-MM-dd");
+            const startDate = format(startOfMonth(activeMonth), "yyyy-MM-dd");
+            const endDate = format(endOfMonth(activeMonth), "yyyy-MM-dd");
             fetchDocuments(startDate, endDate)
                 .then(setDocs)
                 .catch(() => setError("문서 목록을 불러오는 데 실패했습니다."))
@@ -309,7 +342,7 @@ export default function DocumentsPage() {
                 .catch(() => setError("공유받은 문서 목록을 불러오는 데 실패했습니다."))
                 .finally(() => setLoading(false));
         }
-    }, [range, activeTab]);
+    }, [activeMonth, activeTab]);
 
     return (
         <div className="docs-page-layout">
@@ -341,6 +374,11 @@ export default function DocumentsPage() {
                                     locale="ko"
                                     onChange={(date) => {
                                         if (date instanceof Date) setRange([date, date]);
+                                    }}
+                                    onActiveStartDateChange={({ activeStartDate }) => {
+                                        if (activeStartDate) {
+                                            setActiveMonth(activeStartDate);
+                                        }
                                     }}
                                     formatDay={(_locale, date) => format(date, "d")}
                                     tileContent={({ date, view }) => {

@@ -1,5 +1,8 @@
 
 .member-list {
+    --member-item-hover: #f9fafb;
+    --is-me-bg: #f0f9ff;
+
     list-style: none;
     padding: 0;
     margin: 0;
@@ -7,13 +10,14 @@
     flex-direction: column;
 }
 
-.member-item {
+.member-list .member-item {
     /* ✅ display: flex를 사용하고, 자식 요소들의 비율을 조정하여 레이아웃을 개선합니다. */
     display: flex;
     align-items: center;
     gap: 1rem; /* 요소 사이의 간격 */
     padding: 1rem 1.5rem;
-    border-bottom: 1px solid #f3f4f6;
+    border-bottom: 1px solid var(--line);
+    border-radius: 0px;
     transition: background-color 0.2s;
 }
 
@@ -22,12 +26,12 @@
 }
 
 .member-item:not(.is-me):hover {
-    background-color: #f9fafb;
+    background-color: var(--member-item-hover);
 }
 
 /* 자기 자신일 경우 배경색으로 강조 */
 .member-item.is-me {
-    background-color: #f0f9ff;
+    background-color: var(--is-me-bg);
 }
 
 .member-info {
@@ -40,7 +44,7 @@
 
 .member-name {
     font-weight: 600;
-    color: #111827;
+    color: var(--text);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -62,7 +66,7 @@
     padding: 0.1rem 0.5rem;
     font-size: 0.7rem;
     font-weight: 700;
-    background-color: #3b82f6;
+    background-color: #4B52FF;
     color: white;
     border-radius: 999px;
     vertical-align: middle;
@@ -115,18 +119,19 @@
 /* 권한 관리 버튼 스타일 */
 .manage-role-btn {
     padding: 0.4rem 0.8rem;
-    border: 1px solid #d1d5db;
+    border: 1px solid var(--line);
     border-radius: 6px;
-    background-color: #ffffff;
+    background-color: var(--bg);
+    color: var(--text);
     font-size: 0.875rem;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s;
 }
 .manage-role-btn:hover {
-    background-color: #f9fafb;
-    border-color: #a5b4fc;
-    color: #4f46e5;
+    background-color: var(--primary);
+    border-color: var(--primary-hover);
+    color: var(--primary-hover);
 }
 
 .action-placeholder {
@@ -139,4 +144,11 @@
     align-items: center;
     min-height: 200px;
     color: #6b7280;
+}
+
+@media (prefers-color-scheme: dark) {
+    .member-list {
+        --member-item-hover: #202020;
+        --is-me-bg: #1b1b27;
+    }
 }

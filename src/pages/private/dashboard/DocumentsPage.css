@@ -1,15 +1,19 @@
 /* --- 전체 페이지 레이아웃 --- */
 .docs-page-layout {
+    --accordion-hover-bg: #f9fafb;
+    --accordion-item-count: #eef2ff;
+    --docs-page-bg: #f8fafc;
+
     display: grid;
     grid-template-columns: 280px 1fr;
     gap: 2rem;
-    background-color: #f8fafc;
+    background-color: var(--docs-page-bg);
 }
 
 /* --- 왼쪽 사이드바 (필터) --- */
 .docs-sidebar {
-    background-color: #ffffff;
-    border-right: 1px solid #e5e7eb;
+    background-color: var(--bg);
+    border-right: 1px solid var(--line);
     padding: 2rem 1.5rem;
     position: sticky;
     top: 0; /* 스크롤 시 상단에 고정 */
@@ -24,7 +28,7 @@
     font-size: 1.25rem;
     font-weight: 700;
     margin-bottom: 0;
-    color: #111827;
+    color: var(--text);
 }
 
 .filter-group {
@@ -45,24 +49,30 @@
     z-index: 20;
 }
 
+.react-datepicker__header h2 {
+    color: #e0e0e0;
+}
 .react-datepicker__current-month {
-    color: #fff;
+    color: var(--bg);
 }
 .react-datepicker__close-icon::after {
     overflow: hidden;
-    background-color: #000;
+    background-color: var(--text);
+    color: var(--bg);
 }
 
 .filter-group label {
     font-weight: 500;
-    color: #4b5563;
+    color: var(--muted);
     font-size: 0.9rem;
 }
 
 .datepicker-input {
     width: 100%;
     padding: 0.75rem;
-    border: 1px solid #d1d5db;
+    border: 1px solid var(--line);
+    background-color: var(--docs-page-bg);
+    color: var(--text);
     border-radius: 8px;
     font-size: 0.9rem;
     cursor: pointer;
@@ -70,7 +80,7 @@
 
 /* --- 달력 스타일 --- */
 .calendar-container {
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--line);
     border-radius: 12px;
     padding: 8px;
 }
@@ -79,14 +89,23 @@
     width: 100%;
     border: none;
     font-family: inherit;
+    background-color: var(--bg);
 }
 .react-calendar__navigation button {
     min-width: 30px;
     font-size: 1rem;
 }
+.react-calendar__navigation__arrow {
+    color: var(--text);
+}
 .react-calendar__navigation__label {
+    color: var(--text);
     font-weight: 600;
     font-size: 0.9rem;
+}
+.react-calendar__navigation__arrow:hover,
+.react-calendar__navigation__label:hover {
+    color: var(--bg);
 }
 .react-calendar__month-view__weekdays__weekday {
     text-align: center;
@@ -95,6 +114,9 @@
     color: #6b7280;
     text-decoration: none;
     padding-bottom: 0.5em;
+}
+.react-calendar__month-view__days__day {
+    color: var(--text);
 }
 .react-calendar__tile {
     border-radius: 8px;
@@ -106,7 +128,7 @@
     padding: 2px;
 }
 .react-calendar__tile--now {
-    background-color: #f0f9ff;
+    background-color: #9ed8ff4b;
     color: #0284c7;
 }
 .react-calendar__tile:enabled:hover,
@@ -127,10 +149,11 @@
 .search-container {
     width: 100%;
 }
-.search-input {
+.search-container > .search-input {
     width: 100%;
     padding: 0.75rem;
-    border: 1px solid #d1d5db;
+    background-color: var(--docs-page-bg);
+    border: 1px solid var(--line);
     border-radius: 8px;
     font-size: 0.9rem;
     outline: none;
@@ -154,7 +177,7 @@
 .section-title {
     font-size: 1.5rem;
     font-weight: 700;
-    color: #1f2937;
+    color: var(--text);
     margin-bottom: 1.5rem;
     padding-bottom: 0.75rem;
     border-bottom: 1px solid var(--line);
@@ -181,8 +204,8 @@
 
 .accordion-item,
 .accordion-sub-item {
-    background-color: #ffffff;
-    border: 1px solid #e5e7eb;
+    background-color: var(--bg);
+    border: 1px solid var(--line);
     border-radius: 12px;
     overflow: hidden;
 }
@@ -195,16 +218,16 @@
     padding: 1rem 1.25rem;
     font-size: 1rem;
     font-weight: 600;
-    color: #1f2937;
+    color: var(--text);
     text-align: left;
-    background-color: #ffffff;
+    background-color: var(--bg);
     border: none;
     cursor: pointer;
     transition: background-color 0.2s;
 }
 
 .accordion-header:hover {
-    background-color: #f9fafb;
+    background-color: var(--accordion-hover-bg);
 }
 
 .accordion-header > span:first-of-type {
@@ -219,15 +242,15 @@
 .item-count {
     font-size: 0.8rem;
     font-weight: 500;
-    background-color: #eef2ff;
-    color: #4338ca;
+    background-color: var(--accordion-item-count);
+    color: var(--primary);
     padding: 0.2rem 0.6rem;
     border-radius: 999px;
 }
 
 .accordion-content {
     padding: 0.5rem 1.25rem 1.25rem;
-    border-top: 1px solid #f3f4f6;
+    border-top: 1px solid var(--line);
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
@@ -241,10 +264,10 @@
     padding: 0.75rem 1rem;
     font-size: 0.9rem;
     font-weight: 500;
-    background-color: #f9fafb;
+    background-color: var(--bg);
 }
 .accordion-header.sub-header:hover {
-    background-color: #f0f3ff;
+    background-color: var(--accordion-hover-bg);
 }
 .accordion-header.sub-header svg {
     color: #9ca3af;
@@ -261,7 +284,7 @@
     padding: 0.75rem 1rem;
     font-size: 0.9rem;
     color: #374151;
-    background-color: #f9fafb;
+    background-color: var(--docs-page-bg);
     border-radius: 8px;
 }
 .document-leaf.clickable {
@@ -269,8 +292,8 @@
     transition: background-color 0.2s, color 0.2s;
 }
 .document-leaf.clickable:hover {
-    background-color: #eef2ff;
-    color: #4338ca;
+    background-color: var(--accordion-hover-bg);
+    color: var(--primary);
 }
 
 .document-leaf svg {
@@ -278,7 +301,7 @@
     flex-shrink: 0;
 }
 .document-leaf.clickable:hover svg {
-    color: #6366f1;
+    color: var(--primary);
 }
 
 .no-sub-item {
@@ -296,8 +319,8 @@
 }
 
 .document-leaf.standalone {
-    background-color: #ffffff;
-    border: 1px solid #e5e7eb;
+    background-color: var(--docs-page-bg);
+    border: 1px solid var(--line);
     border-radius: 12px;
     padding: 1rem;
     display: flex; /* flex로 변경하여 내부 아이템 정렬 */
@@ -312,6 +335,7 @@
     flex-grow: 1; /* 제목/날짜 영역이 남은 공간 차지 */
 }
 .document-leaf.standalone .title {
+    color: var(--muted);
     font-weight: 600;
 }
 .document-leaf.standalone .date {
@@ -328,9 +352,9 @@
     height: 300px;
     color: #6b7280;
     font-size: 1rem;
-    background-color: #ffffff;
+    background-color: var(--docs-page-bg);
     border-radius: 16px;
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--line);
 }
 
 /* --- 회의록 상세 보기 모달 --- */
@@ -348,13 +372,13 @@
 }
 
 .document-modal-content {
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: var(--modal-bg);
     backdrop-filter: blur(15px);
     border-radius: 16px;
     width: 700px;
     max-width: 90%;
     max-height: 80vh;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    /* box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); */
     display: flex;
     flex-direction: column;
 }
@@ -364,7 +388,8 @@
     justify-content: space-between;
     align-items: center;
     padding: 1rem 1.5rem;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid var(--line);
+    color: var(--text)
 }
 .document-modal-header h2 {
     margin: 0;
@@ -383,7 +408,6 @@
     align-items: center;
     gap: 1rem;
     padding: 0.75rem 1.5rem;
-    background-color: #f9fafb;
 }
 .badge {
     font-size: 0.8rem;
@@ -416,14 +440,15 @@
 
 /* react-markdown 스타일 */
 .markdown-body {
+    --markdown-body: #374151;
     line-height: 1.7;
-    color: #374151;
+    color: var(--markdown-body)
 }
 .markdown-body h1,
 .markdown-body h2,
 .markdown-body h3 {
     font-weight: 700;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid var(--muted);
     padding-bottom: 0.5em;
     margin-top: 1.5em;
     margin-bottom: 1em;
@@ -447,6 +472,9 @@
 }
 .markdown-body li {
     margin-bottom: 0.5em;
+}
+.markdown-body hr {
+    border-color: var(--muted);
 }
 .markdown-body blockquote {
     border-left: 4px solid #d1d5db;
@@ -525,7 +553,8 @@
 
 /* --- 공유 모달 --- */
 .share-modal-content {
-    background: white;
+    background: var(--modal-bg);
+    backdrop-filter: blur(20px);
     border-radius: 16px;
     width: 450px;
     max-width: 90%;
@@ -542,19 +571,19 @@
 
 .share-modal-footer {
     padding: 1rem 1.5rem;
-    border-top: 1px solid #e5e7eb;
+    border-top: 1px solid var(--line);
     display: flex;
     justify-content: flex-end;
     gap: 0.75rem;
 }
 
-.member-list {
+.share-modal-body .member-list {
     list-style: none;
     padding: 0;
     margin: 0;
 }
 
-.member-item {
+.share-modal-body .member-item {
     display: flex;
     align-items: center;
     gap: 0.75rem;
@@ -565,31 +594,31 @@
     transition: background-color 0.2s;
 }
 
-.member-item:hover {
-    background-color: #f3f4f6;
+.share-modal-body .member-item:hover {
+    background-color: var(--accordion-hover-bg);
 }
 
-.member-item.selected {
-    background-color: #eef2ff;
+.share-modal-body .member-item.selected {
+    background-color: var(--accordion-hover-bg);
 }
 
-.member-info {
+.share-modal-body .member-info {
     display: flex;
     flex-direction: column;
 }
 
-.member-name {
+.share-modal-body .member-name {
     font-weight: 600;
 }
 
-.member-email {
+.share-modal-body .member-email {
     font-size: 0.8rem;
     color: #6b7280;
 }
 
 .document-modal-footer {
     padding: 1rem 1.5rem;
-    border-top: 1px solid #e5e7eb;
+    border-top: 1px solid var(--line);
     display: flex;
     justify-content: flex-end;
 }
@@ -599,9 +628,10 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.5rem 1rem;
-    border: 1px solid #d1d5db;
+    border: 1px solid var(--line);
+    color: var(--text);
     border-radius: 8px;
-    background-color: white;
+    background-color: var(--modal-bg);
     cursor: pointer;
     font-weight: 500;
     transition: all 0.2s;
@@ -659,4 +689,15 @@
 .status-badge.completed {
     background-color: #dcfce7; /* 초록색 배경 */
     color: #166534; /* 어두운 초록색 텍스트 */
+}
+
+@media (prefers-color-scheme: dark) {
+    .docs-page-layout {
+        --docs-page-bg: #1f1f1f;
+        --accordion-hover-bg: #313131;
+        --accordion-item-count: #5f5f5f;
+    }
+    .markdown-body {
+        --markdown-body: #94979c;
+    }
 }
