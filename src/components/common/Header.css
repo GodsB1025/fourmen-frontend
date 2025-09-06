@@ -4,17 +4,20 @@
   z-index: 100;
   background: var(--header-bg);
   border-bottom: 1px solid var(--border); /* 하단 얇은 라인 */
-  backdrop-filter: saturate(180%) blur(15px); /* 살짝 또렷하게 */
+  backdrop-filter: saturate(180%) blur(15px); /* 블러 효과 */
 }
 
 .inner {
   height: var(--height);
-  width: 1120px;
+  /* [변경] width를 max-width로 변경하여 유연하게 만듦 */
+  max-width: 1120px;
+  width: 100%; /* 화면 너비에 꽉 차도록 설정 */
   margin: 0 auto;
   padding: 0 var(--padx);
   display: flex;
   align-items: center;
   justify-content: space-between;
+  box-sizing: border-box; /* padding을 너비에 포함시켜 계산을 용이하게 함 */
 }
 
 .brand {
@@ -26,7 +29,7 @@
   line-height: 1;
 }
 
-/* 링크/버튼 공통 느낌 맞추기 */
+/* 링크/버튼 공통 스타일 */
 .loginLink,
 .loginBtn {
   font-size: 14px;
@@ -40,6 +43,7 @@
   padding: 10px 17px;
   cursor: pointer;
   transition: background-color 0.2s ease, color 0.2s ease, border 0.2s ease;
+  white-space: nowrap; /* 버튼 텍스트가 줄바꿈되지 않도록 함 */
 }
 
 .loginLink:hover,
@@ -47,4 +51,43 @@
   background-color: var(--primary-hover);
   color: var(--primary);
   border: 1px solid var(--primary);
+}
+
+/* ----------------- 반응형 코드 추가 ----------------- */
+
+/* 태블릿 및 작은 데스크탑 (1120px 이하) */
+@media (max-width: 1120px) {
+  .inner {
+    /* 이미 width: 100%이므로 별도 변경 없이 좌우 패딩만 유지됨 */
+    /* 필요하다면 이 구간에서 --padx 값을 변경할 수 있습니다. */
+    /* 예: --padx: 24px; */
+  }
+}
+
+/* 모바일 (768px 이하) */
+@media (max-width: 768px) {
+  :root {
+    /* 모바일에서 헤더 높이를 살짝 줄여 화면 공간 확보 */
+    --height: 52px;
+  }
+
+  .brand {
+    /* 모바일에서 브랜드 로고 폰트 크기 살짝 줄이기 */
+    font-size: 15px;
+  }
+  
+  .loginLink,
+  .loginBtn {
+    /* 모바일에서 버튼 크기 및 폰트 크기 조절 */
+    font-size: 13px;
+    padding: 8px 14px;
+  }
+}
+
+/* 작은 모바일 (480px 이하) */
+@media (max-width: 480px) {
+  :root {
+    /* 작은 화면에서 좌우 여백을 줄여 콘텐츠 공간 확보 */
+    --padx: 12px;
+  }
 }

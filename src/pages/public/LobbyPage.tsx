@@ -1,6 +1,6 @@
 import { type JSX, useEffect } from 'react';
 import Footer from '../../components/common/Footer';
-import mans from '../../assets/imgs/man.png'
+import mans from '../../assets/imgs/mens.png'
 import { useNavigate } from "react-router-dom";
 import './LobbyPage.css';
 import { useAuthStore } from '../../stores/authStore';

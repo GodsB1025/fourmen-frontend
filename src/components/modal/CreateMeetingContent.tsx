@@ -121,6 +121,7 @@ const CreateMeetingContent = () => {
                         dateFormat="yyyy년 MM월 dd일 HH:mm" // input에 표시될 날짜 포맷
                         className="custom-datepicker-input" // CSS 클래스 적용
                         disabled={busy}
+                        portalId="root"
                     />
                 </div>
 

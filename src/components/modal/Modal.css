@@ -20,7 +20,7 @@
     max-height: calc(100vh - 4rem);
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    /* overflow: visible; */
     min-width: 720px;
     max-width: 90vw;
     resize: both;
@@ -77,4 +77,5 @@
     height: 0;
     border-bottom: 20px solid #303030;
     border-left: 20px solid transparent;
+    border-bottom-right-radius: 5px;
 }
