@@ -18,7 +18,6 @@ const SignUpInfo = ({
     setF,
     setErr,
     busy,
-    goPrev,
     goNext,
     goSignUp,
 }: SignUpInfoProps) => {
