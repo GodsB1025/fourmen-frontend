@@ -91,3 +91,27 @@
     --padx: 12px;
   }
 }
+
+/* --- 테마 버튼 스타일 추가 --- */
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* 버튼 사이 간격 */
+}
+
+.theme-toggle-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--header-fg);
+  transition: background-color 0.2s ease;
+}
+
+.theme-toggle-btn:hover {
+  background-color: var(--border);
+}
