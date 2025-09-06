@@ -307,6 +307,23 @@
   border: none;      /* 기본 테마의 테두리 제거 */
 }
 
+:root.dark .profile-cal {
+    --calender-today-bg:#202020;
+    --calender-number-text: #c2c2c2;
+    --fc-border-color: var(--line);
+}
+:root.dark .profile-cal .evt-personal {
+    --fc-event-bg-color: #474747;
+    --fc-event-border-color: #6d6d6d;
+    --fc-event-text-color: var(--primary);
+}
+:root.dark .profile-cal .evt-meeting {
+    --fc-event-bg-color: var(--bg);
+    --fc-event-border-color: rgba(241, 241, 241, 0.5);
+    --fc-event-text-color: var(--text);
+}
+
+/*
 @media (prefers-color-scheme: dark) {
     .profile-cal {
         --calender-today-bg:#202020;
@@ -324,3 +341,4 @@
         --fc-event-text-color: var(--text);
     }
 }
+*/

@@ -8,17 +8,17 @@
 }
 
 /* --- 메인 폼 스타일 --- */
-.form-group {
+.create-meeting-container .form-group {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
 }
-.form-group label {
+.create-meeting-container .form-group label {
     font-weight: 500;
     font-size: 0.875rem;
-    color: #374151;
+    color: var(--markdown-body);
 }
-.form-input:focus {
+.create-meeting-container .form-input:focus {
     border-color: #4B52FF;
     box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
 }

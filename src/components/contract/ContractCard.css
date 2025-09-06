@@ -51,7 +51,7 @@
 .card-item__body {
     padding: 0.5rem 1rem;
     text-align: center;
-    border: 1px solid #cbcdd1;
+    border: 1px solid var(--line);
     border-radius: 2rem;
     transition: background-color 0.2s ease;
 }
