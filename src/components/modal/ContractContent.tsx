@@ -272,13 +272,14 @@ const ContractContent: React.FC<ContractContentProps> = ({ templateId, eformsign
                                                 {minutesLoading.detail ? (
                                                     <p>회의록 목록 로딩 중...</p>
                                                 ) : (
-                                                    <div>
+                                                    <div style={{display: "flex", flexDirection: "column", gap: "0.45rem"}}>
                                                         {minutesOfExpandedMeeting.length > 0 ? (
                                                             minutesOfExpandedMeeting.map((minute) => (
                                                                 <div
                                                                     key={minute.minuteId}
                                                                     className="minute-item"
-                                                                    onClick={() => handleMinuteClick(meeting.meetingId, minute.minuteId)}>
+                                                                    onClick={() => handleMinuteClick(meeting.meetingId, minute.minuteId)}
+                                                                >
                                                                     {minute.type === "AUTO" && (
                                                                         <div>
                                                                             <IconAutoREC />

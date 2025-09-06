@@ -3,7 +3,7 @@
 {
   color: var(--text);
   padding: 15px 15px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--line-input);
   border-radius: 1rem;
   width: 100%;
   font-size: 1.2rem;

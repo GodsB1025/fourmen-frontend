@@ -146,14 +146,16 @@
     color: #6b7280;
 }
 
+:root.dark .member-list {
+    --member-item-hover: #202020;
+    --is-me-bg: #1b1b27;
+}
+
+/*
 @media (prefers-color-scheme: dark) {
     .member-list {
         --member-item-hover: #202020;
         --is-me-bg: #1b1b27;
     }
 }
-
-:root.dark .member-list {
-    --member-item-hover: #202020;
-    --is-me-bg: #1b1b27;
-}
+*/
