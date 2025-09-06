@@ -28,7 +28,7 @@ const PrivateLobbyPage = () => {
     const [isPageReady, setIsPageReady] = useState(false);
 
     const user = useAuthStore((state)=>state.user)
-    console.log(user)
+    // console.log(user)
 
     useEffect(() => {
         // 브라우저가 다음 프레임을 그릴 준비가 되었을 때 상태를 업데이트합니다.

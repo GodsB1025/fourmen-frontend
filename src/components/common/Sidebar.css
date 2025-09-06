@@ -53,15 +53,17 @@
     color: var(--text);
     border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15 ease;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
     box-shadow: none;
 }
-.nav-item:hover {
+.nav-item:not(.is-active-sidebar):hover {
     border-color: var(--primary);
     background-color: var(--primary-hover);
+    color: var(--text);
 }
 .nav-item.is-active-sidebar {
     background-color: var(--primary);
+    border-color: var(--primary);
     color: var(--text-btn);
 }
 .icon-sidebar {
