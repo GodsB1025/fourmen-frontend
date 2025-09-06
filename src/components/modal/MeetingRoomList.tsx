@@ -5,7 +5,7 @@ const iconUser = () => {
     return(
         <svg 
             xmlns="http://www.w3.org/2000/svg" width="1.1rem" height="1.1rem" viewBox="0 0 24 24" 
-            fill="none" stroke="#111827" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
             className="lucide lucide-user-round-icon lucide-user-round"
         >
                 <circle cx="12" cy="8" r="5"/>

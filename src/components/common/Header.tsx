@@ -5,6 +5,7 @@ import { PATH } from "../../types/paths";
 import { useAuthStore } from "../../stores/authStore";
 import type { User } from "../../apis/Types";
 import { IconLogo } from "../../assets/icons";
+import ThemeTransitionOverlay from "./ThemeTransitionOverlay";
 
 // 아이콘 컴포넌트를 추가합니다.
 const IconSun = () => (
@@ -37,6 +38,7 @@ const Header = () => {
   // 1. 'light' 또는 'dark' 값을 가질 테마 상태를 추가합니다.
   // localStorage에서 이전에 저장된 테마를 가져오거나, 없으면 'light'를 기본값으로 사용합니다.
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
+  const [isThemeTransitioning, setIsThemeTransitioning] = useState(false);
 
   // 2. 테마가 변경될 때마다 <html> 태그의 클래스를 변경하고, 선택을 localStorage에 저장합니다.
   useEffect(() => {
@@ -49,9 +51,18 @@ const Header = () => {
     localStorage.setItem('theme', theme);
   }, [theme]);
 
-  // 3. 테마를 전환하는 함수입니다.
   const toggleTheme = () => {
-    setTheme(theme === 'light' ? 'dark' : 'light');
+      if (isThemeTransitioning) return; // 전환 중에는 재실행 방지
+
+      setIsThemeTransitioning(true);
+
+      setTimeout(() => {
+          setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
+      }, 1000);
+  };
+
+  const handleAnimationEnd = () => {
+      setIsThemeTransitioning(false);
   };
 
   return (
@@ -79,6 +90,11 @@ const Header = () => {
           )}
         </nav>
       </div>
+      <ThemeTransitionOverlay
+          isTransitioning={isThemeTransitioning}
+          onAnimationEnd={handleAnimationEnd}
+          isDark={theme !== 'light'}
+      />
     </header>
   );
 }

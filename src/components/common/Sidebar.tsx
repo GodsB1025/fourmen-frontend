@@ -6,6 +6,7 @@ import { useChatStore } from "../../stores/chatStore";
 import { logout as apiLogout } from "../../apis/Auth";
 import { useNavigate } from "react-router-dom";
 import { IconAISummary, IconMoon, IconSun } from "../../assets/icons"; // 2. IconMoon, IconSun import
+import ThemeTransitionOverlay from "./ThemeTransitionOverlay";
 
 // ... (IconHome, IconCalendar 등 다른 아이콘 컴포넌트는 그대로 둡니다)
 function IconHome() {
@@ -89,6 +90,7 @@ export default function Sidebar({ onNavigate, activeKey, onOpenCreateModal, onOp
     
     // 3. 테마 관리 로직을 Sidebar 컴포넌트 내에 직접 작성합니다.
     const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
+    const [isThemeTransitioning, setIsThemeTransitioning] = useState(false);
 
     useEffect(() => {
         const root = document.documentElement;
@@ -101,7 +103,19 @@ export default function Sidebar({ onNavigate, activeKey, onOpenCreateModal, onOp
     }, [theme]);
 
     const toggleTheme = () => {
-        setTheme(theme === 'light' ? 'dark' : 'light');
+        if (isThemeTransitioning) return    ; // 전환 중에는 재실행 방지
+
+        setIsThemeTransitioning(true);
+
+        setTimeout(() => {
+            setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
+        }, 1000);
+        // setTheme(theme === 'light' ? 'dark' : 'light');
+    };
+
+    // 3. CSS 애니메이션이 끝나면 상태를 false로 변경
+    const handleAnimationEnd = () => {
+        setIsThemeTransitioning(false);
     };
 
     const hasCompany = !!user?.company;
@@ -146,7 +160,6 @@ export default function Sidebar({ onNavigate, activeKey, onOpenCreateModal, onOp
                         <div className="user-name" title={user.name}>
                             {user.name}
                         </div>
-                        {/* 5. 테마 토글 버튼 추가 */}
                         <button onClick={toggleTheme} className="theme-toggle-btn" aria-label="테마 전환">
                             {theme === 'light' ? <IconMoon /> : <IconSun />}
                         </button>
@@ -191,6 +204,11 @@ export default function Sidebar({ onNavigate, activeKey, onOpenCreateModal, onOp
                     <span className="label danger">로그아웃</span>
                 </button>
             </div>
+            <ThemeTransitionOverlay
+                isTransitioning={isThemeTransitioning}
+                onAnimationEnd={handleAnimationEnd}
+                isDark={theme !== 'light'}
+            />
         </aside>
     );
 }

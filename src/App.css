@@ -9,6 +9,7 @@
     --muted-fg: #585858;
     --sidebar-bg: #ffffff80;
     --private-lobby-bg: #ffffffcc;
+    --overlay-bg: #1a1a1a;
     --border: #e6e6e6;
     --height: 56px;
     --padx: 16px;
@@ -17,8 +18,10 @@
     --muted: #6b7280;
     --primary: #4B52FF;
     --primary-hover: var(--bg);
+    --transparent-hover: #0000000e;
     --text: #111;
     --text-btn: #fff;
+    --text-sub: #45484e;
     --placeholder: #b7b7b7;
     --highlight-card-bg:
         radial-gradient(420px 260px at 8% 6%,  #f7a9ff 0%, rgba(247,169,255,0) 65%),
@@ -37,13 +40,16 @@
         --muted-fg: #c7c7c7;
         --sidebar-bg: #1a1a1a80;
         --private-lobby-bg: #1a1a1acc;
+        --overlay-bg: #fafafa;
         --border: #2a2a2a;
         --text: #eeeeee;
         --text-btn: #111;
+        --text-sub: #b4b6bb;
         --line: #2a2a2a;
         --line-input: #ffffff3f;
         --primary: #f7f7f7;
         --primary-hover: var(--bg);
+        --transparent-hover: #ffffff20;
         --placeholder: #3b3b3b;
         --highlight-card-bg:
             radial-gradient(420px 260px at 8% 6%,  hsl(294, 0%, 13%) 0%, hsla(294, 0%, 83%, 0) 65%),

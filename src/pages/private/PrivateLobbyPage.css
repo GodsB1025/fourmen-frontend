@@ -85,14 +85,14 @@
 .item-time {
     font-size: 0.9rem;
     font-weight: 500;
-    color: #4b5563;
+    color: var(--text-sub);
     width: 50px;
 }
 
 .item-title {
     flex-grow: 1;
     font-size: 1rem;
-    color: #1f2937;
+    color: var(--text);
 }
 
 .item-type-badge {
@@ -204,7 +204,7 @@
 }
 
 .ongoing-item {
-    background-color: #f3f4f6;
+    background-color: var(--modal-bg);
     padding: 0.8rem 1rem;
     border-radius: 8px;
 }
@@ -212,13 +212,13 @@
 .ongoing-title {
     display: block;
     font-weight: 600;
-    color: #1f2937;
+    color: var(--text);
     margin-bottom: 0.25rem;
 }
 
 .ongoing-time {
     font-size: 0.8rem;
-    color: #6b7280;
+    color: var(--muted);
 }
 
 .loading-placeholder,
