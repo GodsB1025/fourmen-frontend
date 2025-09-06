@@ -1,12 +1,13 @@
-import { useMemo, type JSX } from "react";
+import { useMemo, type JSX, useState, useEffect } from "react"; // 1. useState, useEffect import
 import "./Sidebar.css";
 import { PATH } from "../../types/paths";
 import { useAuthStore } from "../../stores/authStore";
 import { useChatStore } from "../../stores/chatStore";
 import { logout as apiLogout } from "../../apis/Auth";
 import { useNavigate } from "react-router-dom";
-import { IconAISummary } from "../../assets/icons";
+import { IconAISummary, IconMoon, IconSun } from "../../assets/icons"; // 2. IconMoon, IconSun import
 
+// ... (IconHome, IconCalendar 등 다른 아이콘 컴포넌트는 그대로 둡니다)
 function IconHome() {
     return (
         <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
@@ -46,7 +47,6 @@ function IconPower() {
         </svg>
     );
 }
-
 function IconMessenger() {
     return (
         <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
@@ -61,6 +61,7 @@ function IconMessenger() {
         </svg>
     );
 }
+
 
 type NavItem = {
     key: string;
@@ -85,6 +86,23 @@ export default function Sidebar({ onNavigate, activeKey, onOpenCreateModal, onOp
         return chatRooms.reduce((sum, room) => sum + (room.unreadCount || 0), 0);
     }, [chatRooms]);
     const nav = useNavigate();
+    
+    // 3. 테마 관리 로직을 Sidebar 컴포넌트 내에 직접 작성합니다.
+    const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
+
+    useEffect(() => {
+        const root = document.documentElement;
+        if (theme === 'dark') {
+            root.classList.add('dark');
+        } else {
+            root.classList.remove('dark');
+        }
+        localStorage.setItem('theme', theme);
+    }, [theme]);
+
+    const toggleTheme = () => {
+        setTheme(theme === 'light' ? 'dark' : 'light');
+    };
 
     const hasCompany = !!user?.company;
     const isUserRole = user?.role === "USER";
@@ -123,8 +141,15 @@ export default function Sidebar({ onNavigate, activeKey, onOpenCreateModal, onOp
         <aside className="sidebar" role="complementary" aria-label="사이드바">
             {user && (
                 <div className="user">
-                    <div className="user-name" title={user.name}>
-                        {user.name}
+                    {/* 4. 이름과 버튼을 묶는 div 추가 */}
+                    <div className="user-profile-header">
+                        <div className="user-name" title={user.name}>
+                            {user.name}
+                        </div>
+                        {/* 5. 테마 토글 버튼 추가 */}
+                        <button onClick={toggleTheme} className="theme-toggle-btn" aria-label="테마 전환">
+                            {theme === 'light' ? <IconMoon /> : <IconSun />}
+                        </button>
                     </div>
                     <div className="user-email" title={user.email}>
                         {user.email}

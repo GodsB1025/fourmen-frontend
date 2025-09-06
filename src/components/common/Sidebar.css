@@ -186,3 +186,36 @@
     visibility: visible;
     opacity: 1;
 }
+/* Sidebar.css 파일의 기존 코드 아래에 추가 */
+
+.user-profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px; /* 이름과 버튼 사이 간격 */
+}
+
+/* 헤더와 동일한 버튼 스타일 재사용 */
+.theme-toggle-btn {
+  background: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  flex-shrink: 0; /* 버튼이 찌그러지지 않도록 설정 */
+}
+
+.theme-toggle-btn:hover {
+  background-color: var(--line);
+  color: var(--text);
+}
+
+.theme-toggle-btn svg {
+    width: 20px;
+    height: 20px;
+}
