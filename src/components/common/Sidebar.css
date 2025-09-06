@@ -219,3 +219,9 @@
     width: 20px;
     height: 20px;
 }
+
+.theme-toggle-btn .theme-gif {
+  width: 22px; /* 아이콘 크기와 동일하게 설정 */
+  height: 22px;
+  object-fit: contain; /* 이미지가 찌그러지지 않도록 함 */
+}

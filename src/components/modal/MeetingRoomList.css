@@ -17,8 +17,8 @@
 
 .meeting-card {
     position: relative;
-    background-color: #ffffff;
-    border: 1px solid #e5e7eb;
+    background-color: var(--modal-bg);
+    border: 1px solid var(--line);
     border-radius: 12px;
     padding: 1rem 1.5rem;
     display: flex;
@@ -28,8 +28,7 @@
 }
 
 .meeting-card:hover {
-    border-color: #c7d2fe;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    border-color: var(--line-input);
 }
 
 .card-header {
@@ -42,8 +41,11 @@
 .card-title {
     font-size: 1.1rem;
     font-weight: 600;
-    color: #111827;
     margin: 0;
+}
+.card-title,
+.card-header span {
+    color: var(--text);
 }
 
 .ai-badge {
@@ -71,19 +73,17 @@
 }
 
 .info-row {
+    color: var(--text);
     display: flex;
     gap: 0.7rem;
     align-items: center;
 }
 
-.info-label {
-    /* width: 70px; */
-    color: #6b7280;
+.info-row .info-label {
     flex-shrink: 0;
 }
 
-.info-value {
-    color: #1f2937;
+.info-row .info-value {
     font-weight: 500;
 }
 
@@ -121,7 +121,7 @@
     align-items: center;
     min-height: 200px;
     border-radius: 12px;
-    background-color: #f9fafb;
+    background-color: none;
     color: #6b7280;
     font-size: 1rem;
     flex-grow: 1;

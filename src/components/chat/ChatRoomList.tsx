@@ -1,4 +1,5 @@
 // import React from "react";
+import { IconPlus } from "../../assets/icons";
 import { useChatStore } from "../../stores/chatStore";
 import "./ChatRoomList.css";
 
@@ -14,7 +15,7 @@ const ChatRoomList = ({ onNewChat }: ChatRoomListProps) => {
             <header className="chatroom-list-header">
                 <h2>대화 목록</h2>
                 <button className="new-chat-button" onClick={onNewChat}>
-                    +
+                    <IconPlus/>
                 </button>
             </header>
             <ul className="chatroom-list">

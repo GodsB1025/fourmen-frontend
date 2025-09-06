@@ -9,7 +9,7 @@
     justify-content: space-between; /* 양쪽 끝으로 정렬 */
     align-items: center; /* 수직 중앙 정렬 */
     padding: 1.5rem;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid var(--line);
     flex-shrink: 0;
 }
 
@@ -24,8 +24,8 @@
     height: 32px;
     border-radius: 50%;
     border: none;
-    background-color: #eef2ff;
-    color: #4f46e5;
+    background-color: var(--primary);
+    color: var(--text-btn);
     font-size: 1.5rem;
     font-weight: bold;
     cursor: pointer;
@@ -55,7 +55,7 @@
 }
 
 .chatroom-item:hover {
-    background-color: #f3f4f6;
+    background-color: var(--transparent-hover);
 }
 
 .chatroom-item.active {

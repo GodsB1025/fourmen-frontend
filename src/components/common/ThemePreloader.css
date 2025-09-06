@@ -1,0 +1,52 @@
+.preloader-container {
+  position: relative;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 150px; /* 아이콘과 동일한 크기 */
+  height: 150px;
+}
+
+.sun-moon {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.sun,
+.moon {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+.sun {
+  background-color: #f9d71c; /* 해 색상 */
+  transform: scale(1);
+}
+
+.moon {
+  background-color: #d4d4d8; /* 달 색상 */
+  transform: scale(0);
+  left: 0;
+}
+
+/* 다크 모드로 전환 (해가 달 뒤로 숨는 애니메이션) */
+.sun-moon.to-moon .sun {
+  transform: scale(0);
+}
+.sun-moon.to-moon .moon {
+  transform: scale(1);
+  transition-delay: 0.2s; /* 해가 사라진 후 달이 나타남 */
+}
+
+/* 라이트 모드로 전환 (달이 해 뒤로 숨는 애니메이션) */
+.sun-moon.to-sun .moon {
+  transform: scale(0);
+}
+.sun-moon.to-sun .sun {
+  transform: scale(1);
+  transition-delay: 0.2s; /* 달이 사라진 후 해가 나타남 */
+}

@@ -1,22 +1,29 @@
 .messenger-layout {
+    --messenger-bg: #f9fafb;
+
     display: flex;
     height: 100%;
     width: 100%;
     overflow: hidden;
-    background-color: #ffffff;
-    border: 1px solid #e5e7eb;
+    background-color: var(--bg);
 }
 
 .messenger-sidebar {
     width: 280px;
     flex-shrink: 0;
     border-right: 1px solid #e5e7eb;
-    background-color: #f9fafb;
+    background-color: var(--messenger-bg);
+    border-right: 1px solid var(--line);
+    color: var(--text);
 }
 
 .messenger-main {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    background-color: #f9fafb;
+    background-color: var(--messenger-bg);
+}
+
+:root.dark .messenger-layout {
+    --messenger-bg: #202020;
 }
