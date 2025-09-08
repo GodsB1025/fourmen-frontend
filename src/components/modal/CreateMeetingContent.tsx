@@ -96,7 +96,7 @@ const CreateMeetingContent = () => {
     };
 
     return (
-        <>
+        <div className="create-meeting-container">
             <form className="panel main-form-panel" style={{ width: '100%' }} onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label htmlFor="meeting-name">회의 이름</label>
@@ -218,7 +218,7 @@ const CreateMeetingContent = () => {
                     />
                 )}
             </AnimatePresence>
-        </>
+        </div>
     );
 };
 
